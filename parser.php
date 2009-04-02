@@ -26,21 +26,40 @@ class PDoc_Parser
     $this->parse(str_replace($this->basedir, '', $filename), $contents);
   }
   
-  # TODO: Extract class methods.
   # TODO: Extract class attributes.
-  # TODO: Extract functions.
+  # TODO: Parse functions/methods' parameters.
   # IMPROVE: Extract interfaces.
   protected function parse($filename, $contents)
   {
+    $in_class = false;
+    $in_class_deepness = 0;
+    $deepness = 0;
+    
     foreach(explode("\n", $contents) as $line)
     {
-      if (preg_match('/(\§comment:[0-9a-z]+\§|)\s*(abstract|)\s*class\s+([\w\_]+)\s*([^\{]+|)/si', $line, $match))
+      preg_match("/^(\s*)/", $line, $match);
+      $deepness = strlen($match[1]) / 2;
+      $trimmed  = trim($line);
+      
+      if ($deepness == $in_class_deepness and $trimmed != '{' and $trimmed != '}' and $trimmed != '')
+      {
+        if ($in_class !== false)
+        {
+          # we are no longer inside a class
+          $in_class = false;
+          $in_class_deepness = 0;
+        }
+      }
+      
+      # CLASS
+      if (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)\s*(abstract|)\s*class\s+([\w\_]+)\s*([^\{]+|)/i', $line, $match))
       {
         $klass = array(
           'file'     => $filename,
           'comment'  => empty($match[1]) ? "" : trim(self::$tokens[$match[1]]),
           'abstract' => ($match[2] == 'abstract') ? true : false,
           'name'     => $match[3],
+          'methods'  => array(),
         );
         
         if (preg_match('/extends\s+([\w\_]+)/i', $match[4], $extends))
@@ -54,6 +73,39 @@ class PDoc_Parser
         }
         
         $this->classes[$klass['name']] = $klass;
+        
+        $in_class = $klass['name'];
+        $in_class_deepness = $deepness;
+      }
+      
+      # FUNCTION
+      if (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)([\w\s]+?)function\s*([^\s\(]*)\s*\((.+)\)\s*$/i', $line, $match))
+      {
+        $func = array(
+          'file'     => $filename,
+          'comment'  => empty($match[1]) ? "" : trim(self::$tokens[$match[1]]),
+          'name'     => $match[3],
+          'static'   => (strpos($match[2], 'static') !== false),
+          'abstract' => (strpos($match[2], 'abstract') !== false),
+          'params'   => $match[4],
+        );
+        
+        if (strpos($match[2], 'protected') !== false) {
+          $func['visibility'] = 'protected';
+        }
+         elseif (strpos($match[2], 'private') !== false) {
+          $func['visibility'] = 'private';
+        }
+        else {
+          $func['visibility'] = 'public';
+        }
+        
+        if ($in_class === false) {
+          $this->functions[$func['name']] = $func;
+        }
+        else {
+          $this->classes[$in_class]['methods'][$func['name']] = $func;
+        }
       }
     }
   }

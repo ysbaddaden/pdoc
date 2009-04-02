@@ -34,11 +34,8 @@ foreach($files as $file)
   $parser->add($file);
 }
 
-print_r($parser->classes);
-
-
 # generates the HTML documentation
 $generator = new PDoc_Generator($parser);
-$generator->save();
+$generator->save($outputdir);
 
 ?>
