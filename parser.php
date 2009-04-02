@@ -23,14 +23,57 @@ class PDoc_Parser
     $contents = file_get_contents($filename);
     $contents = $this->preparse($contents);
     
-    // ...
-    
-    print_r(preg_replace('/\s+/', ' ', $contents)."\n\n");
+    $this->parse(str_replace($this->basedir, '', $filename), $contents);
   }
+  
+  # TODO: Extract class methods.
+  # TODO: Extract class attributes.
+  # TODO: Extract functions.
+  # IMPROVE: Extract interfaces.
+  protected function parse($filename, $contents)
+  {
+    foreach(explode("\n", $contents) as $line)
+    {
+      if (preg_match('/(\§comment:[0-9a-z]+\§|)\s*(abstract|)\s*class\s+([\w\_]+)\s*([^\{]+|)/si', $line, $match))
+      {
+        $klass = array(
+          'file'     => $filename,
+          'comment'  => empty($match[1]) ? "" : trim(self::$tokens[$match[1]]),
+          'abstract' => ($match[2] == 'abstract') ? true : false,
+          'name'     => $match[3],
+        );
+        
+        if (preg_match('/extends\s+([\w\_]+)/i', $match[4], $extends))
+        {
+          $klass['extends'] = $extends[1];
+          $match[4] = str_replace($extends[0], '', $match[4]);
+        }
+        
+        if (preg_match('/implements\s+([\w\_\s,]+)/i', $match[4], $interfaces)) {
+          $klass['implements'] = array_map('trim', explode(',', $interfaces[1]));
+        }
+        
+        $this->classes[$klass['name']] = $klass;
+      }
+    }
+  }
+  
   
   protected function preparse($contents)
   {
-    # replaces comments with tokens
+    $contents = $this->remove_non_phpcode($contents);
+    $contents = $this->tokenize_comments($contents);
+    $contents = $this->source_code_beautifier($contents);
+    return $contents;
+  }
+  
+  protected function remove_non_phpcode($contents)
+  {
+    return preg_replace('/(\?\>(.+?)\<\?php|^\s*\<\?php\s*|\s*\?\>\s*$)/s', '', $contents);
+  }
+  
+  protected function tokenize_comments($contents)
+  {
     $contents = preg_replace_callback('/\/\*(.+?)\*\//s', array($this, '_replace_comments'), $contents);
     
     $lines   = explode("\n", $contents);
@@ -54,11 +97,68 @@ class PDoc_Parser
       }
     }
     $contents = implode(" ", $lines);
+    return $contents;
+  }
+  
+  protected function source_code_beautifier($contents)
+  {
+    $contents = preg_replace('/\s+/', ' ', $contents);
+    $chars    = preg_split('//', $contents);
     
-    # removes strings
-    $contents = preg_replace('/\'.*?\'/', '', $contents);
-    $contents = preg_replace('/".*?"/',   '', $contents);
+    $contents  = '';
+    $deepness  = 0;
+    $line      = '';
+    $in_string = false;
     
+    foreach($chars as $i => $char)
+    {
+      # are we starting or closing a string?
+      if ($char == '"' or $char == "'")
+      {
+        if ($in_string === false) {
+          $in_string = $char;
+        }
+        elseif ($in_string == $char and !preg_match('/\\\$/', $line)) {
+          $in_string = false;
+        }
+      }
+      
+      if ($in_string !== false) {
+        $line .= $char;
+      }
+      else
+      {
+        # let's indent depending on particular chars:
+        switch($char)
+        {
+          case '{':
+            $contents .= (empty($line) ? '' : str_repeat('  ', $deepness)."$line\n").str_repeat('  ', $deepness)."{\n";
+            $deepness++;
+            $line = '';
+            break;
+          
+          case '}':
+            $contents .= (empty($line) ? '' : str_repeat('  ', $deepness)."$line\n").str_repeat('  ', --$deepness)."}\n";
+            if ($deepness == 0) {
+              $contents .= "\n";
+            }
+            $line = '';
+            break;
+          
+          case ';':
+            $contents .= str_repeat('  ', $deepness)."$line$char\n";
+            $line = '';
+            break;
+          
+          case ' ':
+            if (empty($line)) {
+              break;
+            }
+          default:
+            $line .= $char;
+        }
+      }
+    }
     return $contents;
   }
   
@@ -68,13 +168,6 @@ class PDoc_Parser
     $comment = preg_replace('/^\s*\*/m', '', $match[1]);
     self::$tokens[$token] = $comment;
     return $token;
-  }
-  
-  # Computes parsed source files,
-  # organising files, classes, methods, etc.
-  function compute()
-  {
-    
   }
 }
 

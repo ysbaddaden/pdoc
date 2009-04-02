@@ -29,10 +29,13 @@ $files = $browser->search('php');
 
 # parses source code
 $parser = new PDoc_Parser($basedir);
-foreach($files as $file) {
+foreach($files as $file)
+{
   $parser->add($file);
 }
-$parser->compute();
+
+print_r($parser->classes);
+
 
 # generates the HTML documentation
 $generator = new PDoc_Generator($parser);
