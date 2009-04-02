@@ -1,0 +1,17 @@
+= pdoc
+
+pdoc is a minimalistic documentation tool for PHP.
+
+== Usage
+
+  $ pdoc [input_directory] [output_directory]
+
+Examples:
+
+  $ pdoc ~/work/pdoc -o ~/work/docs/pdoc
+
+== TODO
+
+* Actual parsing of source files (extract code structure).
+* Generate the documentation in HTML format.
+
