@@ -10,9 +10,14 @@ class PDoc_Generator
     $this->parser = $parser;
   }
   
+  # TODO: Generate documentation for functions.
   function save($outputdir)
   {
     $this->outputdir = $outputdir;
+    
+    if (!is_dir($this->outputdir)) {
+      mkdir($this->outputdir, 0755, true);
+    }
     
     ksort($this->parser->classes);
     ksort($this->parser->functions);
@@ -22,10 +27,14 @@ class PDoc_Generator
     foreach($this->parser->classes as $klass) {
       $this->generate_class($klass);
     }
+    
+    copy('templates/style.css', $this->outputdir.'/style.css');
   }
   
   protected function generate_index()
   {
+#    echo "Generating documentation...\n";
+    
     $classes   = $this->parser->classes;
     $functions = $this->parser->functions;
     
@@ -38,6 +47,8 @@ class PDoc_Generator
   
   protected function generate_class($klass)
   {
+    echo "Generating documentation for {$klass['name']}\n";
+    
     ksort($klass['methods']);
     $classes   = $this->parser->classes;
     $functions = $this->parser->functions;
