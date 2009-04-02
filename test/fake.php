@@ -34,11 +34,23 @@ class mysql implements database
   }
 }
 
+# Just another test.
+#
+# Really, it's just another test!
 class NS_AnotherTest extends NS_Fake implements Toto, blabla
 {
   
 }
 
+  /**
+   * Adds timestamp columns to a table's definition.
+   * 
+   * $type can be:
+   * 
+   * - date: will create created_on & updated_on.
+   * - time: will create created_at & updated_at.
+   * - datetime: will create created_at & updated_at.
+   */
 class NS_YetAnotherTest implements Toto, blabla extends NS_Fake
 {
   

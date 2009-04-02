@@ -9,77 +9,103 @@
 <div id="main">
   
   <div id="content">
-    <h1>Class: <?= $klass['name'] ?></h1>
-    
-    <ul class="about">
-      <? if ($klass['abstract']): ?>
-        <li>class is <strong>abstract</strong></li>
-      <? endif; ?>
+    <div id="class">
       
-      <? if (!empty($klass['extends'])): ?>
-        <li>
-          inherits from:
-            <a href="class-<?= $klass['extends'] ?>.html"><?= $klass['extends'] ?></a>
-        </li>
-      <? endif; ?>
+      <h1>
+        <? if ($klass['abstract']): ?>
+          <span class="abstract">Abstract</span>
+        <? endif; ?>
+        Class: <?= $klass['name'] ?>
+      </h1>
       
-      <? if (!empty($klass['implements'])): ?>
-        <li>
-          implements:
-          <? foreach($klass['implements'] as $implement): ?>
-            <a href="class-<?= $implement ?>.html"><?= $implement ?></a>,
-          <? endforeach; ?>
-        </li>
-      <? endif; ?>
-    </ul>
-
-
-    <h2>List of attributes:</h2>
-    
-    <p>TODO</p>
-    
-    
-    <h2>List of methods: <?= $klass['name'] ?></h2>
-    
-    <ul class="methods">
-      <? foreach($klass['methods'] as $method): ?>
-        <? $resource = "#{$method['name']}" ?>
-        <li>
-          <a href="<?= $resource ?>"><?= $method['name'] ?></a>(<?= $method['params']?>)
-        </li>
-      <? endforeach; ?>
-    </ul>
-    
-    <h3>Inherited methods:</h3>
-    
-    <p>TODO</p>
-    
-    
-    <h2>Methods</h2>
-    
-    <div id="methods">
-      <? foreach($klass['methods'] as $method): ?>
-        <?
-        $resource = "#{$method['name']}";
-        $about    = preg_split("/[\n\.]/", $method['comment'], PREG_SPLIT_NO_EMPTY);
-        $brief    = array_shift($about);
-        $about    = substr($method['comment'], strlen($brief));
-        ?>
+      <p class="brief"><?= $klass['brief'] ?></p>
+      
+      <dl class="inheritence">
+        <? if (!empty($klass['extends'])): ?>
+          <dt>inherits from:</dt>
+          <dd><a href="class-<?= $klass['extends'] ?>.html"><?= $klass['extends'] ?></a></dd>
+        <? endif; ?>
         
-        <div class="method">
-          <h3>
-            <span class="name"><!--<?= $klass['name'] ?>::--><?= $method['name'] ?></span>
-            <span class="params">(<?= $method['params'] ?>)</span></h3>
-          <p class="brief"><?= $brief ?></p>
+        <? if (!empty($klass['implements'])): ?>
+          <dt>implements:</dt>
+          <dd>
+            <? foreach($klass['implements'] as $implement): ?>
+              <a href="class-<?= $implement ?>.html"><?= $implement ?></a>,
+            <? endforeach; ?>
+          </dd>
+        <? endif; ?>
+      </dl>
+      
+      <div class="description"><?= $klass['description'] ?></div>
+      
+      
+      <h2>Attributes</h2>
+      
+      <p>TODO</p>
+      
+      
+      <h2>Methods</h2>
+      
+      <dl class="methods">
+        <dt>Public methods:</dt>
+        <dd>
+          <ul>
+            <? foreach($klass['methods'] as $method): ?>
+              <? if ($method['visibility'] == 'public'): ?>
+                <? $resource = "#method-{$method['name']}" ?>
+                <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['params'] ?>)"><?= $method['name'] ?></a></li>
+              <? endif; ?>
+            <? endforeach; ?>
+          </ul>
+        </dd>
+        
+        <dt>Protected methods:</dt>
+        <dd>
+          <ul>
+            <? foreach($klass['methods'] as $method): ?>
+              <? if ($method['visibility'] == 'protected'): ?>
+                <? $resource = "#method-{$method['name']}" ?>
+                <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['params'] ?>)"><?= $method['name'] ?></a></li>
+              <? endif; ?>
+            <? endforeach; ?>
+          </ul>
+        </dd>
+        
+        <dt>Private methods:</dt>
+        <dd>
+          <ul>
+            <? foreach($klass['methods'] as $method): ?>
+              <? if ($method['visibility'] == 'private'): ?>
+                <? $resource = "#method-{$method['name']}" ?>
+                <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['params'] ?>)"><?= $method['name'] ?></a></li>
+              <? endif; ?>
+            <? endforeach; ?>
+          </ul>
+        </dd>
+      </dl>
+      
+      <!--h3>Inherited methods:</h3>
+      
+      <p>TODO</p-->
+      
+      
+      <div id="methods">
+        <? foreach($klass['methods'] as $method): ?>
+          <? $resource = "#{$method['name']}" ?>
           
-          <div class="about">
-            <?= str_replace("\n", '<br/>', $about) ?>
+          <div class="method <?= $method['visibility'] ?>" id="method-<?= $method['name'] ?>">
+            <h3>
+              <span class="visibility"><?= $method['visibility'] ?></span>
+              <span class="name"><!--<?= $klass['name'] ?>::--><?= $method['name'] ?></span>
+              <span class="params">(<?= $method['params'] ?>)</span>
+            </h3>
+            
+            <p class="brief"><?= $method['brief'] ?></p>
+            <div class="description"><?= $method['description'] ?></div>
           </div>
-        </div>
-      <? endforeach; ?>
+        <? endforeach; ?>
+      </div>
     </div>
-    
-    
   </div>
   
   
@@ -90,7 +116,7 @@
       <? foreach($classes as $_klass): ?>
         <? $resource = "class-{$_klass['name']}.html" ?>
         <dd>
-          <a href="<?= $resource ?>"><?= $_klass['name'] ?></a>
+          <a href="<?= $resource ?>" title="Class: <?= $_klass['name'] ?>"><?= $_klass['name'] ?></a>
         </dd>
       <? endforeach; ?>
     </dl>

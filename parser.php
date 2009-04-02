@@ -56,11 +56,18 @@ class PDoc_Parser
       {
         $klass = array(
           'file'     => $filename,
-          'comment'  => empty($match[1]) ? "" : trim(self::$tokens[$match[1]]),
           'abstract' => ($match[2] == 'abstract') ? true : false,
           'name'     => $match[3],
           'methods'  => array(),
+          'brief'    => '',
+          'description' => '',
         );
+        
+        if (!empty($match[1]))
+        {
+          $comment = trim(self::$tokens[$match[1]]);
+          list($klass['brief'], $klass['description']) = $this->parse_comment($comment);
+        }
         
         if (preg_match('/extends\s+([\w\_]+)/i', $match[4], $extends))
         {
@@ -79,16 +86,23 @@ class PDoc_Parser
       }
       
       # FUNCTION
-      if (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)([\w\s]+?)function\s*([^\s\(]*)\s*\((.+)\)\s*$/i', $line, $match))
+      if (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)([\w\s]+?)function\s*([^\s\(]*)\s*\((.*)\)\s*$/i', $line, $match))
       {
         $func = array(
           'file'     => $filename,
-          'comment'  => empty($match[1]) ? "" : trim(self::$tokens[$match[1]]),
           'name'     => $match[3],
           'static'   => (strpos($match[2], 'static') !== false),
           'abstract' => (strpos($match[2], 'abstract') !== false),
           'params'   => $match[4],
+          'brief'    => '',
+          'description' => '',
         );
+        
+        if (!empty($match[1]))
+        {
+          $comment = trim(self::$tokens[$match[1]]);
+          list($func['brief'], $func['description']) = $this->parse_comment($comment);
+        }
         
         if (strpos($match[2], 'protected') !== false) {
           $func['visibility'] = 'protected';
@@ -110,6 +124,25 @@ class PDoc_Parser
     }
   }
   
+  # FIXME: If comment has a <code></code> part with empty lines, it breaks the code in parts (while it shouldn't).
+  protected function parse_comment($comment)
+  {
+    $comment = preg_replace('/^[ \t]+/m', '', $comment);
+    $parts   = explode("\n\n", $comment);
+    $brief   = array_shift($parts);
+    
+    $description = '';
+    foreach($parts as $part)
+    {
+      $part = preg_replace('/\$[\w]+/', '<span class="variable">\0</span>', $part);
+      if (preg_match('/^\s*[\-\*]\s+/', $part)) {
+        $part = '<ul>'.preg_replace('/\s*[\-\*]\s+(.+)$/m', '<li>\1</li>', $part).'</ul>';
+      }
+      $description .= "<p>$part</p>";
+    }
+    
+    return array($brief, $description);
+  }
   
   protected function preparse($contents)
   {
@@ -130,21 +163,20 @@ class PDoc_Parser
     
     $lines   = explode("\n", $contents);
     $comment = '';
+    
     foreach($lines as $i => $line)
     {
-      if (preg_match('/^\s*(?:#|\/\/)(.+)$/m', $line, $match))
+      if (preg_match('/^\s*(?:#|\/\/)(.*)$/sm', $line, $match))
       {
         $comment .= $match[1]."\n";
         $lines[$i] = "";
       }
       elseif (!empty($comment))
       {
-        $token   = "§comment:".sha1($comment)."§";
-        $comment = preg_replace('/^\s*(?:#|\/\/)/m', '', $comment);
-        
+        $token = "§comment:".sha1($comment)."§";
+        $comment = preg_replace('/^[ \t]*(?:#|\/\/)/m', '', $comment);
         self::$tokens[$token] = $comment;
         $lines[$i-1] = $token;
-        
         $comment = "";
       }
     }
@@ -217,7 +249,7 @@ class PDoc_Parser
   static protected function _replace_comments($match)
   {
     $token   = "§comment:".sha1($match[0])."§";
-    $comment = preg_replace('/^\s*\*/m', '', $match[1]);
+    $comment = preg_replace('/^[ \t]*\*/m', '', $match[1]);
     self::$tokens[$token] = $comment;
     return $token;
   }

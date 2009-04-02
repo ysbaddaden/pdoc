@@ -28,7 +28,7 @@ class PDoc_Generator
       $this->generate_class($klass);
     }
     
-    copy('templates/style.css', $this->outputdir.'/style.css');
+    copy(ROOT.'/templates/style.css', $this->outputdir.'/style.css');
   }
   
   protected function generate_index()
@@ -39,7 +39,7 @@ class PDoc_Generator
     $functions = $this->parser->functions;
     
     ob_start();
-    include 'templates/index.php';
+    include ROOT.'/templates/index.php';
     $contents = ob_get_clean();
     
     file_put_contents($this->outputdir.'/index.html', $contents);
@@ -54,7 +54,7 @@ class PDoc_Generator
     $functions = $this->parser->functions;
     
     ob_start();
-    include  'templates/class.php';
+    include ROOT.'/templates/class.php';
     $contents = ob_get_clean();
     
     file_put_contents($this->outputdir.'/class-'.$klass['name'].'.html', $contents);

@@ -1,10 +1,10 @@
 <?php
-
 error_reporting(E_ALL);
+define('ROOT', dirname(__FILE__));
 
-require dirname(__FILE__).'/browser.php';
-require dirname(__FILE__).'/parser.php';
-require dirname(__FILE__).'/generator.php';
+require ROOT.'/browser.php';
+require ROOT.'/parser.php';
+require ROOT.'/generator.php';
 
 # params
 if ($_SERVER['argc'] == 3)
