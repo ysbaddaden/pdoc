@@ -7,25 +7,41 @@ require ROOT.'/parser.php';
 require ROOT.'/generator.php';
 
 # params
-if ($_SERVER['argc'] == 3)
+$excludes = array();
+
+for ($n = 1; $n < $_SERVER['argc']; $n++)
 {
-  $basedir   = $_SERVER['argv'][1];
-  $outputdir = $_SERVER['argv'][2];
+  $arg = $_SERVER['argv'][$n];
+  if (strpos($arg, '--') === 0)
+  {
+    $arg = explode('=', ltrim($arg, '-'));
+    switch($arg[0])
+    {
+      case 'exclude':
+        $excludes[] = $arg[1];
+        break;
+      default:
+        trigger_error("Unknown parameter: --{$arg[0]}\n");
+    }
+  }
+  elseif (!isset($basedir)) {
+    $basedir = $arg;
+  }
+  else {
+    $outputdir = $arg;
+  }
 }
-elseif ($_SERVER['argc'] == 2)
-{
-  $basedir   = $_SERVER['argv'][1];
-  $outputdir = "$basedir/doc";
+
+if (!isset($basedir)) {
+  $basedir = $_ENV['PWD'];
 }
-else
-{
-  $basedir   = $_ENV['PWD'];
-  $outputdir = "$basedir/doc";
+if (!isset($outputdir)) {
+  $outputdir = rtrim($basedir, '/').'/doc';
 }
 
 # searches for source code
 $browser = new PDoc_Browser($basedir);
-$files = $browser->search('php');
+$files = $browser->search('php', $excludes);
 
 # parses source code
 $parser = new PDoc_Parser($basedir);

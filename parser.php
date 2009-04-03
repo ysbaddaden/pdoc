@@ -124,7 +124,7 @@ class PDoc_Parser
     }
   }
   
-  # FIXME: If comment has a <code></code> part with empty lines, it breaks the code in parts (while it shouldn't).
+  # FIXME: If comment has a code part with empty lines, it breaks the code in parts (while it shouldn't).
   protected function parse_comment($comment)
   {
     $comment = preg_replace('/^[ \t]+/m', '', $comment);
@@ -138,6 +138,7 @@ class PDoc_Parser
       if (preg_match('/^\s*[\-\*]\s+/', $part)) {
         $part = '<ul>'.preg_replace('/\s*[\-\*]\s+(.+)$/m', '<li>\1</li>', $part).'</ul>';
       }
+      $part = str_replace("<code>\n", '<code>', $part);
       $description .= "<p>$part</p>";
     }
     

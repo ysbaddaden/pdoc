@@ -21,20 +21,18 @@ a { text-decoration: none; }
 
 #navbar a { color: #66F; }
 
-.method { margin-bottom: 3em; }
-.method h3 { font-size: 1em; font-weight: normal; background: #EEE; padding: .5em; }
-.method h3 .name { font-weight: bold; }
-.method h3 .visibility { float: right; font-weight: bold; color: #888; font-style: italic; }
-.method code { font-family: monospace; white-space: pre; border: 1px solid #EEE;
-  display: block; padding: 0; overflow: auto; margin: 1.5em 0; }
-.method > * { padding: 0 .5em; }
-
 #class dd { margin-bottom: 1.5em; padding-left: 0; }
 #class li { display: inline; }
 #class li:after { content: ', '; }
 
-.brief {  }
-
 h1 .abstract { font-size: .5em; float: right; color: #888; font-weight: bold;
   font-style: italic; text-transform: lowercase; margin-top: 1.25em; }
+
+.method { margin-bottom: 3em; }
+.method h3 { font-size: 1em; font-weight: normal; background: #EEE; padding: .5em; border-top: 1px solid #DDD; }
+.method h3 .name { font-weight: bold; }
+.method h3 .visibility { float: right; font-weight: bold; color: #888; font-style: italic; }
+.method code { font-family: monospace; white-space: pre; border: 1px solid #DDD;
+  display: block; padding: .5em; overflow: auto; margin: 1.5em 0; border-left-width: 4px; }
+.method > * { padding: 0 .5em; }
 
