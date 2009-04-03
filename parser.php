@@ -1,6 +1,7 @@
 <?php
 
 # Parser for PHP source files.
+# @package PDoc
 class PDoc_Parser
 {
   public $basedir;
@@ -61,12 +62,13 @@ class PDoc_Parser
           'methods'  => array(),
           'brief'    => '',
           'description' => '',
+          'params' => array(),
         );
         
         if (!empty($match[1]))
         {
           $comment = trim(self::$tokens[$match[1]]);
-          list($klass['brief'], $klass['description']) = $this->parse_comment($comment);
+          list($klass['brief'], $klass['description'], $klass['params']) = $this->parse_comment($comment);
         }
         
         if (preg_match('/extends\s+([\w\_]+)/i', $match[4], $extends))
@@ -96,12 +98,13 @@ class PDoc_Parser
           'params'   => $match[4],
           'brief'    => '',
           'description' => '',
+          'params' => array(),
         );
         
         if (!empty($match[1]))
         {
           $comment = trim(self::$tokens[$match[1]]);
-          list($func['brief'], $func['description']) = $this->parse_comment($comment);
+          list($func['brief'], $func['description'], $func['params']) = $this->parse_comment($comment);
         }
         
         if (strpos($match[2], 'protected') !== false) {
@@ -128,8 +131,18 @@ class PDoc_Parser
   protected function parse_comment($comment)
   {
     $comment = preg_replace('/^[ \t]+/m', '', $comment);
-    $parts   = explode("\n\n", $comment);
-    $brief   = array_shift($parts);
+    
+    # extracts params
+    $params  = array();
+    preg_match_all('/^@([^\s]+)\s+(.+)$/m', $comment, $matches, PREG_SET_ORDER);
+    foreach($matches as $match) {
+      $params[$match[1]] = $match[2];
+    }
+#   $comment = preg_replace('/^[ \t]*\@(\w+)\s+(.+)$/m', $comment);
+
+    # distinguishes brief & description's contents
+    $parts = explode("\n\n", $comment);
+    $brief = array_shift($parts);
     
     $description = '';
     foreach($parts as $part)
@@ -142,7 +155,7 @@ class PDoc_Parser
       $description .= "<p>$part</p>";
     }
     
-    return array($brief, $description);
+    return array($brief, $description, $params);
   }
   
   protected function preparse($contents)
@@ -255,6 +268,7 @@ class PDoc_Parser
     return $token;
   }
   
+  
   # Returns from the given methods, the ones that are public, private or protected.
   function & filter_methods($methods, $visibility='public')
   {
@@ -263,6 +277,25 @@ class PDoc_Parser
     {
       if ($method['visibility'] == $visibility) {
         $rs[] = $method;
+      }
+    }
+    return $rs;
+  }
+  
+  function & get_tree()
+  {
+    $rs = array();
+    foreach($this->classes as $klass)
+    {
+      if (isset($klass['params']['package']))
+      {
+        if (!isset($rs[$klass['params']['package']])) {
+          $rs[$klass['params']['package']] = array();
+        }
+        $rs[$klass['params']['package']][] = $klass;
+      }
+      else {
+        $rs[] = $klass;
       }
     }
     return $rs;

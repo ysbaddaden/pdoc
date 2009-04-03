@@ -117,6 +117,7 @@
     </div>
   </div>
   
+  <hr/>
   
   <div id="navbar">
     <dl class="classes">
@@ -125,7 +126,11 @@
       <? foreach($this->parser->classes as $_klass): ?>
         <? $resource = "class-{$_klass['name']}.html" ?>
         <dd>
-          <a href="<?= $resource ?>" title="Class: <?= $_klass['name'] ?>"><?= $_klass['name'] ?></a>
+          <? if ($_klass['name'] == $klass['name']): ?>
+            <?= $_klass['name'] ?>
+          <? else: ?>
+            <a href="<?= $resource ?>" title="Class: <?= $_klass['name'] ?>"><?= $_klass['name'] ?></a>
+          <? endif; ?>
         </dd>
       <? endforeach; ?>
     </dl>

@@ -54,8 +54,7 @@ $files = $browser->search('php', $excludes);
 
 # parses source code
 $parser = new PDoc_Parser($basedir);
-foreach($files as $file)
-{
+foreach($files as $file) {
   $parser->add($file);
 }
 

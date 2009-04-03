@@ -7,6 +7,7 @@
 # $files = $browser->search('php', array('test'));
 # </code>
 #
+# @package PDoc
 class PDoc_Browser
 {
   public    $basedir;

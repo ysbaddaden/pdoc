@@ -1,6 +1,7 @@
 <?php
 
 # Generates the HTML documentation from parsed source files.
+# @package PDoc
 class PDoc_Generator
 {
   public $parser;

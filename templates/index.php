@@ -12,7 +12,28 @@
   
   <h2>List of classes:</h2>
   
-  <ul class="classes">
+  <? $tree = $this->parser->get_tree() ?>
+  
+  <ul>
+    <? foreach($tree as $package => $classes): ?>
+      <li>
+        <? if (is_numeric($package)): ?>
+          <? $resource = "class-{$classes['name']}.html" ?>
+          <a href="<?= $resource ?>"><?= $classes['name'] ?></a>
+        <? else: ?>
+          <?= $package ?>
+          <ul>
+            <? foreach($classes as $klass): ?>
+              <? $resource = "class-{$klass['name']}.html" ?>
+              <li><a href="<?= $resource ?>"><?= $klass['name'] ?></a></li>
+            <? endforeach; ?>
+          </ul>
+        <? endif; ?>
+      </li>
+    <? endforeach; ?>
+  </ul>
+  
+  <!--ul class="classes">
     <? foreach($this->parser->classes as $klass): ?>
       <? $resource = "class-{$klass['name']}.html" ?>
       <li><a href="<?= $resource ?>"><?= $klass['name'] ?></a></li>
@@ -27,7 +48,7 @@
       <? $resource = "function-{$klass['name']}.html" ?>
       <li><a href="<?= $func['name'] ?>"><?= $func['name'] ?></a></li>
     <? endforeach; ?>
-  </ul>
+  </ul-->
 
 </div>
 </body>
