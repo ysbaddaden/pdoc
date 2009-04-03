@@ -10,28 +10,53 @@
 
   <h1 class="index">Documentation for <strong><?= $this->project_name ?></strong></h1>
   
-  <h2>List of classes:</h2>
+  <!--h2>List of classes:</h2-->
   
   <? $tree = $this->parser->get_tree() ?>
   
-  <ul>
-    <? foreach($tree as $package => $classes): ?>
-      <li>
-        <? if (is_numeric($package)): ?>
-          <? $resource = "class-{$classes['name']}.html" ?>
-          <a href="<?= $resource ?>"><?= $classes['name'] ?></a>
-        <? else: ?>
-          <?= $package ?>
+  <dl class="tree">
+    <? foreach($tree['packages'] as $package => $data): ?>
+      <dt><?= $package ?></dt>
+      <dd>
+        <? if (!empty($data['classes'])): ?>
           <ul>
-            <? foreach($classes as $klass): ?>
+            <? foreach($data['classes'] as $klass): ?>
               <? $resource = "class-{$klass['name']}.html" ?>
               <li><a href="<?= $resource ?>"><?= $klass['name'] ?></a></li>
             <? endforeach; ?>
           </ul>
         <? endif; ?>
-      </li>
+        
+        <? if (!empty($data['subpackages'])): ?>
+          <dl>
+            <? foreach($data['subpackages'] as $subpackage => $classes): ?>
+              <dt><?= $subpackage ?></dt>
+              <dd>
+                <ul>
+                  <? foreach($classes as $klass): ?>
+                    <? $resource = "class-{$klass['name']}.html" ?>
+                    <li><a href="<?= $resource ?>"><?= $klass['name'] ?></a></li>
+                  <? endforeach; ?>
+                </ul>
+              </dd>
+            <? endforeach; ?>
+          </dl>
+        <? endif; ?>
+      </dd>
     <? endforeach; ?>
-  </ul>
+    
+    <? if (!empty($tree['classes'])): ?>
+      <dt>Global</dt>
+      <dd>
+        <ul>
+          <? foreach($tree['classes'] as $klass): ?>
+            <? $resource = "class-{$klass['name']}.html" ?>
+            <li><a href="<?= $resource ?>"><?= $klass['name'] ?></a></li>
+          <? endforeach; ?>
+        </ul>
+      </dd>
+    <? endif; ?>
+  </dl>
   
   <!--ul class="classes">
     <? foreach($this->parser->classes as $klass): ?>

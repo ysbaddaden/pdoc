@@ -136,7 +136,7 @@ class PDoc_Parser
     $params  = array();
     preg_match_all('/^@([^\s]+)\s+(.+)$/m', $comment, $matches, PREG_SET_ORDER);
     foreach($matches as $match) {
-      $params[$match[1]] = $match[2];
+      $params[strtolower($match[1])] = $match[2];
     }
 #   $comment = preg_replace('/^[ \t]*\@(\w+)\s+(.+)$/m', $comment);
 
@@ -284,20 +284,52 @@ class PDoc_Parser
   
   function & get_tree()
   {
-    $rs = array();
+    $rs = array(
+      'packages' => array(),
+      'classes'  => array()
+    );
+    
     foreach($this->classes as $klass)
     {
       if (isset($klass['params']['package']))
       {
-        if (!isset($rs[$klass['params']['package']])) {
-          $rs[$klass['params']['package']] = array();
+        $package = $klass['params']['package'];
+        if (!isset($rs['packages'][$package]))
+        {
+          $rs['packages'][$package] = array(
+            'subpackages' => array(),
+            'classes'     => array(),
+          );
         }
-        $rs[$klass['params']['package']][] = $klass;
+        
+        if (isset($klass['params']['subpackage']))
+        {
+          $subpackage = $klass['params']['subpackage'];
+          if (!isset($rs['packages'][$package])) {
+            $rs['packages'][$package]['subpackages'][$subpackage] = array();
+          }
+          $rs['packages'][$package]['subpackages'][$subpackage][] = $klass;
+        }
+        else {
+          $rs['packages'][$package]['classes'][] = $klass;
+        }
       }
       else {
-        $rs[] = $klass;
+        $rs['classes'][] = $klass;
       }
     }
+    
+    ksort($rs['packages']);
+    foreach(array_keys($rs['packages']) as $package)
+    {
+      ksort($rs['classes']);
+      ksort($rs['packages'][$package]);
+      ksort($rs['packages'][$package]['subpackages']);
+      foreach(array_keys($rs['packages'][$package]['subpackages']) as $subpackage) {
+        ksort($rs['packages'][$package]['subpackages'][$subpackage]);
+      }
+    }
+    
     return $rs;
   }
 }

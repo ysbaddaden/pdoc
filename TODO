@@ -1,0 +1,22 @@
+
+Things to do:
+
+  * Parse class' attributes;
+  * Generate documentation for class' attributes.
+  * Generate documentation for global functions.
+  
+  * Display global/packaged functions on main page.
+  * Display classes/functions as a tree in navbar.
+  
+  * Create inheritence trees (ascending & descending) for a given class.
+  * Return the list of methods inherited by a given class.
+  * Display the above lists in generated documentation.
+
+  * Parse TODO, NOTE, CHANGED and other kinds of DEPRECATED contents.
+  * Display above contents (TODO, DEPRECATED, etc.) in pages
+  * Generate special pages for TODO, DEPRECATED, etc.
+
+Bugs to fix:
+
+  * Fix the bug that exploses <code> in comments.
+

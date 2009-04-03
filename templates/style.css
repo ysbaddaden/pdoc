@@ -15,7 +15,9 @@ dt { font-weight: bold; }
 
 a { text-decoration: none; }
 
-.classes dd { padding-left: 0; }
+code { font-family: monospace; white-space: pre; border: 1px solid #DDD;
+  display: block; padding: .5em; overflow: auto; margin: 1.5em 0; border-left-width: 4px; }
+
 
 #main    { width: 900px; padding: 1.5em 3em; margin: 0 auto; background: #FFF; color: #333; }
 #content { float: right; width: 70%; }
@@ -26,6 +28,14 @@ a { text-decoration: none; }
 
 #header, h1.index { font-size: 2.5em; font-weight: normal; margin-top: 0; border-bottom: .5em solid #CCC; }
 #header a { color: #333; }
+
+
+.tree { -moz-column-count: 2; -moz-column-gap: 3em; -webkit-column-count: 2; -webkit-column-gap: 3em; }
+.tree dt { margin-top: 1.5em; }
+.tree dl dt { margin-top: .75em; font-weight: normal; }
+
+.classes dd { padding-left: 0; }
+
 
 #class dd { margin-bottom: 1.5em; padding-left: 0; }
 #class li { display: inline; }
@@ -38,7 +48,5 @@ h1 .abstract { font-size: .5em; float: right; color: #888; font-weight: bold;
 .method h3 { font-size: 1em; font-weight: normal; background: #EEE; padding: .5em; border-top: 1px solid #DDD; }
 .method h3 .name { font-weight: bold; }
 .method h3 .visibility { float: right; font-weight: bold; color: #888; font-style: italic; }
-.method code { font-family: monospace; white-space: pre; border: 1px solid #DDD;
-  display: block; padding: .5em; overflow: auto; margin: 1.5em 0; border-left-width: 4px; }
 .method > * { padding: 0 .5em; }
 
