@@ -8,20 +8,27 @@ require ROOT.'/generator.php';
 
 # params
 $excludes = array();
+$project  = '';
 
+# parses params
 for ($n = 1; $n < $_SERVER['argc']; $n++)
 {
   $arg = $_SERVER['argv'][$n];
   if (strpos($arg, '--') === 0)
   {
-    $arg = explode('=', ltrim($arg, '-'));
-    switch($arg[0])
+    $arg = ltrim($arg, '-');
+    if (strpos($arg, '=')) {
+      list($arg, $value) = explode('=', $arg);
+    }
+    else {
+      $value = $_SERVER['argv'][++$n];
+    }
+    
+    switch($arg)
     {
-      case 'exclude':
-        $excludes[] = $arg[1];
-        break;
-      default:
-        trigger_error("Unknown parameter: --{$arg[0]}\n");
+      case 'exclude': $excludes[] = $value; break;
+      case 'project': $project = $value; break;
+      default: trigger_error("Unknown parameter: --{$arg}\n");
     }
   }
   elseif (!isset($basedir)) {
@@ -32,12 +39,14 @@ for ($n = 1; $n < $_SERVER['argc']; $n++)
   }
 }
 
+# default params (when missing)
 if (!isset($basedir)) {
   $basedir = $_ENV['PWD'];
 }
 if (!isset($outputdir)) {
   $outputdir = rtrim($basedir, '/').'/doc';
 }
+
 
 # searches for source code
 $browser = new PDoc_Browser($basedir);
@@ -51,7 +60,7 @@ foreach($files as $file)
 }
 
 # generates the HTML documentation
-$generator = new PDoc_Generator($parser);
+$generator = new PDoc_Generator($parser, $project);
 $generator->save($outputdir);
 
 ?>

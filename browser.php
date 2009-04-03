@@ -41,7 +41,7 @@ class PDoc_Browser
   # skipping those that match the given exclusion patterns.
   protected function & recursive_search($dir, $extension)
   {
-    echo "Searching in $dir/\n";
+#    echo "Searching in $dir/\n";
     
     $files = array();
     if ($dh = opendir($dir))
@@ -55,7 +55,7 @@ class PDoc_Browser
         
         if ($this->exclude_regexp !== false and preg_match($this->exclude_regexp, $path))
         {
-          echo "Skips: $path\n";
+#          echo "Skips: $path\n";
           continue;
         }
         
@@ -64,7 +64,7 @@ class PDoc_Browser
         }
         elseif (preg_match('/\.'.$extension.'$/', $file))
         {
-          echo "Found: $path\n";
+#          echo "Found: $path\n";
           $files[] = $path;
         }
       }

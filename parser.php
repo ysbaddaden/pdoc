@@ -254,6 +254,19 @@ class PDoc_Parser
     self::$tokens[$token] = $comment;
     return $token;
   }
+  
+  # Returns from the given methods, the ones that are public, private or protected.
+  function & filter_methods($methods, $visibility='public')
+  {
+    $rs = array();
+    foreach($methods as $method)
+    {
+      if ($method['visibility'] == $visibility) {
+        $rs[] = $method;
+      }
+    }
+    return $rs;
+  }
 }
 
 ?>

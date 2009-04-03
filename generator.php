@@ -3,10 +3,12 @@
 # Generates the HTML documentation from parsed source files.
 class PDoc_Generator
 {
-  protected $parser;
+  public $parser;
+  public $project_name;
   
-  function __construct($parser)
+  function __construct($parser, $project_name)
   {
+    $this->project_name = $project_name;
     $this->parser = $parser;
   }
   
@@ -35,9 +37,6 @@ class PDoc_Generator
   {
 #    echo "Generating documentation...\n";
     
-    $classes   = $this->parser->classes;
-    $functions = $this->parser->functions;
-    
     ob_start();
     include ROOT.'/templates/index.php';
     $contents = ob_get_clean();
@@ -50,8 +49,6 @@ class PDoc_Generator
     echo "Generating documentation for {$klass['name']}\n";
     
     ksort($klass['methods']);
-    $classes   = $this->parser->classes;
-    $functions = $this->parser->functions;
     
     ob_start();
     include ROOT.'/templates/class.php';

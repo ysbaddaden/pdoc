@@ -7,7 +7,11 @@
 </head>
 <body>
 <div id="main">
-  
+
+  <p id="header">
+    <a href="index.html">Documentation for <strong><?= $this->project_name ?></strong></a>
+  </p>
+
   <div id="content">
     <div id="class">
       
@@ -47,41 +51,46 @@
       <h2>Methods</h2>
       
       <dl class="methods">
-        <dt>Public methods:</dt>
-        <dd>
-          <ul>
-            <? foreach($klass['methods'] as $method): ?>
-              <? if ($method['visibility'] == 'public'): ?>
+      
+        <? $public_methods    = $this->parser->filter_methods($klass['methods'], 'public') ?>
+        <? $protected_methods = $this->parser->filter_methods($klass['methods'], 'protected') ?>
+        <? $private_methods   = $this->parser->filter_methods($klass['methods'], 'private') ?>
+      
+        <? if (!empty($public_methods)): ?>
+          <dt>Public methods:</dt>
+          <dd>
+            <ul>
+              <? foreach($public_methods as $method): ?>
                 <? $resource = "#method-{$method['name']}" ?>
                 <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['params'] ?>)"><?= $method['name'] ?></a></li>
-              <? endif; ?>
-            <? endforeach; ?>
-          </ul>
-        </dd>
+              <? endforeach; ?>
+            </ul>
+          </dd>
+        <? endif; ?>
         
-        <dt>Protected methods:</dt>
-        <dd>
-          <ul>
-            <? foreach($klass['methods'] as $method): ?>
-              <? if ($method['visibility'] == 'protected'): ?>
+        <? if (!empty($protected_methods)): ?>
+          <dt>Protected methods:</dt>
+          <dd>
+            <ul>
+              <? foreach($protected_methods as $method): ?>
                 <? $resource = "#method-{$method['name']}" ?>
                 <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['params'] ?>)"><?= $method['name'] ?></a></li>
-              <? endif; ?>
-            <? endforeach; ?>
-          </ul>
-        </dd>
+              <? endforeach; ?>
+            </ul>
+          </dd>
+        <? endif; ?>
         
-        <dt>Private methods:</dt>
-        <dd>
-          <ul>
-            <? foreach($klass['methods'] as $method): ?>
-              <? if ($method['visibility'] == 'private'): ?>
+        <? if (!empty($private_methods)): ?>
+          <dt>Private methods:</dt>
+          <dd>
+            <ul>
+              <? foreach($private_methods as $method): ?>
                 <? $resource = "#method-{$method['name']}" ?>
                 <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['params'] ?>)"><?= $method['name'] ?></a></li>
-              <? endif; ?>
-            <? endforeach; ?>
-          </ul>
-        </dd>
+              <? endforeach; ?>
+            </ul>
+          </dd>
+        <? endif; ?>
       </dl>
       
       <!--h3>Inherited methods:</h3>
@@ -113,7 +122,7 @@
     <dl class="classes">
       <dt>Classes:</dt>
       
-      <? foreach($classes as $_klass): ?>
+      <? foreach($this->parser->classes as $_klass): ?>
         <? $resource = "class-{$_klass['name']}.html" ?>
         <dd>
           <a href="<?= $resource ?>" title="Class: <?= $_klass['name'] ?>"><?= $_klass['name'] ?></a>
