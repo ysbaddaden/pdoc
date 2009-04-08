@@ -31,13 +31,15 @@ class PDoc_Generator
       $this->generate_class($klass);
     }
     
+    foreach($this->parser->functions as $function) {
+      $this->generate_function($function);
+    }
+    
     copy(ROOT.'/templates/style.css', $this->outputdir.'/style.css');
   }
   
   protected function generate_index()
   {
-#    echo "Generating documentation...\n";
-    
     ob_start();
     include ROOT.'/templates/index.php';
     $contents = ob_get_clean();
@@ -57,6 +59,18 @@ class PDoc_Generator
     
     file_put_contents($this->outputdir.'/class-'.$klass['name'].'.html', $contents);
   }
+  
+  protected function generate_function($function)
+  {
+    echo "Generating documentation for {$function['name']}\n";
+    
+    ob_start();
+    include ROOT.'/templates/function.php';
+    $contents = ob_get_clean();
+    
+    file_put_contents($this->outputdir.'/function-'.$function['name'].'.html', $contents);
+  }
+
 }
 
 ?>

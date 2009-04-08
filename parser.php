@@ -91,14 +91,14 @@ class PDoc_Parser
       if (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)([\w\s]+?)function\s*([^\s\(]*)\s*\((.*)\)\s*$/i', $line, $match))
       {
         $func = array(
-          'file'     => $filename,
-          'name'     => $match[3],
-          'static'   => (strpos($match[2], 'static') !== false),
-          'abstract' => (strpos($match[2], 'abstract') !== false),
-          'params'   => $match[4],
-          'brief'    => '',
+          'file'      => $filename,
+          'name'      => $match[3],
+          'static'    => (strpos($match[2], 'static') !== false),
+          'abstract'  => (strpos($match[2], 'abstract') !== false),
+          'arguments' => $match[4],
+          'brief'     => '',
           'description' => '',
-          'params' => array(),
+          'params'    => array(),
         );
         
         if (!empty($match[1]))

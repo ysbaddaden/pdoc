@@ -62,7 +62,7 @@
             <ul>
               <? foreach($public_methods as $method): ?>
                 <? $resource = "#method-{$method['name']}" ?>
-                <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['params'] ?>)"><?= $method['name'] ?></a></li>
+                <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['arguments'] ?>)"><?= $method['name'] ?></a></li>
               <? endforeach; ?>
             </ul>
           </dd>
@@ -74,7 +74,7 @@
             <ul>
               <? foreach($protected_methods as $method): ?>
                 <? $resource = "#method-{$method['name']}" ?>
-                <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['params'] ?>)"><?= $method['name'] ?></a></li>
+                <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['arguments'] ?>)"><?= $method['name'] ?></a></li>
               <? endforeach; ?>
             </ul>
           </dd>
@@ -86,7 +86,7 @@
             <ul>
               <? foreach($private_methods as $method): ?>
                 <? $resource = "#method-{$method['name']}" ?>
-                <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['params'] ?>)"><?= $method['name'] ?></a></li>
+                <li><a href="<?= $resource ?>" title="<?= $klass['name'] ?>::<?= $method['name'] ?>(<?= $method['arguments'] ?>)"><?= $method['name'] ?></a></li>
               <? endforeach; ?>
             </ul>
           </dd>
@@ -106,7 +106,7 @@
             <h3>
               <span class="visibility"><?= $method['visibility'] ?></span>
               <span class="name"><!--<?= $klass['name'] ?>::--><?= $method['name'] ?></span>
-              <span class="params">(<?= $method['params'] ?>)</span>
+              <span class="arguments">(<?= $method['arguments'] ?>)</span>
             </h3>
             
             <p class="brief"><?= $method['brief'] ?></p>
@@ -120,20 +120,7 @@
   <hr/>
   
   <div id="navbar">
-    <dl class="classes">
-      <dt>Classes:</dt>
-      
-      <? foreach($this->parser->classes as $_klass): ?>
-        <? $resource = "class-{$_klass['name']}.html" ?>
-        <dd>
-          <? if ($_klass['name'] == $klass['name']): ?>
-            <?= $_klass['name'] ?>
-          <? else: ?>
-            <a href="<?= $resource ?>" title="Class: <?= $_klass['name'] ?>"><?= $_klass['name'] ?></a>
-          <? endif; ?>
-        </dd>
-      <? endforeach; ?>
-    </dl>
+    <? include '_navbar.php' ?>
   </div>
   
   <div class="clear"></div>
