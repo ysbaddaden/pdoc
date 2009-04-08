@@ -2,6 +2,33 @@
 
 pdoc is a minimalistic documentation tool for PHP.
 
+
+== Syntax
+
+Whenever a class, function, method or attribute is preceded by a comment (whatever the form), it is considered to be a comment for the following class, function, method or attribute.
+
+So that you may do this:
+
+    # This is a comment for the following class.
+    class MyClass
+    {
+      # This comment is discarded.
+      
+      # This is a brief for my_method
+      #
+      # This is the long comment for MyClass::my_method().
+      # You may fill it with a lot of things.
+      # 
+      # $toto can be:
+      # - something
+      # - something else
+      function my_method($toto)
+      {
+        
+      }
+    }
+
+
 == Usage
 
   $ pdoc [input_directory] [output_directory]
@@ -9,9 +36,4 @@ pdoc is a minimalistic documentation tool for PHP.
 Examples:
 
   $ pdoc ~/work/pdoc -o ~/work/docs/pdoc
-
-== TODO
-
-* Actual parsing of source files (extract code structure).
-* Generate the documentation in HTML format.
 
