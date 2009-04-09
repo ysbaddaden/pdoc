@@ -1,6 +1,7 @@
 <?php
 
 # Parser for PHP source files.
+# 
 # @package PDoc
 class PDoc_Parser
 {
@@ -130,7 +131,7 @@ class PDoc_Parser
   # FIXME: If comment has a code part with empty lines, it breaks the code in parts (while it shouldn't).
   protected function parse_comment($comment)
   {
-    $comment = preg_replace('/^[ \t]+/m', '', $comment);
+    $comment = preg_replace('/^[ ]/m', '', $comment);
     
     # extracts params
     $params  = array();

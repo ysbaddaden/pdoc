@@ -1,10 +1,10 @@
 <?php
 error_reporting(E_ALL);
-define('ROOT', dirname(__FILE__));
+define('ROOT', dirname(dirname(__FILE__)));
 
-require ROOT.'/browser.php';
-require ROOT.'/parser.php';
-require ROOT.'/generator.php';
+require ROOT.'/lib/browser.php';
+require ROOT.'/lib/parser.php';
+require ROOT.'/lib/generator.php';
 
 # params
 $excludes = array();

@@ -1,4 +1,2 @@
 #!/usr/bin/php
-<?php
-require dirname(__FILE__).'/pdoc.php';
-?>
+<?php require dirname(__FILE__).'/lib/pdoc.php' ?>

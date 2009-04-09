@@ -1,12 +1,15 @@
 
 Things to do:
 
-  * Parse class' attributes;
-  * Generate documentation for class' attributes.
+  * Add support for a --private=no argument.
+  * Add support for a --protected=no argument.
   
   * Use the markdown syntax to parse descriptions, TODO, etc.
   
-  * Display the navbar on index page, as well as the README file (instead of list of classes).
+  * Parse class' attributes;
+  * Generate documentation for class' attributes.
+  
+  * Display the navbar on main page, and the README file as main content.
   * Display classes/functions as a tree in navbar (using package & subpackage).
   
   * Create inheritence trees (ascending & descending) for a given class.
@@ -16,6 +19,8 @@ Things to do:
   * Parse TODO, NOTE, CHANGED and other kinds of DEPRECATED contents in descriptions.
   * Display above contents (TODO, DEPRECATED, etc.) in pages
   * Generate special pages for parsed TODO, DEPRECATED, etc.
+
+  * Detect constructors and destructors, and document them specifically.
 
 Bugs to fix:
 

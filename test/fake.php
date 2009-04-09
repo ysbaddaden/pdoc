@@ -50,6 +50,12 @@ class NS_AnotherTest extends NS_Fake implements Toto, blabla
    * - date: will create created_on & updated_on.
    * - time: will create created_at & updated_at.
    * - datetime: will create created_at & updated_at.
+   * 
+   * Examples:
+   *
+   *   $test = new NS_YetAnotherTest();
+   *   
+   *   $test->azerty = 'blabla';
    */
 class NS_YetAnotherTest implements Toto, blabla extends NS_Fake
 {
