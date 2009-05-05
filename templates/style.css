@@ -15,9 +15,9 @@ dt { font-weight: bold; }
 
 a { text-decoration: none; }
 
-code { font-family: monospace; white-space: pre; border: 1px solid #DDD;
+code { font-family: monospace; }
+pre  { white-space: pre; border: 1px solid #DDD; font-family: monospace;
   display: block; padding: .5em; overflow: auto; margin: 1.5em 0; border-left-width: 4px; }
-
 
 #main    { width: 900px; padding: 1.5em 3em; margin: 0 auto; background: #FFF; color: #333; }
 #content { float: right; width: 70%; }

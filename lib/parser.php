@@ -139,23 +139,19 @@ class PDoc_Parser
     foreach($matches as $match) {
       $params[strtolower($match[1])] = $match[2];
     }
-#   $comment = preg_replace('/^[ \t]*\@(\w+)\s+(.+)$/m', $comment);
 
     # distinguishes brief & description's contents
-    $parts = explode("\n\n", $comment);
-    $brief = array_shift($parts);
-    
-    $description = '';
-    foreach($parts as $part)
+    $pos = strpos($comment, "\n");
+    if ($pos)
     {
-      $part = preg_replace('/\$[\w]+/', '<span class="variable">\0</span>', $part);
-      if (preg_match('/^\s*[\-\*]\s+/', $part)) {
-        $part = '<ul>'.preg_replace('/\s*[\-\*]\s+(.+)$/m', '<li>\1</li>', $part).'</ul>';
-      }
-      $part = str_replace("<code>\n", '<code>', $part);
-      $description .= "<p>$part</p>";
+      $brief = trim(substr($comment, 0, $pos));
+      $description = text_to_html(trim(substr($comment, $pos)));
     }
-    
+    else
+    {
+      $brief = $comment;
+      $description = '';
+    }
     return array($brief, $description, $params);
   }
   

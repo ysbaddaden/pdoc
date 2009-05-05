@@ -3,6 +3,7 @@ error_reporting(E_ALL);
 define('ROOT', dirname(dirname(__FILE__)));
 
 require ROOT.'/lib/browser.php';
+require ROOT.'/lib/text_parser.php';
 require ROOT.'/lib/parser.php';
 require ROOT.'/lib/generator.php';
 
