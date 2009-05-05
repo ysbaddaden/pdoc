@@ -40,6 +40,10 @@ class mysql implements database
    *   $post->name = 'my first post [update]';
    *   $post->update_attribute('name');
    *   
+   *   $a = array(
+   *     "A",
+   *     "B",
+   *   );
    *   $post->update_attribute('name', 'my first post [update 2]');
    */
   function update_attribute($attribute, $value=null)

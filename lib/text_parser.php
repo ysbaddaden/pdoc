@@ -31,7 +31,7 @@ class TextParser
       
       if ($indent >= 2)
       {
-        $block = trim(preg_replace("/\n[ ]+/", "\n", $block));
+        $block = trim(preg_replace("/\n[ ]{".$indent."}/", "\n", $block));
         $html .= "<pre>".$block."</pre>";
       }
       else {
