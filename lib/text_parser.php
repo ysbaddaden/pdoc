@@ -35,7 +35,7 @@ class TextParser
         $html .= "<pre>".$block."</pre>";
       }
       else {
-        $html .= "<p>".trim($block)."</p>";
+        $html .= "<p>".$block."</p>";
       }
     }
     return $html;
@@ -66,7 +66,6 @@ class TextParser
         $text .= "\n\n".$blocks[$k];
       endif;
     }
-    
     $this->text = $text;
   }
   

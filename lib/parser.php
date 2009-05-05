@@ -145,7 +145,7 @@ class PDoc_Parser
     if ($pos)
     {
       $brief = trim(substr($comment, 0, $pos));
-      $description = text_to_html(trim(substr($comment, $pos)));
+      $description = text_to_html(substr($comment, $pos));
     }
     else
     {

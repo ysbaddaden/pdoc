@@ -32,6 +32,23 @@ class mysql implements database
   function __construct() {
     $this->name = 'driver \'mysql\' { test }';
   }
+  
+   /**
+   * Updates one attribute of record.
+   * 
+   *   $post = new Post(1);
+   *   $post->name = 'my first post [update]';
+   *   $post->update_attribute('name');
+   *   
+   *   $post->update_attribute('name', 'my first post [update 2]');
+   */
+  function update_attribute($attribute, $value=null)
+  {
+    $value   = (func_num_args() > 1) ? $value : $this->$attribute;
+    $updates = array($attribute => $value);
+    return $this->update_attributes(&$updates);
+  }
+  
 }
 
 # Just another test.
