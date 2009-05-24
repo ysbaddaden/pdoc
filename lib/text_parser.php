@@ -9,9 +9,16 @@ function text_to_html($text)
 class TextParser
 {
   public $text;
+  public $options = array(
+    'pre_width'      => 2,
+    'headings_start' => 2,
+  );
   
-  function __construct($text)
+  function __construct($text, $options=null)
   {
+    if (!empty($options)) {
+      $this->options = array_merge($this->options, $options);
+    }
     $this->text = $text;
     $this->linearize_text();
   }
@@ -29,14 +36,36 @@ class TextParser
       }
       $indent = $this->get_indentation($block);
       
-      if ($indent >= 2)
+      if ($indent >= $this->options['pre_width'])
       {
         $block = trim(preg_replace("/\n[ ]{".$indent."}/", "\n", $block));
-        $html .= "<pre>".$block."</pre>";
+        $html .= "<pre>$block</pre>\n";
+      }
+      elseif(preg_match('/^([=]+)(.+?)[=]*$/s', $block, $m))
+      {
+        $hx    = strlen($m[1]) - 1 + $this->options['headings_start'];
+        $html .= "<h{$hx}>{$m[2]}</h{$hx}>\n";
+      }
+      elseif(preg_match('/^[\-\*] /s', $block, $m))
+      {
+        $block = $this->parse_list($block);
+        $html .= "<ul>$block</ul>\n";
       }
       else {
-        $html .= "<p>".$block."</p>";
+        $html .= "<p>$block</p>\n";
       }
+    }
+    return $html;
+  }
+  
+  protected function parse_list($block)
+  {
+    $block = "\n$block\n";
+    preg_match_all('/\n[\-\*] (.+)/', $block, $matches, PREG_SET_ORDER);
+
+    $html = '';
+    foreach($matches as $match) {
+      $html .= "<li>{$match[1]}</li>\n";
     }
     return $html;
   }
