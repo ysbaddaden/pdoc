@@ -8,8 +8,9 @@ require ROOT.'/lib/parser.php';
 require ROOT.'/lib/generator.php';
 
 # params
-$excludes = array();
-$project  = '';
+$excludes         = array();
+$project_name     = '';
+$document_private = false;
 
 # parses params
 for ($n = 1; $n < $_SERVER['argc']; $n++)
@@ -20,9 +21,6 @@ for ($n = 1; $n < $_SERVER['argc']; $n++)
     $arg = ltrim($arg, '-');
     if (strpos($arg, '=')) {
       list($arg, $value) = explode('=', $arg);
-    }
-    elseif (isset($_SERVER['argv'][++$n])) {
-      $value = $_SERVER['argv'][$n];
     }
     else {
       $value = null;
@@ -36,10 +34,29 @@ for ($n = 1; $n < $_SERVER['argc']; $n++)
         echo "  --help           Displays this help message.\n";
         echo "  --project name   Sets the project's name.\n";
         echo "  --exclude path/  Excludes a file or directory from documentation.\n";
+        echo "  --private        Document private methods and attributes (defaults: no).\n";
+      exit;
+      
+      case 'exclude':
+        if ($value === null and isset($_SERVER['argv'][++$n])) {
+          $value = $_SERVER['argv'][$n];
+        }
+        $excludes[] = $value;
       break;
-      case 'exclude': $excludes[] = $value; break;
-      case 'project': $project = $value; break;
-      default: trigger_error("Unknown parameter: --{$arg}\n");
+      
+      case 'project':
+        if ($value === null and isset($_SERVER['argv'][++$n])) {
+          $value = $_SERVER['argv'][$n];
+        }
+        $project_name = $value;
+      break;
+      
+      case 'private':
+        $document_private = true;
+      break;
+      
+      default:
+        trigger_error("Unknown parameter: --{$arg}\n");
     }
   }
   elseif (!isset($basedir)) {
@@ -70,7 +87,7 @@ foreach($files as $file) {
 }
 
 # generates the HTML documentation
-$generator = new PDoc_Generator($parser, $project);
+$generator = new PDoc_Generator($parser, $project_name, $document_private);
 $generator->save($outputdir);
 
 ?>

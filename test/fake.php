@@ -29,6 +29,12 @@ class mysql implements database
 {
   public $name;
   
+  # Contains table name.
+  protected $table_name;
+  
+  private static $private_data_2;
+  static $static_var;
+  
   function __construct() {
     $this->name = 'driver \'mysql\' { test }';
   }
@@ -53,6 +59,23 @@ class mysql implements database
     return $this->update_attributes(&$updates);
   }
   
+  private function azerty()
+  {
+    
+  }
+  
+  protected function merge_conditions($a, $b)
+  {
+    if (!empty($a) and empty($b)) {
+      return $a;
+    }
+    if (empty($a) and !empty($b)) {
+      return $b;
+    }
+    $a = $this->db->sanitize_sql_for_conditions($a);
+    $b = $this->db->sanitize_sql_for_conditions($b);
+    return "($a) AND ($b)";
+  }
 }
 
 # Just another test.

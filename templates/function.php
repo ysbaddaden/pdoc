@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="language" content="en"/>
@@ -8,34 +9,32 @@
 <body>
 <div id="main">
 
-  <p id="header">
+  <header>
     <a href="index.html">Documentation for <strong><?= $this->project_name ?></strong></a>
-  </p>
+  </header>
 
-  <div id="content">
-    <div id="class">
-      
+  <section id="content">
+    <section id="function">
       <h1>
-        Function: <?= $function['name'] ?>
+        Function <?= $function['name'] ?>
       </h1>
       
-      <div class="function">
+      <article class="function">
         <h2>
-          <span class="name"><?= $function['name'] ?></span>
-          <span class="arguments">(<?= $function['arguments'] ?>)</span>
+          <span class="name"><?= $function['name'] ?></span><span class="arguments">(<?= $function['arguments'] ?>)</span>
         </h2>
         
         <p class="brief"><?= $function['brief'] ?></p>
         <div class="description"><?= $function['description'] ?></div>
-      </div>
-    </div>
-  </div>
+      </article>
+    </section>
+  </section>
   
   <hr/>
   
-  <div id="navbar">
+  <nav>
     <? include '_navbar.php' ?>
-  </div>
+  </nav>
   
   <div class="clear"></div>
 </div>

@@ -23,7 +23,7 @@ class TextParser
     $this->linearize_text();
   }
   
-  # Transforms the text to HTML.
+  # Transforms plain text to html.
   function transform()
   {
     $blocks = explode("\n\n", $this->text);
@@ -38,26 +38,34 @@ class TextParser
       
       if ($indent >= $this->options['pre_width'])
       {
+        # preformated text
         $block = trim(preg_replace("/\n[ ]{".$indent."}/", "\n", $block));
         $html .= "<pre>$block</pre>\n";
       }
       elseif(preg_match('/^([=]+)(.+?)[=]*$/s', $block, $m))
       {
+        # heading
         $hx    = strlen($m[1]) - 1 + $this->options['headings_start'];
         $html .= "<h{$hx}>{$m[2]}</h{$hx}>\n";
       }
       elseif(preg_match('/^[\-\*] /s', $block, $m))
       {
+        # list (unordered)
         $block = $this->parse_list($block);
         $html .= "<ul>$block</ul>\n";
       }
-      else {
+      else
+      {
+        # paragraph
         $html .= "<p>$block</p>\n";
       }
     }
     return $html;
   }
   
+  # Parses a list.
+  # 
+  # TODO: Parse sublists.
   protected function parse_list($block)
   {
     $block = "\n$block\n";
@@ -71,19 +79,21 @@ class TextParser
   }
   
   # Text pre-parser.
-  # It linearizes the text by removing useless characters, building blocks, etc.
+  # 
+  # It linearizes plain text by removing useless characters,
+  # building blocks, etc.
   private function linearize_text()
   {
     # cleanup
     $text = str_replace("\r", '', $this->text);
     $text = preg_replace('/\n+\s*\n+/m', "\n\n", $text);
     
-    # separates blocks (separated by an empty line)
+    # separates blocks (separator is an empty line)
     $blocks = explode("\n\n", "\n\n$text\n\n");
     $text   = '';
     
-    # builds blocks back together
-    # we just force the indentation between blocks
+    # builds blocks back together (we just force the
+    # indentation between blocks)
     for ($k=1; $k<count($blocks); $k++)
     {
       $indent = $this->get_indentation($blocks[$k]);

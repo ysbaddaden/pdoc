@@ -24,13 +24,11 @@ class PDoc_Parser
     
     $contents = file_get_contents($filename);
     $contents = $this->preparse($contents);
-    
     $this->parse(str_replace($this->basedir, '', $filename), $contents);
   }
   
-  # TODO: Extract class attributes.
-  # TODO: Parse functions/methods' parameters.
-  # IMPROVE: Extract interfaces.
+  # IMPROVE: Parse functions/methods' arguments (actually just copied).
+  # IMPROVE: Parse interfaces.
   protected function parse($filename, $contents)
   {
     $in_class = false;
@@ -43,7 +41,10 @@ class PDoc_Parser
       $deepness = strlen($match[1]) / 2;
       $trimmed  = trim($line);
       
-      if ($deepness == $in_class_deepness and $trimmed != '{' and $trimmed != '}' and $trimmed != '')
+      if ($deepness == $in_class_deepness
+        and $trimmed != '{'
+        and $trimmed != '}'
+        and $trimmed != '')
       {
         if ($in_class !== false)
         {
@@ -53,70 +54,20 @@ class PDoc_Parser
         }
       }
       
-      # CLASS
+      # class
       if (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)\s*(abstract|)\s*class\s+([\w\_]+)\s*([^\{]+|)/i', $line, $match))
       {
-        $klass = array(
-          'file'     => $filename,
-          'abstract' => ($match[2] == 'abstract') ? true : false,
-          'name'     => $match[3],
-          'methods'  => array(),
-          'brief'    => '',
-          'description' => '',
-          'params' => array(),
-        );
-        
-        if (!empty($match[1]))
-        {
-          $comment = trim(self::$tokens[$match[1]]);
-          list($klass['brief'], $klass['description'], $klass['params']) = $this->parse_comment($comment);
-        }
-        
-        if (preg_match('/extends\s+([\w\_]+)/i', $match[4], $extends))
-        {
-          $klass['extends'] = $extends[1];
-          $match[4] = str_replace($extends[0], '', $match[4]);
-        }
-        
-        if (preg_match('/implements\s+([\w\_\s,]+)/i', $match[4], $interfaces)) {
-          $klass['implements'] = array_map('trim', explode(',', $interfaces[1]));
-        }
-        
+        $klass = $this->parse_class($match);
         $this->classes[$klass['name']] = $klass;
         
         $in_class = $klass['name'];
         $in_class_deepness = $deepness;
       }
       
-      # FUNCTION
-      if (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)([\w\s]+?)function\s*([^\s\(]*)\s*\((.*)\)\s*$/i', $line, $match))
+      # function or class method
+      elseif (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)([\w\s]+?)function\s*([^\s\(]*)\s*\((.*)\)\s*$/i', $line, $match))
       {
-        $func = array(
-          'file'      => $filename,
-          'name'      => $match[3],
-          'static'    => (strpos($match[2], 'static') !== false),
-          'abstract'  => (strpos($match[2], 'abstract') !== false),
-          'arguments' => $match[4],
-          'brief'     => '',
-          'description' => '',
-          'params'    => array(),
-        );
-        
-        if (!empty($match[1]))
-        {
-          $comment = trim(self::$tokens[$match[1]]);
-          list($func['brief'], $func['description'], $func['params']) = $this->parse_comment($comment);
-        }
-        
-        if (strpos($match[2], 'protected') !== false) {
-          $func['visibility'] = 'protected';
-        }
-         elseif (strpos($match[2], 'private') !== false) {
-          $func['visibility'] = 'private';
-        }
-        else {
-          $func['visibility'] = 'public';
-        }
+        $func = $this->parse_function($match);
         
         if ($in_class === false) {
           $this->functions[$func['name']] = $func;
@@ -125,10 +76,112 @@ class PDoc_Parser
           $this->classes[$in_class]['methods'][$func['name']] = $func;
         }
       }
+      
+      # class attribute
+      elseif ($in_class !== false
+        and preg_match('/^\s*(\§comment:[0-9a-z]+\§|)\s*((?:public|protected|private|static)\s*(?:public|protected|private|static)?)\s*\$([\w\d_]+);$/i', $line, $match))
+      {
+        $attribute = $this->parse_class_attribute($match);
+        $this->classes[$in_class]['attributes'][$attribute['name']] = $attribute;
+      }
     }
   }
   
-  # FIXME: If comment has a code part with empty lines, it breaks the code in parts (while it shouldn't).
+  private function & parse_class($match)
+  {
+    $klass = array(
+      'abstract'    => ($match[2] == 'abstract') ? true : false,
+      'name'        => $match[3],
+      'attributes'  => array(),
+      'methods'     => array(),
+      'brief'       => '',
+      'description' => '',
+      'params'      => array(),
+    );
+    
+    # class: documented?
+    if (!empty($match[1]))
+    {
+      $comment = trim(self::$tokens[$match[1]]);
+      list($klass['brief'], $klass['description'], $klass['params']) = $this->parse_comment($comment);
+    }
+    
+    # class: inheritance?
+    if (preg_match('/extends\s+([\w\_]+)/i', $match[4], $extends))
+    {
+      $klass['extends'] = $extends[1];
+      $match[4] = str_replace($extends[0], '', $match[4]);
+    }
+    
+    # class: implements interfaces?
+    if (preg_match('/implements\s+([\w\_\s,]+)/i', $match[4], $interfaces)) {
+      $klass['implements'] = array_map('trim', explode(',', $interfaces[1]));
+    }
+    
+    return $klass;
+  }
+  
+  private function & parse_function($match)
+  {
+    $func = array(
+      'name'        => $match[3],
+      'static'      => (strpos($match[2], 'static') !== false),
+      'abstract'    => (strpos($match[2], 'abstract') !== false),
+      'visibility'  => 'public',
+      'arguments'   => $match[4],
+      'brief'       => '',
+      'description' => '',
+      'params'      => array(),
+    );
+    
+    # function: documented?
+    if (!empty($match[1]))
+    {
+      $comment = trim(self::$tokens[$match[1]]);
+      list($func['brief'], $func['description'], $func['params']) = $this->parse_comment($comment);
+    }
+    
+    # function: visibility?
+    if (strpos($match[2], 'protected') !== false) {
+      $func['visibility'] = 'protected';
+    }
+    elseif (strpos($match[2], 'private') !== false) {
+      $func['visibility'] = 'private';
+    }
+    
+    return $func;
+  }
+  
+  private function & parse_class_attribute($match)
+  {
+    $attribute = array(
+      'name'        => $match[3],
+      'static'      => (strpos($match[2], 'static') !== false),
+      'visibility'  => 'public',
+      'brief'       => '',
+      'description' => '',
+      'params'      => array(),
+    );
+    
+    # attribute: visibility?
+    if (strpos($match[2], 'protected') !== false) {
+      $attribute['visibility'] = 'protected';
+    }
+    elseif (strpos($match[2], 'private') !== false) {
+      $attribute['visibility'] = 'private';
+    }
+    
+    # attribute: documented?
+    if (!empty($match[1]))
+    {
+      $comment = trim(self::$tokens[$match[1]]);
+      list($attribute['brief'], $attribute['description'], $attribute['params']) = $this->parse_comment($comment);
+    }
+    
+    return $attribute;
+  }
+  
+  # TODO: Replace parsing of '@param' with 'PARAM:'.
   protected function parse_comment($comment)
   {
     $comment = preg_replace('/^[ ]/m', '', $comment);
@@ -140,7 +193,7 @@ class PDoc_Parser
       $params[strtolower($match[1])] = $match[2];
     }
 
-    # distinguishes brief & description's contents
+    # distinguishes between brief & description
     $pos = strpos($comment, "\n");
     if ($pos)
     {
@@ -266,14 +319,65 @@ class PDoc_Parser
   }
   
   
-  # Returns from the given methods, the ones that are public, private or protected.
-  function & filter_methods($methods, $visibility='public')
+  function & filter_instance_methods($methods)
   {
-    $rs = array();
+    $rs = array(
+      'public'    => array(),
+      'protected' => array(),
+      'private'   => array(),
+    );
     foreach($methods as $method)
     {
-      if ($method['visibility'] == $visibility) {
-        $rs[] = $method;
+      if (!$method['static']) {
+        $rs[$method['visibility']][] = $method;
+      }
+    }
+    return $rs;
+  }
+  
+  function & filter_static_methods($methods)
+  {
+    $rs = array(
+      'public'    => array(),
+      'protected' => array(),
+      'private'   => array(),
+    );
+    foreach($methods as $method)
+    {
+      if ($method['static']) {
+        $rs[$method['visibility']][] = $method;
+      }
+    }
+    return $rs;
+  }
+  
+  function & filter_static_attributes($attributes)
+  {
+    $rs = array(
+      'public'    => array(),
+      'protected' => array(),
+      'private'   => array(),
+    );
+    foreach($attributes as $attribute)
+    {
+      if ($attribute['static']) {
+        $rs[$attribute['visibility']][] = $attribute;
+      }
+    }
+    return $rs;
+  }
+  
+  function & filter_instance_attributes($attributes)
+  {
+    $rs = array(
+      'public'    => array(),
+      'protected' => array(),
+      'private'   => array(),
+    );
+    foreach($attributes as $attribute)
+    {
+      if (!$attribute['static']) {
+        $rs[$attribute['visibility']][] = $attribute;
       }
     }
     return $rs;

@@ -7,13 +7,13 @@ class PDoc_Generator
   public $parser;
   public $project_name;
   
-  function __construct($parser, $project_name)
+  function __construct($parser, $project_name, $document_private=false)
   {
-    $this->project_name = $project_name;
-    $this->parser = $parser;
+    $this->project_name     = $project_name;
+    $this->document_private = $document_private;
+    $this->parser           = $parser;
   }
   
-  # TODO: Generate documentation for functions.
   function save($outputdir)
   {
     $this->outputdir = $outputdir;
