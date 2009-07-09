@@ -67,7 +67,7 @@ class PDoc_Parser
       # function or class method
       elseif (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)([\w\s]+?)function\s*([^\s\(]*)\s*\((.*)\)\s*$/i', $line, $match))
       {
-        $func = $this->parse_function($match);
+        $func = $this->parse_function($match, $in_class);
         
         if ($in_class === false) {
           $this->functions[$func['name']] = $func;
@@ -79,7 +79,7 @@ class PDoc_Parser
       
       # class attribute
       elseif ($in_class !== false
-        and preg_match('/^\s*(\§comment:[0-9a-z]+\§|)\s*((?:public|protected|private|static)\s*(?:public|protected|private|static)?)\s*\$([\w\d_]+);$/i', $line, $match))
+        and preg_match('/^\s*(\§comment:[0-9a-z]+\§|)\s*((?:public|protected|private|static)\s*(?:public|protected|private|static)?)\s*\$([\w\d_]+)\s*[;=]/i', $line, $match))
       {
         $attribute = $this->parse_class_attribute($match);
         $this->classes[$in_class]['attributes'][$attribute['name']] = $attribute;
@@ -97,13 +97,22 @@ class PDoc_Parser
       'brief'       => '',
       'description' => '',
       'params'      => array(),
+      'namespace'   => '',
     );
     
-    # class: documented?
+    # class: is documented?
     if (!empty($match[1]))
     {
       $comment = trim(self::$tokens[$match[1]]);
       list($klass['brief'], $klass['description'], $klass['params']) = $this->parse_comment($comment);
+    }
+    
+    # namespace?
+    if (isset($klass['params']['namespace'])) {
+      $klass['namespace'] = $klass['params']['namespace'];
+    }
+    elseif (preg_match('/^(.+)_[^_]+$/', $klass['name'], $ns_match)) {
+      $klass['namespace'] = $ns_match[1];
     }
     
     # class: inheritance?
@@ -121,7 +130,7 @@ class PDoc_Parser
     return $klass;
   }
   
-  private function & parse_function($match)
+  private function & parse_function($match, $is_method)
   {
     $func = array(
       'name'        => $match[3],
@@ -132,6 +141,7 @@ class PDoc_Parser
       'brief'       => '',
       'description' => '',
       'params'      => array(),
+      'namespace'   => '',
     );
     
     # function: documented?
@@ -141,11 +151,29 @@ class PDoc_Parser
       list($func['brief'], $func['description'], $func['params']) = $this->parse_comment($comment);
     }
     
-    # function: visibility?
-    if (strpos($match[2], 'protected') !== false) {
-      $func['visibility'] = 'protected';
+    if ($is_method)
+    {
+      # function: visibility?
+      if (strpos($match[2], 'protected') !== false) {
+        $func['visibility'] = 'protected';
+      }
+      elseif (strpos($match[2], 'private') !== false) {
+        $func['visibility'] = 'private';
+      }
     }
-    elseif (strpos($match[2], 'private') !== false) {
+    else
+    {
+      # function: namespace?
+      if (isset($func['params']['namespace'])) {
+        $func['namespace'] = $func['params']['namespace'];
+      }
+#      elseif (preg_match('/^(.+)_[^_]+$/', $func['name'], $match)) {
+#        $func['namespace'] = $match[1];
+#      }
+    }
+    
+    # forced private visibility?
+    if (isset($func['params']['private'])) {
       $func['visibility'] = 'private';
     }
     
@@ -164,11 +192,17 @@ class PDoc_Parser
     );
     
     # attribute: visibility?
-    if (strpos($match[2], 'protected') !== false) {
-      $attribute['visibility'] = 'protected';
-    }
-    elseif (strpos($match[2], 'private') !== false) {
+    if (isset($attribute['params']['private'])) {
       $attribute['visibility'] = 'private';
+    }
+    else
+    {
+      if (strpos($match[2], 'protected') !== false) {
+        $attribute['visibility'] = 'protected';
+      }
+      elseif (strpos($match[2], 'private') !== false) {
+        $attribute['visibility'] = 'private';
+      }
     }
     
     # attribute: documented?
@@ -181,7 +215,7 @@ class PDoc_Parser
     return $attribute;
   }
   
-  # TODO: Replace parsing of '@param' with 'PARAM:'.
+  # Extracts brief, description and params from a comment.
   protected function parse_comment($comment)
   {
     $comment = preg_replace('/^[ ]/m', '', $comment);
@@ -192,7 +226,10 @@ class PDoc_Parser
     foreach($matches as $match) {
       $params[strtolower($match[1])] = $match[2];
     }
-
+    
+    # removes params
+    $comment = preg_replace('/^@([^\s]+)\s+(.+)$/m', '', $comment);
+    
     # distinguishes between brief & description
     $pos = strpos($comment, "\n");
     if ($pos)
@@ -207,6 +244,7 @@ class PDoc_Parser
     }
     return array($brief, $description, $params);
   }
+  
   
   protected function preparse($contents)
   {
@@ -247,6 +285,7 @@ class PDoc_Parser
     $contents = implode(" ", $lines);
     return $contents;
   }
+  
   
   protected function source_code_beautifier($contents)
   {
@@ -386,48 +425,49 @@ class PDoc_Parser
   function & get_tree()
   {
     $rs = array(
-      'packages' => array(),
-      'classes'  => array()
+      '_global' => array(
+        '_functions' => array(),
+        '_classes'   => array(),
+      ),
     );
     
     foreach($this->classes as $klass)
     {
-      if (isset($klass['params']['package']))
+      if(!empty($klass['namespace']))
       {
-        $package = $klass['params']['package'];
-        if (!isset($rs['packages'][$package]))
+        $namespace = explode('_', $klass['namespace']);
+        $_rs =& $rs;
+        foreach($namespace as $ns)
         {
-          $rs['packages'][$package] = array(
-            'subpackages' => array(),
-            'classes'     => array(),
-          );
-        }
-        
-        if (isset($klass['params']['subpackage']))
-        {
-          $subpackage = $klass['params']['subpackage'];
-          if (!isset($rs['packages'][$package])) {
-            $rs['packages'][$package]['subpackages'][$subpackage] = array();
+          if (!isset($_rs[$ns])) {
+            $_rs[$ns] = array();
           }
-          $rs['packages'][$package]['subpackages'][$subpackage][] = $klass;
+          $_rs =& $_rs[$ns];
         }
-        else {
-          $rs['packages'][$package]['classes'][] = $klass;
-        }
+        $_rs['_classes'][] = $klass;
       }
       else {
-        $rs['classes'][] = $klass;
+        $rs['_global']['_classes'][] = $klass;
       }
     }
     
-    ksort($rs['packages']);
-    foreach(array_keys($rs['packages']) as $package)
+    foreach($this->functions as $func)
     {
-      ksort($rs['classes']);
-      ksort($rs['packages'][$package]);
-      ksort($rs['packages'][$package]['subpackages']);
-      foreach(array_keys($rs['packages'][$package]['subpackages']) as $subpackage) {
-        ksort($rs['packages'][$package]['subpackages'][$subpackage]);
+      if (!empty($func['namespace']))
+      {
+        $namespace = explode('_', $func['namespace']);
+        $_rs =& $rs;
+        foreach($namespace as $ns)
+        {
+          if (!isset($_rs[$ns])) {
+            $_rs[$ns] = array();
+          }
+          $_rs =& $_rs[$ns];
+        }
+        $_rs['_functions'][] = $func;
+      }
+      else {
+        $rs['_global']['_functions'][] = $klass;
       }
     }
     

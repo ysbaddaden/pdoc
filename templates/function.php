@@ -1,3 +1,4 @@
+<? /*
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +13,10 @@
   <header>
     <a href="index.html">Documentation for <strong><?= $this->project_name ?></strong></a>
   </header>
+
+  <pre>
+  <? print_r($function) ?>
+  </pre>
 
   <section id="content">
     <section id="function">
@@ -40,3 +45,4 @@
 </div>
 </body>
 </html>
+*/ ?>

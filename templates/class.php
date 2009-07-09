@@ -29,14 +29,24 @@
       <dl class="inheritence">
         <? if (!empty($klass['extends'])): ?>
           <dt>inherits from:</dt>
-          <dd><a href="class-<?= $klass['extends'] ?>.html"><?= $klass['extends'] ?></a></dd>
+          <dd>
+            <? if (isset($this->parser->classes[$klass['extends']])): ?>
+              <a href="class-<?= $klass['extends'] ?>.html"><?= $klass['extends'] ?></a>
+            <? else: ?>
+              <a href="http://www.php.net/<?= $klass['extends'] ?>"><?= $klass['extends'] ?></a> (PHP),
+            <? endif; ?>
+          </dd>
         <? endif; ?>
         
         <? if (!empty($klass['implements'])): ?>
           <dt>implements:</dt>
           <dd>
             <? foreach($klass['implements'] as $implement): ?>
-              <a href="class-<?= $implement ?>.html"><?= $implement ?></a>,
+              <? if (isset($this->parser->classes[$implement])): ?>
+                <a href="class-<?= $implement ?>.html"><?= $implement ?></a>,
+              <? else: ?>
+                <a href="http://www.php.net/<?= $implement ?>"><?= $implement ?></a> (PHP),
+              <? endif; ?>
             <? endforeach; ?>
           </dd>
         <? endif; ?>
@@ -92,6 +102,9 @@
         
         <ul class="methods">
           <? foreach($klass['methods'] as $method): ?>
+            <? if (!$this->document_private and $method['visibility'] == 'private'): ?>
+              <? continue; ?>
+            <? endif; ?>
             <li>
               <a href="#method-<?= $method['name'] ?>"
                 title="<?= $method['visibility'] ?><?= $method['static'] ? ' static' : '' ?> <?= $method['name'] ?>(<?= $method['arguments'] ?>)"
