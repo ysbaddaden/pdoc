@@ -65,7 +65,7 @@ class PDoc_Parser
       }
       
       # function or class method
-      elseif (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)([\w\s]+?)function\s*([^\s\(]*)\s*\((.*)\)\s*$/i', $line, $match))
+      elseif (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)([\w\s\&]+?)function\s*&?\s*([^\s\(]*)\s*\((.*)\)\s*;?\s*$/i', $line, $match))
       {
         $func = $this->parse_function($match, $in_class);
         
