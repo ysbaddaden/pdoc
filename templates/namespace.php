@@ -20,6 +20,11 @@
         <span class="name"><?= $namespace ?></span>
       </h1>
       
+      <? if (!empty($comment)): ?>
+        <p class="brief"><?= $comment['brief'] ?></p>
+        <p class="description"><?= $comment['description'] ?></p>
+     <? endif; ?> 
+      
       <? if (!empty($tree)): ?>
         <h2>Namespaces:</h2>
         

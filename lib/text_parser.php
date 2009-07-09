@@ -39,7 +39,7 @@ class TextParser
       if ($indent >= $this->options['pre_width'])
       {
         # preformated text
-        $block = trim(preg_replace("/\n[ ]{".$indent."}/", "\n", $block));
+        $block = htmlspecialchars(trim(preg_replace("/\n[ ]{".$indent."}/", "\n", $block)));
         $html .= "<pre>$block</pre>\n";
       }
       elseif(preg_match('/^([=]+)(.+?)[=]*$/s', $block, $m))

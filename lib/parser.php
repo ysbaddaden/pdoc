@@ -467,7 +467,7 @@ class PDoc_Parser
         $_rs['_functions'][] = $func;
       }
       else {
-        $rs['_global']['_functions'][] = $klass;
+        $rs['_global']['_functions'][] = $func;
       }
     }
     

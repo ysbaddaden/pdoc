@@ -69,6 +69,16 @@ class PDoc_Generator
     unset($tree['_classes']);
     unset($tree['_functions']);
     
+    $comment = null;
+    foreach(array_keys($classes) as $i)
+    {
+      if ($classes[$i]['name'] == "{$namespace}_NS")
+      {
+        $comment = $classes[$i];
+        break;
+      }
+    }
+    
     ob_start();
     include ROOT.'/templates/namespace.php';
     $contents = ob_get_clean();
@@ -119,7 +129,9 @@ function PDoc_render_tree($tree, $namespace='')
       foreach($subtree as $klass)
       {
         $klass_name = empty($namespace) ? $klass['name'] : str_replace("{$namespace}_", '', $klass['name']);
-        echo "<dd class=\"klass\"><a title=\"Class: {$klass['name']}\" href=\"class-{$klass['name']}.html\">{$klass_name}</a></dd>\n";
+        if ($klass_name != 'NS') {
+          echo "<dd class=\"klass\"><a title=\"Class: {$klass['name']}\" href=\"class-{$klass['name']}.html\">{$klass_name}</a></dd>\n";
+        }
       }
     }
     elseif ($ns == '_functions')
