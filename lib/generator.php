@@ -6,6 +6,9 @@ class PDoc_Generator
   public $parser;
   public $project_name;
   
+  public $inputdir;
+  public $outputdir;
+  
   public $relative_url = '';
   
   function __construct($parser, $project_name, $document_private=false)
@@ -15,8 +18,9 @@ class PDoc_Generator
     $this->parser           = $parser;
   }
   
-  function save($outputdir)
+  function save($inputdir, $outputdir)
   {
+    $this->inputdir  = $inputdir;
     $this->outputdir = $outputdir;
     
     if (!is_dir($this->outputdir)) {
@@ -215,19 +219,11 @@ class PDoc_Generator
     }
     echo "</dl>\n";
   }
+  
+  protected function fix_internal_links($html)
+  {
+    return str_replace('src="classes/', 'src="'.$this->relative_url().'classes/', $html);
+  }
 }
 
-/*
-function klass_url($klass)
-{
-  $path = "classes/".str_replace('_', '/', $klass['name']).'.html';
-  return $path;
-}
-
-function namespace_url($namespace)
-{
-  $path = "classes/".str_replace('_', '/', $namespace).".html";
-  return $path;
-}
-*/
 ?>

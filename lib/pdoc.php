@@ -88,6 +88,6 @@ foreach($files as $file) {
 
 # generates the HTML documentation
 $generator = new PDoc_Generator($parser, $project_name, $document_private);
-$generator->save($outputdir);
+$generator->save($basedir, $outputdir);
 
 ?>

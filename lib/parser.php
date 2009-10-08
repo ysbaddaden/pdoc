@@ -1,8 +1,6 @@
 <?php
 
 # Parser for PHP source files.
-# 
-# @package PDoc
 class PDoc_Parser
 {
   public $basedir;
@@ -33,8 +31,6 @@ class PDoc_Parser
     $this->parse(str_replace($this->basedir, '', $filename), $contents);
   }
   
-  # IMPROVE: Parse functions/methods' arguments (actually just copied).
-  # IMPROVE: Parse interfaces.
   protected function parse($filename, $contents)
   {
     $in_class = false;
@@ -240,13 +236,13 @@ class PDoc_Parser
     
     # extracts params
     $params  = array();
-    preg_match_all('/^@([^\s]+)\s+(.+)$/m', $comment, $matches, PREG_SET_ORDER);
+    preg_match_all('/^@([^\s]+)(?:\s+(.+)|)$/m', $comment, $matches, PREG_SET_ORDER);
     foreach($matches as $match) {
-      $params[strtolower($match[1])] = $match[2];
+      $params[strtolower($match[1])] = isset($match[2]) ? $match[2] : true;
     }
     
     # removes params
-    $comment = preg_replace('/^@([^\s]+)\s+(.+)$/m', '', $comment);
+    $comment = preg_replace('/^@([^\s]+)(?:\s+(.+)|)$/m', '', $comment);
     
     # distinguishes between brief & description
     $pos = strpos($comment, "\n");
@@ -261,6 +257,7 @@ class PDoc_Parser
       $brief = $comment;
       $description = text_to_html($comment);
     }
+    
     return array($brief, $description, $params);
   }
   

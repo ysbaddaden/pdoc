@@ -52,15 +52,32 @@ class TextParser
       {
         # list (unordered)
         $block = $this->parse_list($block);
-        $html .= "<ul>$block</ul>\n";
+        $html .= "<ul>".$this->parse_span($block)."</ul>\n";
       }
       else
       {
         # paragraph
-        $html .= "<p>$block</p>\n";
+        $html .= "<p>".$this->parse_span($block)."</p>\n";
       }
     }
     return $html;
+  }
+  
+  private function parse_span($block)
+  {
+    $block = preg_replace('/`(.+?)`/', '<code>\1</code>', $block);
+    $block = preg_replace_callback('/\+(.+?)\+/', array($this, '__replace_links'), $block);
+    return $block;
+  }
+  
+  # @private
+  static function __replace_links($match)
+  {
+    if (strtolower($match[1]) != $match[1])
+    {
+      return '<a href="classes/'.implode('/', explode('_', $match[1])).'.html">'.$match[1].'</a>';
+    }
+    return '<a href="#method-'.$match[1].'">'.$match[1].'</a>';
   }
   
   # Parses a list.

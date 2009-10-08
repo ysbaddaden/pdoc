@@ -2,12 +2,9 @@
 
 # Browses a directory, looking for some files.
 #
-# <code>
-# $browser = new PDoc_Browser('./src');
-# $files = $browser->search('php', array('test'));
-# </code>
-#
-# @package PDoc
+#   $browser = new PDoc_Browser('./src');
+#   $files = $browser->search('php', array('test'));
+# 
 class PDoc_Browser
 {
   public    $basedir;

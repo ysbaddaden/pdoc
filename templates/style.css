@@ -5,10 +5,12 @@ body { font: normal 14px/1.25 Verdana, Arial, Helvetica, sans-serif; margin: 0; 
 header, footer, section, article, hgroup, aside { display: block; }
 
 h1, h2, h3, h4, h5, h6 { color: #112255; font-weight: bold; margin-top: 1.5em; }
+h4, h5, h6 { font-size: 1em; }
 
 h1 { font-weight: normal; border-bottom: 4px solid #CCC; margin-top: 0; }
 h2, h3 { border-bottom: 1px solid #AAA; }
 h2 { color: #333; }
+h3 { font-size: 18px; }
 
 h1 .name { font-weight: bold; }
 
@@ -21,7 +23,7 @@ dt { font-weight: bold; }
 
 a { text-decoration: none; color: #039; }
 
-code { font-family: monospace; }
+code { font-family: monospace; background: #F4F4F4; }
 pre  { white-space: pre; font-family: monospace; font-size: .833em; border-left: 4px solid #CCC;
   display: block; padding-left: .75em; overflow: auto; margin-left: 1.5em; }
 
@@ -53,6 +55,7 @@ aside ul { margin: 0; padding: 0; list-style: none; max-height: 300px; overflow:
 /* page: class */
 /*.classes dd { padding-left: 0; }*/
 
+#class > .description { background: #F4F4F4; padding: 1em; }
 #class > .description { background: #F4F4F4; padding: 1em; }
 #class > .description :first-child { margin-top: 0; }
 #class > .description :last-child  { margin-bottom: 0; }

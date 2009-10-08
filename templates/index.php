@@ -9,14 +9,19 @@
 <body>
 <div id="main">
 
-  <section id="index">
-    <h1 class="index">Documentation for <strong><?= $this->project_name ?></strong></h1>
-    
-    <div class="tree">
-      <? $tree = $this->parser->get_tree() ?>
-      <? $this->render_tree($tree) ?>
-    </div>
+  <h1 class="index">Documentation for <strong><?= $this->project_name ?></strong></h1>
+  
+  <section id="content">
+  <?
+  if (file_exists($this->inputdir.'doc/README')) {
+    echo $this->fix_internal_links(text_to_html(file_get_contents($this->inputdir.'doc/README')));
+  }
+  ?>
   </section>
+  
+  <aside>
+    <? include '_aside.php' ?>
+  </aside>
   
 </div>
 </body>
