@@ -71,7 +71,7 @@ class PDoc_Parser
       }
       
       # interface
-      if (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)\s*()interface\s+([\w\_]+)\s*([^\{]+|)/i', $line, $match))
+      elseif (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)\s*()interface\s+([\w\_]+)\s*([^\{]+|)/i', $line, $match))
       {
         $klass = $this->parse_class($match);
         $klass['interface'] = true;
