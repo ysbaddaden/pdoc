@@ -496,6 +496,9 @@ class PDoc_Parser
     
     foreach($this->classes as $klass)
     {
+      if (isset($klass['private']) and $klass['private']) {
+        continue;
+      }
       if (preg_match('/^(.+)_NS$/', $klass['name'], $match)) {
         $list[$match[1]] = $klass;
       }
@@ -513,6 +516,37 @@ class PDoc_Parser
       if (isset($func['namespace'])) {
         $list[$func['namespace']] = $func['namespace'];
       }
+    }
+    
+    ksort($list);
+    return $list;
+  }
+  
+  function & list_methods()
+  {
+    $list = array();
+    
+    foreach($this->classes as $klass)
+    {
+      if (isset($klass['private']) and $klass['private']) {
+        continue;
+      }
+      foreach($klass['methods'] as $method)
+      {
+        if (isset($method['private']) and $method['private']) {
+          continue;
+        }
+        $name = "{$method['name']} ({$klass['name']})";
+        $list[$name] = "classes/".str_replace('_', '/', $klass['name']).'.html#method-'.$method['name'];
+      }
+    }
+    
+    foreach($this->functions as $func)
+    {
+      if (isset($func['private']) and $func['private']) {
+        continue;
+      }
+      $list[$func['name']] = "classes/global.html#function-".$func['name'];
     }
     
     ksort($list);

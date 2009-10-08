@@ -42,7 +42,7 @@ aside { float: left;  width: 27%; overflow: hidden; font-size: 12px; }
 aside section { margin-bottom: 1.5em; }
 aside h4 { margin: 0; padding: .2em .5em; background: #CCC; color: #333; border-bottom: 2px solid #AAA; }
 aside ul { margin: 0; padding: 0; list-style: none; max-height: 300px; overflow: auto; }
-
+aside li { white-space: nowrap; }
 
 /* page: index */
 #index .tree { -moz-column-count: 2; -moz-column-gap: 3em; -webkit-column-count: 2; -webkit-column-gap: 3em; }

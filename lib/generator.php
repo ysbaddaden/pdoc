@@ -100,7 +100,12 @@ class PDoc_Generator
       }
     }
     
-    $this->relative_url(count(explode('_', $namespace)));
+    if ($namespace == '_global') {
+      $this->relative_url(1);
+    }
+    else {
+      $this->relative_url(count(explode('_', $namespace)));
+    }
     
     ob_start();
     include ROOT.'/templates/namespace.php';
