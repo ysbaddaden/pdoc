@@ -51,7 +51,11 @@ aside ul { margin: 0; padding: 0; list-style: none; max-height: 300px; overflow:
 
 
 /* page: class */
-.classes dd { padding-left: 0; }
+/*.classes dd { padding-left: 0; }*/
+
+#class > .description { background: #F4F4F4; padding: 1em; }
+#class > .description :first-child { margin-top: 0; }
+#class > .description :last-child  { margin-bottom: 0; }
 
 h1 .abstract { font-size: .5em; float: right; color: #888; font-weight: bold;
   font-style: italic; text-transform: lowercase; margin-top: 1.25em; }

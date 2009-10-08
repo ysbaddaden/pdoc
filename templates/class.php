@@ -28,35 +28,41 @@
         <span class="name"><?= $klass['name'] ?></span>
       </h1>
       
-      <p class="brief"><?= $klass['brief'] ?></p>
+      <div class="description">
+        <?= $klass['description'] ?>
+      </div>
       
-      <dl class="inheritence">
-        <? if (!empty($klass['extends'])): ?>
-          <dt>extends:</dt>
-          <dd>
-            <? if (isset($this->parser->classes[$klass['extends']])): ?>
-              <a href="<?= $this->klass_url($klass['extends']) ?>"><?= $klass['extends'] ?></a>
-            <? else: ?>
-              <?= $klass['extends'] ?></a>
+      <? if (!empty($klass['extends']) or !empty($klass['implements'])): ?>
+        <section id="inheritence">
+          <h2>Inheritence</h2>
+          
+          <dl>
+            <? if (!empty($klass['extends'])): ?>
+              <dt>Extends:</dt>
+              <dd>
+                <? if (isset($this->parser->classes[$klass['extends']])): ?>
+                  <a href="<?= $this->klass_url($klass['extends']) ?>"><?= $klass['extends'] ?></a>
+                <? else: ?>
+                  <?= $klass['extends'] ?></a>
+                <? endif; ?>
+              </dd>
             <? endif; ?>
-          </dd>
-        <? endif; ?>
-        
-        <? if (!empty($klass['implements'])): ?>
-          <dt>implements:</dt>
-          <dd>
-            <? foreach($klass['implements'] as $implement): ?>
-              <? if (isset($this->parser->classes[$implement])): ?>
-                <a href="<?= $this->klass_url($implement) ?>"><?= $implement ?></a>,
-              <? else: ?>
-                <a href="http://www.php.net/<?= $implement ?>"><?= $implement ?></a> (PHP),
-              <? endif; ?>
-            <? endforeach; ?>
-          </dd>
-        <? endif; ?>
-      </dl>
-      
-      <div class="description"><?= $klass['description'] ?></div>
+            
+            <? if (!empty($klass['implements'])): ?>
+              <dt>Implements:</dt>
+              <dd>
+                <? foreach($klass['implements'] as $implement): ?>
+                  <? if (isset($this->parser->classes[$implement])): ?>
+                    <a href="<?= $this->klass_url($implement) ?>"><?= $implement ?></a>,
+                  <? else: ?>
+                    <a href="http://www.php.net/<?= $implement ?>"><?= $implement ?></a> (PHP),
+                  <? endif; ?>
+                <? endforeach; ?>
+              </dd>
+            <? endif; ?>
+          </dl>
+        </section>
+      <? endif; ?>
       
       <section id="attributes">
         <? $static_attributes   = $this->parser->filter_static_attributes($klass['attributes']) ?>

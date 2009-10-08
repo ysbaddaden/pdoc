@@ -6,8 +6,6 @@
       <span class="name"><?= $method['name'] ?></span><span class="arguments">(<?= $method['arguments'] ?>)</span>
     </h3>
     
-    <p class="brief"><?= $method['brief'] ?></p>
-    
     <div class="description">
       <?= $method['description'] ?>
     </div>

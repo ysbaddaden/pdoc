@@ -253,12 +253,13 @@ class PDoc_Parser
     if ($pos)
     {
       $brief = trim(substr($comment, 0, $pos));
-      $description = text_to_html(substr($comment, $pos));
+      //$description = text_to_html(substr($comment, $pos));
+      $description = text_to_html($comment, $pos);
     }
     else
     {
       $brief = $comment;
-      $description = '';
+      $description = text_to_html($comment);
     }
     return array($brief, $description, $params);
   }
@@ -490,6 +491,35 @@ class PDoc_Parser
     }
     
     return $rs;
+  }
+  
+  function & list_classes()
+  {
+    $list = array();
+    
+    foreach($this->classes as $klass)
+    {
+      if (preg_match('/^(.+)_NS$/', $klass['name'], $match)) {
+        $list[$match[1]] = $klass;
+      }
+      else
+      {
+        $list[$klass['name']] = $klass;
+        if (isset($klass['namespace'])) {
+          $list[$klass['namespace']] = $klass['namespace'];
+        }
+      }
+    }
+    
+    foreach($this->functions as $func)
+    {
+      if (isset($func['namespace'])) {
+        $list[$func['namespace']] = $func['namespace'];
+      }
+    }
+    
+    ksort($list);
+    return $list;
   }
 }
 

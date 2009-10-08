@@ -4,7 +4,8 @@
     <span class="name"><?= $function['name'] ?></span><span class="arguments">(<?= $function['arguments'] ?>)</span>
   </h3>
   
-  <p class="brief"><?= $function['brief'] ?></p>
-  <div class="description"><?= $function['description'] ?></div>
+  <div class="description">
+    <?= $function['description'] ?>
+  </div>
 </article>
 
