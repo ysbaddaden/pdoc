@@ -4,7 +4,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="language" content="en"/>
   <title>Documentation for <?= $this->project_name ?></title>
-	<link rel="stylesheet" type="text/css" charset="utf-8" href="style.css"/>
+	<link rel="stylesheet" type="text/css" charset="utf-8" href="<?= $this->stylesheet_url() ?>"/>
 </head>
 <body>
 <div id="main">
@@ -14,7 +14,7 @@
     
     <div class="tree">
       <? $tree = $this->parser->get_tree() ?>
-      <? PDoc_render_tree($tree) ?>
+      <? $this->render_tree($tree) ?>
     </div>
   </section>
   

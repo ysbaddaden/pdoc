@@ -6,6 +6,8 @@ class PDoc_Generator
   public $parser;
   public $project_name;
   
+  public $relative_url = '';
+  
   function __construct($parser, $project_name, $document_private=false)
   {
     $this->project_name     = $project_name;
@@ -94,11 +96,13 @@ class PDoc_Generator
       }
     }
     
+    $this->relative_url(count(explode('_', $namespace)));
+    
     ob_start();
     include ROOT.'/templates/namespace.php';
     $contents = ob_get_clean();
     
-    $path = namespace_url($namespace);
+    $path = $this->namespace_path($namespace);
     @mkdir($this->outputdir.dirname($path), 0775, true);
     file_put_contents($this->outputdir.$path, $contents);
     
@@ -113,12 +117,13 @@ class PDoc_Generator
     echo "Generating documentation for class: {$klass['name']} ({$klass['namespace']})\n";
     
     ksort($klass['methods']);
+    $this->relative_url(count(explode('_', $klass['name'])));
     
     ob_start();
     include ROOT.'/templates/class.php';
     $contents = ob_get_clean();
     
-    $path = klass_url($klass);
+    $path = $this->klass_path($klass);
     @mkdir($this->outputdir.dirname($path), 0775, true);
     file_put_contents($this->outputdir.$path, $contents);
   }
@@ -133,51 +138,86 @@ class PDoc_Generator
 #    
 #    file_put_contents($this->outputdir.'/function-'.$function['name'].'.html', $contents);
 #  }
-}
-
-function PDoc_render_tree($tree, $namespace='')
-{
-  ksort($tree);
   
-  echo "<dl>\n";
-  foreach($tree as $ns => $subtree)
+  protected function stylesheet_url()
   {
-    if ($ns == '_classes')
+    return $this->relative_url().'style.css';
+  }
+  
+  protected function relative_url($deepness=null)
+  {
+    if ($deepness !== null) {
+      $this->relative_url = str_repeat('../', $deepness);
+    }
+    return $this->relative_url;
+  }
+  
+  protected function klass_path($klass)
+  {
+    $name = is_array($klass) ? $klass['name'] : $klass;
+    return "classes/".str_replace('_', '/', $name).'.html';
+  }
+  
+  protected function namespace_path($namespace)
+  {
+    return "classes/".str_replace('_', '/', $namespace).".html";
+  }
+  
+  protected function klass_url($klass)
+  {
+    return $this->relative_url().$this->klass_path($klass);
+  }
+  
+  protected function namespace_url($namespace)
+  {
+    return $this->relative_url().$this->namespace_path($namespace);
+  }
+  
+  protected function render_tree($tree, $namespace='')
+  {
+    ksort($tree);
+    
+    echo "<dl>\n";
+    foreach($tree as $ns => $subtree)
     {
-      ksort($subtree);
-      foreach($subtree as $klass)
+      if ($ns == '_classes')
       {
-        $klass_name = empty($namespace) ? $klass['name'] : str_replace("{$namespace}_", '', $klass['name']);
-        $klass_url  = klass_url($klass);
-        if ($klass_name != 'NS') {
-          echo "<dd class=\"klass\"><a title=\"Class: {$klass['name']}\" href=\"{$klass_url}\">{$klass_name}</a></dd>\n";
+        ksort($subtree);
+        foreach($subtree as $klass)
+        {
+          $klass_name = empty($namespace) ? $klass['name'] : str_replace("{$namespace}_", '', $klass['name']);
+          $klass_url  = $this->klass_url($klass);
+          if ($klass_name != 'NS') {
+            echo "<dd class=\"klass\"><a title=\"Class: {$klass['name']}\" href=\"{$klass_url}\">{$klass_name}</a></dd>\n";
+          }
         }
       }
-    }
-    /*
-    elseif ($ns == '_functions')
-    {
-      ksort($subtree);
-      foreach($subtree as $func)
+      /*
+      elseif ($ns == '_functions')
       {
-        $func_name = empty($namespace) ? $func['name'] : str_replace("{$namespace}_", '', $func['name']);
-        echo "<dd class=\"func\" title=\"Function: {$func['name']}\">{$func_name}</dd>\n";
+        ksort($subtree);
+        foreach($subtree as $func)
+        {
+          $func_name = empty($namespace) ? $func['name'] : str_replace("{$namespace}_", '', $func['name']);
+          echo "<dd class=\"func\" title=\"Function: {$func['name']}\">{$func_name}</dd>\n";
+        }
+      }
+      */
+      elseif ($ns != '_functions')
+      {
+        $ns_name = empty($namespace) ? $ns : $namespace.'_'.$ns;
+        $ns_url  = $this->namespace_url($ns_name);
+        echo "<dt><a href=\"{$ns_url}\">$ns</a></dt>\n";
+        echo "<dd>";
+        $this->render_tree($subtree, $ns_name);
+        echo "</dd>";
       }
     }
-    */
-    elseif ($ns != '_functions')
-    {
-      $ns_name = empty($namespace) ? $ns : $namespace.'_'.$ns;
-      $ns_url  = namespace_url($ns_name);
-      echo "<dt><a href=\"{$ns_url}\">$ns</a></dt>\n";
-      echo "<dd>";
-      PDoc_render_tree($subtree, $ns_name);
-      echo "</dd>";
-    }
+    echo "</dl>\n";
   }
-  echo "</dl>\n";
 }
 
+/*
 function klass_url($klass)
 {
   $path = "classes/".str_replace('_', '/', $klass['name']).'.html';
@@ -189,5 +229,5 @@ function namespace_url($namespace)
   $path = "classes/".str_replace('_', '/', $namespace).".html";
   return $path;
 }
-
+*/
 ?>

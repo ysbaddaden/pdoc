@@ -109,6 +109,7 @@ class PDoc_Parser
       'description' => '',
       'params'      => array(),
       'namespace'   => '',
+      'interface'   => false,
     );
     
     # class: is documented?

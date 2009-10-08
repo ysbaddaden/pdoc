@@ -4,13 +4,13 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="language" content="en"/>
   <title>Class <?= $klass['name'] ?></title>
-	<link rel="stylesheet" type="text/css" charset="utf-8" href="style.css"/>
+	<link rel="stylesheet" type="text/css" charset="utf-8" href="<?= $this->stylesheet_url() ?>"/>
 </head>
 <body>
 <div id="main">
 
   <header>
-    <a href="index.html">Documentation for <strong><?= $this->project_name ?></strong></a>
+    <a href="<?= $this->relative_url() ?>index.html">Documentation for <strong><?= $this->project_name ?></strong></a>
   </header>
 
   <section id="content">
@@ -32,12 +32,12 @@
       
       <dl class="inheritence">
         <? if (!empty($klass['extends'])): ?>
-          <dt>inherits from:</dt>
+          <dt>extends:</dt>
           <dd>
             <? if (isset($this->parser->classes[$klass['extends']])): ?>
-              <a href="class-<?= $klass['extends'] ?>.html"><?= $klass['extends'] ?></a>
+              <a href="<?= $this->klass_url($klass['extends']) ?>"><?= $klass['extends'] ?></a>
             <? else: ?>
-              <a href="http://www.php.net/<?= $klass['extends'] ?>"><?= $klass['extends'] ?></a> (PHP),
+              <?= $klass['extends'] ?></a>
             <? endif; ?>
           </dd>
         <? endif; ?>
@@ -47,7 +47,7 @@
           <dd>
             <? foreach($klass['implements'] as $implement): ?>
               <? if (isset($this->parser->classes[$implement])): ?>
-                <a href="class-<?= $implement ?>.html"><?= $implement ?></a>,
+                <a href="<?= $this->klass_url($implement) ?>"><?= $implement ?></a>,
               <? else: ?>
                 <a href="http://www.php.net/<?= $implement ?>"><?= $implement ?></a> (PHP),
               <? endif; ?>
@@ -165,7 +165,7 @@
   <hr/>
   
   <aside>
-    <? include '_navbar.php' ?>
+    <? include '_aside.php' ?>
   </aside>
   
   <div class="clear"></div>

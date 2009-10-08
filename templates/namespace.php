@@ -4,13 +4,13 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="language" content="en"/>
   <title><?= $namespace ?></title>
-	<link rel="stylesheet" type="text/css" charset="utf-8" href="style.css"/>
+	<link rel="stylesheet" type="text/css" charset="utf-8" href="<?= $this->stylesheet_url() ?>"/>
 </head>
 <body>
 <div id="main">
   
   <header>
-    <a href="index.html">Documentation for <strong><?= $this->project_name ?></strong></a>
+    <a href="<?= $this->relative_url() ?>index.html">Documentation for <strong><?= $this->project_name ?></strong></a>
   </header>
   
   <section id="content">
@@ -31,7 +31,7 @@
         <ul class="classes">
           <? foreach(array_keys($tree) as $_ns): ?>
             <li>
-              <a href="namespace-<?= $namespace.'_'.$_ns ?>.html"><?= $namespace.'_'.$_ns ?></a>
+              <a href="<?= $this->namespace_url($namespace.'_'.$_ns) ?>"><?= $namespace.'_'.$_ns ?></a>
             </li>
           <? endforeach; ?>
         </ul>
@@ -43,7 +43,7 @@
         <ul class="classes">
           <? foreach($classes as $klass): ?>
             <li>
-              <a href="class-<?= $klass['name'] ?>.html"><?= $klass['name'] ?></a>
+              <a href="<?= $this->klass_url($klass) ?>"><?= $klass['name'] ?></a>
             </li>
           <? endforeach; ?>
         </ul>
@@ -73,7 +73,7 @@
   <hr/>
   
   <aside>
-    <? include '_navbar.php' ?>
+    <? include '_aside.php' ?>
   </aside>
   
   <div class="clear"></div>

@@ -37,9 +37,9 @@
   
   <hr/>
   
-  <nav>
-    <? include '_navbar.php' ?>
-  </nav>
+  <aside>
+    <? include '_aside.php' ?>
+  </aside>
   
   <div class="clear"></div>
 </div>
