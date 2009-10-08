@@ -64,6 +64,17 @@ class PDoc_Parser
         $in_class_deepness = $deepness;
       }
       
+      # interface
+      if (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)\s*()interface\s+([\w\_]+)\s*([^\{]+|)/i', $line, $match))
+      {
+        $klass = $this->parse_class($match);
+        $klass['interface'] = true;
+        $this->classes[$klass['name']] = $klass;
+        
+        $in_class = $klass['name'];
+        $in_class_deepness = $deepness;
+      }
+      
       # function or class method
       elseif (preg_match('/^\s*(\§comment:[0-9a-z]+\§|)([\w\s\&]+?)function\s*&?\s*([^\s\(]*)\s*\((.*)\)\s*;?\s*$/i', $line, $match))
       {
@@ -137,7 +148,7 @@ class PDoc_Parser
       'static'      => (strpos($match[2], 'static') !== false),
       'abstract'    => (strpos($match[2], 'abstract') !== false),
       'visibility'  => 'public',
-      'arguments'   => $match[4],
+      'arguments'   => preg_replace('/§comment:([\w\d]+)§/', '', $match[4]),
       'brief'       => '',
       'description' => '',
       'params'      => array(),

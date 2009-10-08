@@ -72,9 +72,9 @@
   
   <hr/>
   
-  <nav>
+  <aside>
     <? include '_navbar.php' ?>
-  </nav>
+  </aside>
   
   <div class="clear"></div>
 </div>

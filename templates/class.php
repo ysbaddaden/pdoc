@@ -20,7 +20,11 @@
         <? if ($klass['abstract']): ?>
           <span class="abstract">Abstract</span>
         <? endif; ?>
-        Class
+        <? if ($klass['interface']): ?>
+          Interface
+        <? else: ?>
+          Class
+        <? endif; ?>
         <span class="name"><?= $klass['name'] ?></span>
       </h1>
       
@@ -160,9 +164,9 @@
   
   <hr/>
   
-  <nav>
+  <aside>
     <? include '_navbar.php' ?>
-  </nav>
+  </aside>
   
   <div class="clear"></div>
 </div>

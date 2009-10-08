@@ -24,18 +24,15 @@ class PDoc_Generator
     ksort($this->parser->classes);
     ksort($this->parser->functions);
     
-    # index page
+    # indexes
     $this->generate_index();
+    $this->generate_class_index();
+#    $this->generate_method_index();
     
     # each class
     foreach($this->parser->classes as $klass) {
       $this->generate_class($klass);
     }
-    
-    # each function (deprecated)
-#    foreach($this->parser->functions as $function) {
-#      $this->generate_function($function);
-#    }
     
     # each namespace
     $tree = $this->parser->get_tree();
@@ -56,6 +53,24 @@ class PDoc_Generator
     $contents = ob_get_clean();
     
     file_put_contents($this->outputdir.'/index.html', $contents);
+  }
+  
+  protected function generate_class_index()
+  {
+    ob_start();
+    include ROOT.'/templates/class_index.php';
+    $contents = ob_get_clean();
+    
+    file_put_contents($this->outputdir.'/class_index.html', $contents);
+  }
+  
+  protected function generate_methods_index()
+  {
+    ob_start();
+    include ROOT.'/templates/method_index.php';
+    $contents = ob_get_clean();
+    
+    file_put_contents($this->outputdir.'/method_index.html', $contents);
   }
   
   protected function generate_namespace($tree, $namespace)
@@ -83,7 +98,9 @@ class PDoc_Generator
     include ROOT.'/templates/namespace.php';
     $contents = ob_get_clean();
     
-    file_put_contents($this->outputdir."/namespace-$namespace.html", $contents);
+    $path = namespace_url($namespace);
+    @mkdir($this->outputdir.dirname($path), 0775, true);
+    file_put_contents($this->outputdir.$path, $contents);
     
     # child namespaces
     foreach($tree as $ns => $subtree) {
@@ -101,7 +118,9 @@ class PDoc_Generator
     include ROOT.'/templates/class.php';
     $contents = ob_get_clean();
     
-    file_put_contents($this->outputdir.'/class-'.$klass['name'].'.html', $contents);
+    $path = klass_url($klass);
+    @mkdir($this->outputdir.dirname($path), 0775, true);
+    file_put_contents($this->outputdir.$path, $contents);
   }
   
 #  protected function generate_function($function)
@@ -129,11 +148,13 @@ function PDoc_render_tree($tree, $namespace='')
       foreach($subtree as $klass)
       {
         $klass_name = empty($namespace) ? $klass['name'] : str_replace("{$namespace}_", '', $klass['name']);
+        $klass_url  = klass_url($klass);
         if ($klass_name != 'NS') {
-          echo "<dd class=\"klass\"><a title=\"Class: {$klass['name']}\" href=\"class-{$klass['name']}.html\">{$klass_name}</a></dd>\n";
+          echo "<dd class=\"klass\"><a title=\"Class: {$klass['name']}\" href=\"{$klass_url}\">{$klass_name}</a></dd>\n";
         }
       }
     }
+    /*
     elseif ($ns == '_functions')
     {
       ksort($subtree);
@@ -143,16 +164,30 @@ function PDoc_render_tree($tree, $namespace='')
         echo "<dd class=\"func\" title=\"Function: {$func['name']}\">{$func_name}</dd>\n";
       }
     }
-    else
+    */
+    elseif ($ns != '_functions')
     {
       $ns_name = empty($namespace) ? $ns : $namespace.'_'.$ns;
-      echo "<dt><a href=\"namespace-{$ns_name}.html\">$ns</a></dt>\n";
+      $ns_url  = namespace_url($ns_name);
+      echo "<dt><a href=\"{$ns_url}\">$ns</a></dt>\n";
       echo "<dd>";
       PDoc_render_tree($subtree, $ns_name);
       echo "</dd>";
     }
   }
   echo "</dl>\n";
+}
+
+function klass_url($klass)
+{
+  $path = "classes/".str_replace('_', '/', $klass['name']).'.html';
+  return $path;
+}
+
+function namespace_url($namespace)
+{
+  $path = "classes/".str_replace('_', '/', $namespace).".html";
+  return $path;
 }
 
 ?>

@@ -36,10 +36,10 @@ header a { color: #333; }
 
 #content { float: right; width: 70%; }
 
-nav   { float: left;  width: 26%; overflow: hidden; font-size: 12px; }
-nav a { color: #66F; }
-nav .selected a { font-weight: bold; }
-nav dl { margin: 0; }
+aside   { float: left;  width: 26%; overflow: hidden; font-size: 12px; }
+aside a { color: #66F; }
+aside .selected a { font-weight: bold; }
+aside dl { margin: 0; }
 
 
 /* page: index */

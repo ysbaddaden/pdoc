@@ -78,10 +78,10 @@ class TextParser
     return $html;
   }
   
-  # Text pre-parser.
+  # Beautifies text.
   # 
-  # It linearizes plain text by removing useless characters,
-  # building blocks, etc.
+  # It works by linearizing plain text, which consist of removing
+  # useless characters and creating blocks.
   private function linearize_text()
   {
     # cleanup
@@ -108,7 +108,7 @@ class TextParser
     $this->text = $text;
   }
   
-  # Returns the indentation (in spaces) for a given text.
+  # Returns the indentation (in spaces) for a given text block.
   private function get_indentation($line)
   {
     $line = preg_replace('/\t/', ' ', $line);

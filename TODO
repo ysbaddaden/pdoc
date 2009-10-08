@@ -1,28 +1,21 @@
 
 Things to do:
 
-  * Add support for a --private=no argument.
-  * Add support for a --protected=no argument.
-  
-  * Use the markdown syntax to parse descriptions, TODO, etc.
-  
-  * Parse class' attributes;
-  * Generate documentation for class' attributes.
-  
-  * Display the navbar on main page, and the README file as main content.
-  * Display classes/functions as a tree in navbar (using package & subpackage).
-  
-  * Create inheritence trees (ascending & descending) for a given class.
-  * Return the list of methods inherited by a given class.
-  * Display the above lists in generated documentation (ie: class X inheritates the following public methods).
+  * Extract value of class attributes.
+  * Extract source of functions and class methods.
 
-  * Parse TODO, NOTE, CHANGED and other kinds of DEPRECATED contents in descriptions.
-  * Display above contents (TODO, DEPRECATED, etc.) in pages
-  * Generate special pages for parsed TODO, DEPRECATED, etc.
+  * Display navbar on main page, and README file as main content.
+
+  * Generate inheritence tree (ascending & descending) for a given class.
+  * Document the inheritence tree.
+
+  * Parse TODO:, NOTE:, CHANGED: and other kinds of DEPRECATED: contents in descriptions.
+  * Document TODO:, DEPRECATED:, etc.
+  * Generate special pages for parsed TODO:, DEPRECATED:, etc.
 
   * Detect constructors and destructors, and document them specifically.
+  * Do not document PHP magic methods (ie. __get, __set, __wakeup, etc).
 
-Bugs to fix:
-
-  * Fix the bug that exploses <code> in comments (use of a markdown parser shall fix it).
+  * Store documentation in folders (like classes/ActionController/Base.html)
+  * Generate more indexes: classes.html, methods.html, files.html
 
