@@ -11,6 +11,12 @@ class PDoc_Parser
   
   static protected $tokens = array();
   
+  private $nodoc = array(/*'__construct',*/ '__destruct', '__clone',
+    '__call', '__callStatic',
+    '__get', '__set', '__isset', '__unset',
+    '__sleep', '__wakeup',
+    '__toString', /*'__invoke',*/ '__set_state'
+  );
   
   function __construct($basedir)
   {
@@ -83,7 +89,7 @@ class PDoc_Parser
         if ($in_class === false) {
           $this->functions[$func['name']] = $func;
         }
-        else {
+        elseif (!in_array($match[3], $this->nodoc)) {
           $this->classes[$in_class]['methods'][$func['name']] = $func;
         }
       }
