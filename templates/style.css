@@ -39,7 +39,7 @@ header a { color: #333; }
 #content { float: right; width: 70%; }
 
 aside { float: left;  width: 27%; overflow: hidden; font-size: 12px; }
-aside section { margin-bottom: 1.5em; }
+aside section { margin-bottom: 1.5em; border: 1px solid #AAA; }
 aside h4 { margin: 0; padding: .2em .5em; background: #CCC; color: #333; border-bottom: 2px solid #AAA; }
 aside ul { margin: 0; padding: 0; list-style: none; max-height: 300px; overflow: auto; }
 aside li { white-space: nowrap; }

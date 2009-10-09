@@ -1,9 +1,15 @@
 <?php
 
-function text_to_html($text)
+function text_to_html($text, $options=null)
 {
-  $parser = new TextParser($text);
+  $parser = new TextParser($text, $options);
   return $parser->transform();
+}
+
+function span_to_html($block)
+{
+  $parser = new TextParser('');
+  return $parser->parse_span($block);
 }
 
 class TextParser
@@ -39,6 +45,7 @@ class TextParser
       if ($indent >= $this->options['pre_width'])
       {
         # preformated text
+        $block = str_replace(array('<\?', '?\>'), array('<?', '?>'), $block);
         $block = htmlspecialchars(trim(preg_replace("/\n[ ]{".$indent."}/", "\n", $block)));
         $html .= "<pre>$block</pre>\n";
       }
@@ -63,11 +70,17 @@ class TextParser
     return $html;
   }
   
-  private function parse_span($block)
+  function parse_span($block)
   {
     $block = preg_replace('/`(.+?)`/', '<code>\1</code>', $block);
     $block = preg_replace_callback('/\+(.+?)\+/', array($this, '__replace_links'), $block);
+    $block = preg_replace_callback('/(?:http|https|ftp|sftp|ssh):\/\/[^ ]+/', array($this, '__cb_auto_link'), $block);
     return $block;
+  }
+  
+  static private function __cb_auto_link($match)
+  {
+    return '<a href="'.htmlspecialchars($match[0]).'">'.$match[0].'</a>';
   }
   
   # @private
@@ -75,9 +88,14 @@ class TextParser
   {
     if (strtolower($match[1]) != $match[1])
     {
+      if (strpos($match[1], '::'))
+      {
+        list($klass, $method) = explode('::', $match[1], 2);
+        return '<a href="classes/'.implode('/', explode('_', $klass)).'.html#method-'.str_replace(array('(', ')'), '', $method).'">'.$match[1].'</a>';
+      }
       return '<a href="classes/'.implode('/', explode('_', $match[1])).'.html">'.$match[1].'</a>';
     }
-    return '<a href="#method-'.$match[1].'">'.$match[1].'</a>';
+    return '<a href="#method-'.str_replace(array('(', ')'), '', $match[1]).'">'.$match[1].'</a>';
   }
   
   # Parses a list.
@@ -108,19 +126,21 @@ class TextParser
     # separates blocks (separator is an empty line)
     $blocks = explode("\n\n", "\n\n$text\n\n");
     $text   = '';
+    $previous_indent = 0;
     
     # builds blocks back together (we just force the
     # indentation between blocks)
     for ($k=1; $k<count($blocks); $k++)
     {
       $indent = $this->get_indentation($blocks[$k]);
-      $previous_indent = $this->get_indentation($blocks[$k-1]);
       
-      if ($indent > 0 and $indent == $previous_indent):
+      if ($indent > 0 and ($indent == $previous_indent or ($indent > $this->options['pre_width'] and $indent >= $previous_indent))):
         $text .= "\n".str_repeat(' ', $indent)."\n".$blocks[$k];
       else:
         $text .= "\n\n".$blocks[$k];
       endif;
+      
+      $previous_indent = $indent;
     }
     $this->text = $text;
   }

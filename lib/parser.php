@@ -141,6 +141,9 @@ class PDoc_Parser
       $klass['implements'] = array_map('trim', explode(',', $interfaces[1]));
     }
     
+    # forced private visibility?
+    $func['visibility'] = isset($func['params']['private']) ? 'private' : 'public';
+    
     return $klass;
   }
   
@@ -246,17 +249,9 @@ class PDoc_Parser
     
     # distinguishes between brief & description
     $pos = strpos($comment, "\n");
-    if ($pos)
-    {
-      $brief = trim(substr($comment, 0, $pos));
-      //$description = text_to_html(substr($comment, $pos));
-      $description = text_to_html($comment, $pos);
-    }
-    else
-    {
-      $brief = $comment;
-      $description = text_to_html($comment);
-    }
+    $brief = ($pos) ? trim(substr($comment, 0, $pos)) : $comment;
+#    $description = text_to_html($comment, array('headings_start' => 4));
+    $description = $comment;
     
     return array($brief, $description, $params);
   }
@@ -292,7 +287,6 @@ class PDoc_Parser
       elseif (!empty($comment))
       {
         $token = "§comment:".sha1($comment)."§";
-        $comment = preg_replace('/^[ \t]*(?:#|\/\/)/m', '', $comment);
         self::$tokens[$token] = $comment;
         $lines[$i-1] = $token;
         $comment = "";
@@ -365,6 +359,7 @@ class PDoc_Parser
     return $contents;
   }
   
+  # @private
   static protected function _replace_comments($match)
   {
     $token   = "§comment:".sha1($match[0])."§";
@@ -496,9 +491,6 @@ class PDoc_Parser
     
     foreach($this->classes as $klass)
     {
-      if (isset($klass['private']) and $klass['private']) {
-        continue;
-      }
       if (preg_match('/^(.+)_NS$/', $klass['name'], $match)) {
         $list[$match[1]] = $klass;
       }
@@ -513,8 +505,13 @@ class PDoc_Parser
     
     foreach($this->functions as $func)
     {
-      if (isset($func['namespace'])) {
-        $list[$func['namespace']] = $func['namespace'];
+      if (isset($func['namespace']))
+      {
+        $ns = array('namespace' => $func['namespace']);
+        if (isset($func['private']) and $func['private']) {
+          $ns['private'] = true;
+        }
+        $list[$func['namespace']] = $ns;
       }
     }
     
@@ -528,25 +525,30 @@ class PDoc_Parser
     
     foreach($this->classes as $klass)
     {
-      if (isset($klass['private']) and $klass['private']) {
-        continue;
-      }
+      $private = (isset($klass['visibility']) and $klass['visibility'] == 'private');
+      
       foreach($klass['methods'] as $method)
       {
-        if (isset($method['private']) and $method['private']) {
-          continue;
+        if ($private) {
+          $method['visibility'] = 'private';
         }
         $name = "{$method['name']} ({$klass['name']})";
-        $list[$name] = "classes/".str_replace('_', '/', $klass['name']).'.html#method-'.$method['name'];
+        $method['link'] = "classes/".str_replace('_', '/', $klass['name']).'.html#method-'.$method['name'];
+        $list[$name] = $method;
       }
     }
     
     foreach($this->functions as $func)
     {
-      if (isset($func['private']) and $func['private']) {
-        continue;
+      if (isset($func['namespace']))
+      {
+        $name = "{$func['name']} ({$func['namespace']})";
+        $func['link'] = "classes/".str_replace('_', '/', $func['namespace']).".html#function-".$func['name'];
+      } 
+      else {
+        $func['link'] = "classes/global.html#function-".$func['name'];
       }
-      $list[$func['name']] = "classes/global.html#function-".$func['name'];
+      $list[$name]  = $func;
     }
     
     ksort($list);

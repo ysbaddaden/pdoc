@@ -14,16 +14,16 @@
   </header>
   
   <section id="content">
-    <section id="namespace">
-      
+    <section id="class">
       <h1>
         <span class="name"><?= $namespace ?></span>
       </h1>
       
-      <? if (!empty($comment)): ?>
-        <p class="brief"><?= $comment['brief'] ?></p>
-        <p class="description"><?= $comment['description'] ?></p>
-     <? endif; ?> 
+      <? if (!empty($comment['description'])): ?>
+        <div class="description">
+          <?= $this->fix_internal_links(text_to_html($comment['description'], array('headings_start' => 2))) ?>
+        </div>
+     <? endif; ?>
       
       <? if (!empty($tree)): ?>
         <h2>Namespaces:</h2>

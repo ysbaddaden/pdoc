@@ -7,7 +7,7 @@
     </h3>
     
     <div class="description">
-      <?= $method['description'] ?>
+      <?= $this->fix_internal_links(text_to_html($method['description'], array('headings_start' => 4))) ?>
     </div>
   </article>
 <? endforeach; ?>

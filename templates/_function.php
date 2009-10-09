@@ -5,7 +5,7 @@
   </h3>
   
   <div class="description">
-    <?= $function['description'] ?>
+    <?= $this->fix_internal_links(text_to_html($function['description'], array('headings_start' => 4))) ?>
   </div>
 </article>
 

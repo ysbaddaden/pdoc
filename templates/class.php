@@ -20,17 +20,21 @@
         <? if ($klass['abstract']): ?>
           <span class="abstract">Abstract</span>
         <? endif; ?>
+        
         <? if ($klass['interface']): ?>
           Interface
         <? else: ?>
           Class
         <? endif; ?>
+        
         <span class="name"><?= $klass['name'] ?></span>
       </h1>
       
-      <div class="description">
-        <?= $klass['description'] ?>
-      </div>
+      <? if (!empty($klass['description'])): ?>
+        <div class="description">
+          <?= $this->fix_internal_links(text_to_html($klass['description'], array('headings_start' => 2))) ?>
+        </div>
+      <? endif; ?>
       
       <? if (!empty($klass['extends']) or !empty($klass['implements'])): ?>
         <section id="inheritence">

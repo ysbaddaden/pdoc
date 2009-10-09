@@ -32,7 +32,7 @@ class PDoc_Generator
     
     # indexes
     $this->generate_index();
-    $this->generate_class_index();
+#    $this->generate_class_index();
 #    $this->generate_method_index();
     
     # each class
@@ -60,7 +60,7 @@ class PDoc_Generator
     
     file_put_contents($this->outputdir.'/index.html', $contents);
   }
-  
+  /*
   protected function generate_class_index()
   {
     ob_start();
@@ -78,7 +78,7 @@ class PDoc_Generator
     
     file_put_contents($this->outputdir.'/method_index.html', $contents);
   }
-  
+  */
   protected function generate_namespace($tree, $namespace)
   {
     echo "Generating documentation for namespace: {$namespace}\n";
@@ -227,7 +227,7 @@ class PDoc_Generator
   
   protected function fix_internal_links($html)
   {
-    return str_replace('src="classes/', 'src="'.$this->relative_url().'classes/', $html);
+    return preg_replace('/(src|href)="classes\//', '\1="'.$this->relative_url().'classes/', $html);
   }
 }
 
