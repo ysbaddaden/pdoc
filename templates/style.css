@@ -1,10 +1,10 @@
 
 .clear { clear: both; }
 
-body { font: normal 14px/1.25 Verdana, Arial, Helvetica, sans-serif; margin: 0; padding: 0; }
+body { font: normal 14px/1.25 Verdana, Arial, Helvetica, sans-serif; margin: 0; padding: 1.5em; }
 header, footer, section, article, hgroup, aside { display: block; }
 
-h1, h2, h3, h4, h5, h6 { color: #112255; font-weight: bold; margin-top: 1.5em; }
+h1, h2, h3, h4, h5, h6 { color: #125; font-weight: bold; margin-top: 1.5em; }
 h4, h5, h6 { font-size: 1em; }
 
 h1 { font-weight: normal; border-bottom: 4px solid #CCC; margin-top: 0; }
@@ -28,32 +28,10 @@ pre  { white-space: pre; font-family: monospace; font-size: .833em; border-left:
   display: block; padding-left: .75em; overflow: auto; margin-left: 1.5em; }
 
 
-/* layout */
+body.index    { padding: 0; }
+body.index h1 { font-size: 1em; font-weight: bold; background: #125; color: #FFF; border: 0; margin: 0; padding: 4px 2px; }
+body.index ul { font-size: .833em; list-style: none; padding: 2px; margin: 0; white-space: nowrap; }
 
-#main { width: 960px; padding: 1.5em 3em; margin: 0 auto; background: #FFF; color: #333; }
-
-header { margin-bottom: 1em; }
-header, h1.index { font-size: 2.5em; font-weight: normal; margin-top: 0; border-bottom: 8px solid #CCC; }
-header a { color: #333; }
-
-#content { float: right; width: 70%; }
-
-aside { float: left;  width: 27%; overflow: hidden; font-size: 12px; }
-aside section { margin-bottom: 1.5em; border: 1px solid #AAA; }
-aside h4 { margin: 0; padding: .2em .5em; background: #CCC; color: #333; border-bottom: 2px solid #AAA; }
-aside ul { margin: 0; padding: 0; list-style: none; max-height: 300px; overflow: auto; }
-aside li { white-space: nowrap; }
-
-/* page: index */
-#index .tree { -moz-column-count: 2; -moz-column-gap: 3em; -webkit-column-count: 2; -webkit-column-gap: 3em; }
-.tree dl dt { margin-top: .75em; padding: 0; }
-.tree dl dl dt { margin-top: 0; }
-.tree dd { padding-left: 1em; margin-left: 0; border-left: 1px dotted #CCC; }
-.tree dd.klass, .tree dd.func { padding-left: 0; border-left: 0; }
-
-
-/* page: class */
-/*.classes dd { padding-left: 0; }*/
 
 #class > .description { background: #F4F4F4; padding: 1em; }
 #class > .description { background: #F4F4F4; padding: 1em; }

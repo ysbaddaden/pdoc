@@ -1,28 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="language" content="en"/>
-  <title>Documentation for <?= $this->project_name ?></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>Classes for <?= $this->project_name ?></title>
 	<link rel="stylesheet" type="text/css" charset="utf-8" href="<?= $this->stylesheet_url() ?>"/>
 </head>
-<body>
-<div id="main">
+<body class="index">
 
-  <header>
-    <a href="<?= $this->relative_url() ?>index.html">Documentation for <strong><?= $this->project_name ?></strong></a>
-  </header>
+  <h1>List of classes</h1>
   
-  <section>
-    <h1>List of classes</h1>
-    
-    <ul class="class-index">
-      <? foreach($this->parser->classes as $klass): ?>
-        <li><a href="<?= $this->klass_url($klass) ?>"><?= $klass['name'] ?></a></li>
-      <? endforeach; ?>
-    </ul>
-  </section>
-  
-</div>
+  <ul class="index">
+    <? foreach($this->parser->list_classes() as $aside_name => $aside_klass): ?>
+      <? if (!isset($aside_klass['visibility']) or $aside_klass['visibility'] != 'private'): ?>
+        <li><a href="<?= $this->klass_url($aside_name) ?>" target="docwin"><?= $aside_name ?></a></li>
+      <? endif; ?>
+    <? endforeach; ?>
+  </ul>
+
 </body>
 </html>

@@ -31,9 +31,10 @@ class PDoc_Generator
     ksort($this->parser->functions);
     
     # indexes
+    $this->generate_readme();
     $this->generate_index();
-#    $this->generate_class_index();
-#    $this->generate_method_index();
+    $this->generate_class_index();
+    $this->generate_method_index();
     
     # each class
     foreach($this->parser->classes as $klass) {
@@ -52,33 +53,35 @@ class PDoc_Generator
     copy(ROOT.'/templates/style.css', $this->outputdir.'/style.css');
   }
   
-  protected function generate_index()
+  
+  protected function generate_readme()
   {
-    ob_start();
-    include ROOT.'/templates/index.php';
-    $contents = ob_get_clean();
+    $readme = file_exists($this->inputdir.'/doc/README') ?
+      file_get_contents($this->inputdir.'/doc/README') : "";
     
-    file_put_contents($this->outputdir.'/index.html', $contents);
-  }
-  /*
-  protected function generate_class_index()
-  {
-    ob_start();
-    include ROOT.'/templates/class_index.php';
-    $contents = ob_get_clean();
-    
-    file_put_contents($this->outputdir.'/class_index.html', $contents);
+    ob_start(); include ROOT.'/templates/readme.php';
+    file_put_contents($this->outputdir.'/readme.html', ob_get_clean());
   }
   
-  protected function generate_methods_index()
+  protected function generate_index()
   {
-    ob_start();
-    include ROOT.'/templates/method_index.php';
-    $contents = ob_get_clean();
-    
-    file_put_contents($this->outputdir.'/method_index.html', $contents);
+    ob_start(); include ROOT.'/templates/index.php';
+    file_put_contents($this->outputdir.'/index.html', ob_get_clean());
   }
-  */
+  
+  protected function generate_class_index()
+  {
+    ob_start(); include ROOT.'/templates/class_index.php';
+    file_put_contents($this->outputdir.'/class_index.html', ob_get_clean());
+  }
+  
+  protected function generate_method_index()
+  {
+    ob_start(); include ROOT.'/templates/method_index.php';
+    file_put_contents($this->outputdir.'/method_index.html', ob_get_clean());
+  }
+  
+  
   protected function generate_namespace($tree, $namespace)
   {
     echo "Generating documentation for namespace: {$namespace}\n";
@@ -137,16 +140,6 @@ class PDoc_Generator
     file_put_contents($this->outputdir.$path, $contents);
   }
   
-#  protected function generate_function($function)
-#  {
-#    echo "Generating documentation for function: {$function['name']} ({$function['namespace']})\n";
-#    
-#    ob_start();
-#    include ROOT.'/templates/function.php';
-#    $contents = ob_get_clean();
-#    
-#    file_put_contents($this->outputdir.'/function-'.$function['name'].'.html', $contents);
-#  }
   
   protected function stylesheet_url()
   {
@@ -182,6 +175,7 @@ class PDoc_Generator
     return $this->relative_url().$this->namespace_path($namespace);
   }
   
+  
   protected function render_tree($tree, $namespace='')
   {
     ksort($tree);
@@ -201,17 +195,6 @@ class PDoc_Generator
           }
         }
       }
-      /*
-      elseif ($ns == '_functions')
-      {
-        ksort($subtree);
-        foreach($subtree as $func)
-        {
-          $func_name = empty($namespace) ? $func['name'] : str_replace("{$namespace}_", '', $func['name']);
-          echo "<dd class=\"func\" title=\"Function: {$func['name']}\">{$func_name}</dd>\n";
-        }
-      }
-      */
       elseif ($ns != '_functions')
       {
         $ns_name = empty($namespace) ? $ns : $namespace.'_'.$ns;

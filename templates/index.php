@@ -1,28 +1,16 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="language" content="en"/>
   <title>Documentation for <?= $this->project_name ?></title>
-	<link rel="stylesheet" type="text/css" charset="utf-8" href="<?= $this->stylesheet_url() ?>"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head>
-<body>
-<div id="main">
 
-  <h1 class="index">Documentation for <strong><?= $this->project_name ?></strong></h1>
-  
-  <section id="content">
-  <?
-  if (file_exists($this->inputdir.'doc/README')) {
-    echo $this->fix_internal_links(text_to_html(file_get_contents($this->inputdir.'doc/README')));
-  }
-  ?>
-  </section>
-  
-  <aside>
-    <? include '_aside.php' ?>
-  </aside>
-  
-</div>
-</body>
+  <frameset cols="25%,*">
+    <frameset rows="50%,50%">
+      <frame src="class_index.html"  name="Classes">
+      <frame src="method_index.html" name="Methods">
+    </frameset>
+    <frame src="readme.html" name="docwin">
+  </frameset>
+
 </html>
