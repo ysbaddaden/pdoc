@@ -2,38 +2,75 @@
 
 pdoc is a minimalistic documentation tool for PHP.
 
-
 == Syntax
 
-Whenever a class, function, method or attribute is preceded by a comment (whatever the form), it is considered to be a comment for the following class, function, method or attribute.
+Whenever a class, function, method or attribute is preceded by a comment
+(whatever the form), it is considered to be a comment for the following
+class, function, method or attribute.
 
 So that you may do this:
 
-    # This is a comment for the following class.
-    class MyClass
-    {
-      # This comment is discarded.
-      
-      # This is a brief for my_method
-      #
-      # This is the long comment for MyClass::my_method().
-      # You may fill it with a lot of things.
-      # 
-      # $toto can be:
-      # - something
-      # - something else
-      function my_method($toto)
-      {
-        
-      }
-    }
-
+ # This is a comment for the following class.
+ # 
+ # = This is a heading
+ # 
+ # == This is sub-heading
+ # 
+ # This is a
+ # paragraph.
+ # 
+ # - this is a list (first item)
+ # - (second item)
+ # 
+ class MyClass
+ {
+   # Just a variable.
+   public $var;
+   
+   # This comment is discarded.
+   
+   # This is a brief for +my_method+
+   # 
+   # This is the long comment for +MyClass::my_method()+.
+   # You may fill it with a lot of things.
+   # 
+   # `$toto` can be:
+   # 
+   # - something
+   # - something else
+   # 
+   # == Example:
+   # 
+   #   $c = new MyClass();
+   #   $c->my_method('my_var');
+   #
+   # See http://some.url/ for more details.
+   # 
+   function my_method($toto)
+   {
+     
+   }
+   
+   # @private
+   function undocumented_public_method()
+   {
+     
+   }
+ }
 
 == Usage
 
-  $ pdoc [input_directory] [output_directory]
+ $ pdoc [options] <input_directory> <output_directory>
+
+Available options:
+
+- --project "Project Name"
+- --exclude subpath (exclude a path from input_directory, there can be more than one)
+- --private (do document private methods and attributes (not reliable))
 
 Examples:
 
-  $ pdoc ~/work/pdoc -o ~/work/docs/pdoc
+ $ pdoc ~/work/pdoc ~/work/docs/pdoc
+ $ pdoc --project "PDOC" . doc/
+ $ pdoc --exclude log/ --exclude test/ . doc/
 
