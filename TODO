@@ -1,4 +1,18 @@
 
+Experimental branch:
+
+  * Update Browser to parse each files whenever one is found.
+  * Rewrite Parser from scratch (eg: tokenize whilst reading the file).
+  * Use a bunch of objects to describe the tokenized source code
+    instead of using a stupid array (eg. Php_Klass, Php_Function, etc).
+  * Update Generator to use objects.
+  
+  * TextParser:
+    * Use *bold* to mark <b>bold</b>
+    * Use _emphase_ to mark <em>emphase</em>
+    * Use +$attr+ to mark <code>$attr</code>
+    * Use <tt>method</tt> to create links to classes, methods or functions.
+
 Things to do:
 
   * Extract value of class attributes.
