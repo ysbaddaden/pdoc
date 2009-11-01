@@ -13,7 +13,7 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $functions = $analyzer->functions();
     
     # args
-    $this->assert_equal(array_keys($functions), array('abc', 'def', 'ghi'));
+    $this->assert_equal(array_keys($functions), array('abc', 'def', 'ghi', 'jkl'));
     $this->assert_equal($functions['abc']['arguments'], "\$a, \$b=null, \$c=array('a' => array('b' => 'c'))");
     $this->assert_equal($functions['ghi']['arguments'], "\$a=(true && false), \$d='e', \$e=\"fg\"");
     
@@ -21,6 +21,7 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal($functions['def'], array('arguments' => '', 'comment' => "this is a comment\nfor def\n"));
     $this->assert_equal($functions['abc']['comment'], "This is a doc\nblock test.");
     $this->assert_equal($functions['ghi']['comment'], "this is\na test");
+    $this->assert_equal($functions['jkl']['comment'], '');
   }
 }
 new Test_Pdoc_Analyzer();

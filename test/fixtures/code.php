@@ -30,6 +30,12 @@ function ghi($a=(true && false), $d='e', $e="fg")
   if ($a == 0) {
     echo $b;
   }
+  # irrelevant comment
+}
+
+function jkl()
+{
+  
 }
 
 /* function jklmno() {} */

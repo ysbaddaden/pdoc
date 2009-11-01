@@ -66,7 +66,9 @@ class Pdoc_Analyzer
     
     $name = $token[1];
     $args = $this->parse_function_args();
-    $this->functions[$name] = array('arguments' => $args);
+    $code = $this->parse_function_code();
+    
+    $this->functions[$name] = array('arguments' => $args/*, 'code' => $code*/);
     $this->functions[$name]['comment'] = $this->comment;
     
     $this->comment = '';
@@ -112,6 +114,25 @@ class Pdoc_Analyzer
       }
     }
     return $val;
+  }
+  
+  private function parse_function_code()
+  {
+    $code = '';
+    $deep = 0;
+    
+    while(($token = next($this->tokens)) !== false)
+    {
+      $code .= is_string($token) ? $token : $token[1];
+      
+      switch($token[0])
+      {
+        case '{': $deep++; break;
+        case '}': $deep--; if ($deep < 1) return $code; break;
+      }
+    }
+    
+    return $code;
   }
   
   private function debug_token($token)
