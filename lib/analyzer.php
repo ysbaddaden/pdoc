@@ -1,6 +1,10 @@
 <?php
 
 # Replacement for +Pdoc_Parser+ which uses PHP's tokenizer.
+# 
+# IMPROVE: Parse classes and interfaces (with abstract/final).
+# IMPROVE: Parse class methods (with visibility/static/abstract/final).
+# IMPROVE: Parse class attributes (with visibility/static).
 class Pdoc_Analyzer
 {
   private $tokens;
@@ -46,6 +50,7 @@ class Pdoc_Analyzer
     
     if (preg_match('/^\s*(#|\/\/)/', $comment))
     {
+      # searches for a collection of single-line comments
       while(($token = next($this->tokens)) !== false)
       {
         switch($token[0])
@@ -57,6 +62,8 @@ class Pdoc_Analyzer
       }
       prev($this->tokens);
     }
+    
+    # removes useless chars
     $this->comment = preg_replace(array('/^\s*(#|[*]) /m', '/\/[*]*\s*|\s*[*]\//'), '', $comment);
   }
   
@@ -70,7 +77,6 @@ class Pdoc_Analyzer
     
     $this->functions[$name] = array('arguments' => $args/*, 'code' => $code*/);
     $this->functions[$name]['comment'] = $this->comment;
-    
     $this->comment = '';
   }
   
@@ -88,7 +94,6 @@ class Pdoc_Analyzer
         case ')': if (isset($var)) $args[] = $var; break 2;
       }
     }
-    
     return implode(', ', $args);
   }
   
@@ -116,6 +121,7 @@ class Pdoc_Analyzer
     return $val;
   }
   
+  # IMPROVE: Remove minimal indentation from code.
   private function parse_function_code()
   {
     $code = '';
@@ -127,11 +133,11 @@ class Pdoc_Analyzer
       
       switch($token[0])
       {
+        case T_COMMENT: case T_DOC_COMMENT: continue;
         case '{': $deep++; break;
         case '}': $deep--; if ($deep < 1) return $code; break;
       }
     }
-    
     return $code;
   }
   
