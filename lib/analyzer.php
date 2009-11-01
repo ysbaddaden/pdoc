@@ -4,7 +4,10 @@
 class Pdoc_Analyzer
 {
   private $tokens;
+  private $comment   = '';
+  
   private $functions = array();
+  
   
   # Analyzes a PHP source file for functions, classes, methods, etc.
   function add($php_file)
@@ -20,7 +23,7 @@ class Pdoc_Analyzer
         switch($id)
         {
           case T_FUNCTION: $this->parse_function(); break;
-#          case T_COMMENT:  $this->parse_comment();  break;
+          case T_COMMENT:  $this->parse_comment();  break;
 #          case T_CLASS:    $this->parse_class();    break;
 #          case T_METHOD:   $this->parse_method();   break;
         }
@@ -38,12 +41,21 @@ class Pdoc_Analyzer
   }
   
   
+  private function parse_comment()
+  {
+    $token = current($this->tokens);
+    $this->comment .= preg_replace(array('/^\s*# /', '/\/[*]*\s*|[*]\//'), '', $token[1]);
+  }
+  
   private function parse_function()
   {
     while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
     $name = $token[1];
     $args = $this->parse_function_args();
     $this->functions[$name] = array('arguments' => $args);
+    $this->functions[$name]['comment'] = $this->comment;
+    
+    $this->comment = '';
   }
   
   private function parse_function_args()

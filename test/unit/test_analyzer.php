@@ -11,10 +11,15 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $analyzer->add(dirname(__FILE__).'/../fixtures/code.php');
     
     $functions = $analyzer->functions();
+    
+    # args
     $this->assert_equal(array_keys($functions), array('abc', 'def', 'ghi'));
-    $this->assert_equal($functions['def'], array('arguments' => ''/*, 'comment' => 'this is a comment for def'*/));
-    $this->assert_equal($functions['abc'], array('arguments' => "\$a, \$b=null, \$c=array('a' => array('b' => 'c'))"));
-    $this->assert_equal($functions['ghi'], array('arguments' => "\$a=(true && false), \$d='e', \$e=\"fg\""));
+    $this->assert_equal($functions['abc']['arguments'], "\$a, \$b=null, \$c=array('a' => array('b' => 'c'))");
+    $this->assert_equal($functions['ghi']['arguments'], "\$a=(true && false), \$d='e', \$e=\"fg\"");
+    
+    # comments
+    $this->assert_equal($functions['def'], array('arguments' => '', 'comment' => "this is a comment\nfor def\n"));
+    $this->assert_equal($functions['ghi']['comment'], "this is\na test\n");
   }
 }
 new Test_Pdoc_Analyzer();
