@@ -19,7 +19,8 @@ class Test_Pdoc_Analyzer extends Unit_Test
     
     # comments
     $this->assert_equal($functions['def'], array('arguments' => '', 'comment' => "this is a comment\nfor def\n"));
-    $this->assert_equal($functions['ghi']['comment'], "this is\na test\n");
+    $this->assert_equal($functions['abc']['comment'], "This is a doc\nblock test.");
+    $this->assert_equal($functions['ghi']['comment'], "this is\na test");
   }
 }
 new Test_Pdoc_Analyzer();

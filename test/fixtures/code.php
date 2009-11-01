@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * This is a doc
+ * block test.
+ */
 function abc($a, $b=null, $c=array('a' => array('b' => 'c')))
 {
   if ($a == 0) {
