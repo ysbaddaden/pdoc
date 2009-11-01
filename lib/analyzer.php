@@ -20,7 +20,7 @@ class Pdoc_Analyzer
       {
         list($id, $text, $line) = $token;
         
-#        $this->debug_token($token);
+        $this->debug_token($token);
         
         switch($id)
         {
@@ -50,10 +50,14 @@ class Pdoc_Analyzer
     
     if (preg_match('/^\s*(#|\/\/)/', $this->comment))
     {
-      while(($token = next($this->tokens)) !== false
-        and $token[0] == T_COMMENT)
+      while(($token = next($this->tokens)) !== false)
       {
-        $this->comment .= $token[1];
+        switch($token[0])
+        {
+          case T_COMMENT: $this->comment .= $token[1]; break;
+          case T_WHITESPACE: continue;
+          default: break 2;
+        }
       }
       prev($this->tokens);
     }
