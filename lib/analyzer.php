@@ -20,6 +20,8 @@ class Pdoc_Analyzer
       {
         list($id, $text, $line) = $token;
         
+#        $this->debug_token($token);
+        
         switch($id)
         {
           case T_FUNCTION: $this->parse_function(); break;
@@ -44,7 +46,18 @@ class Pdoc_Analyzer
   private function parse_comment()
   {
     $token = current($this->tokens);
-    $this->comment .= preg_replace(array('/^\s*(#|[*]) /m', '/\/[*]*\s*|\s*[*]\//'), '', $token[1]);
+    $this->comment = $token[1];
+    
+    if (preg_match('/^\s*(#|\/\/)/', $this->comment))
+    {
+      while(($token = next($this->tokens)) !== false
+        and $token[0] == T_COMMENT)
+      {
+        $this->comment .= $token[1];
+      }
+      prev($this->tokens);
+    }
+    $this->comment = preg_replace(array('/^\s*(#|[*]) /m', '/\/[*]*\s*|\s*[*]\//'), '', $this->comment);
   }
   
   private function parse_function()
