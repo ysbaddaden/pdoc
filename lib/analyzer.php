@@ -2,15 +2,21 @@
 
 # Replacement for +Pdoc_Parser+ which uses PHP's tokenizer.
 # 
-# IMPROVE: Parse classes and interfaces (with abstract/final).
-# IMPROVE: Parse class methods (with visibility/static/abstract/final).
-# IMPROVE: Parse class attributes (with visibility/static).
+# TODO: Parse interface method declarations (with visibility and arguments).
+# TODO: Parse abstract/final properties for classes.
+# TODO: Parse class methods (with visibility/static/abstract/final and arguments).
+# TODO: Parse class attributes (with visibility/static).
+# TODO: Parse pseudo-namespaces.
+# IMPROVE: Parse namespaces.
+# 
 class Pdoc_Analyzer
 {
   private $tokens;
-  private $comment   = '';
+  private $comment    = '';
   
-  private $functions = array();
+  private $functions  = array();
+  private $classes    = array();
+  private $interfaces = array();
   
   
   # Analyzes a PHP source file for functions, classes, methods, etc.
@@ -24,10 +30,10 @@ class Pdoc_Analyzer
       {
         switch($token[0])
         {
-          case T_FUNCTION: $this->parse_function(); break;
           case T_COMMENT: case T_DOC_COMMENT: $this->parse_comment(); break;
-#          case T_CLASS:    $this->parse_class();    break;
-#          case T_METHOD:   $this->parse_method();   break;
+          case T_FUNCTION:  $this->parse_function();  break;
+          case T_CLASS:     $this->parse_class();     break;
+          case T_INTERFACE: $this->parse_interface(); break;
         }
       }
     }
@@ -40,6 +46,22 @@ class Pdoc_Analyzer
     $functions = $this->functions;
     ksort($functions);
     return $functions;
+  }
+  
+  # Returns the list of classes.
+  function & classes()
+  {
+    $classes = $this->classes;
+    ksort($classes);
+    return $classes;
+  }
+  
+  # Returns the list of classes.
+  function & interfaces()
+  {
+    $interfaces = $this->interfaces;
+    ksort($interfaces);
+    return $interfaces;
   }
   
   
@@ -67,6 +89,67 @@ class Pdoc_Analyzer
     $this->comment = preg_replace(array('/^\s*(#|[*]) /m', '/\/[*]*\s*|\s*[*]\//'), '', $comment);
   }
   
+  private function parse_class()
+  {
+    while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
+    
+    $name  = $token[1];
+    $klass = array(
+      'comment'    => $this->comment,
+      'extends'    => '',
+      'implements' => array(),
+    );
+    $this->comment = '';
+    
+    while(($token = next($this->tokens)) !== false)
+    {
+      switch($token[0])
+      {
+        case T_EXTENDS:
+          while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
+          $klass['extends'] = $token[1];
+        break;
+        
+        case T_IMPLEMENTS:
+        case ',':
+          while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
+          $klass['implements'][] = $token[1];
+        break;
+        
+        case '{': break 2;
+      }
+    }
+
+    $this->classes[$name] = $klass;
+  }
+  
+  private function parse_interface()
+  {
+    while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
+    
+    $name = $token[1];
+    $interface = array(
+      'comment'    => $this->comment,
+      'extends'    => array(),
+    );
+    $this->comment = '';
+    
+    while(($token = next($this->tokens)) !== false)
+    {
+      switch($token[0])
+      {
+        case T_EXTENDS:
+        case ',':
+          while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
+          $interface['extends'][] = $token[1];
+        break;
+        case '{': break 2;
+      }
+    }
+    
+    $this->interfaces[$name] = $interface;
+  }
+
   private function parse_function()
   {
     while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
