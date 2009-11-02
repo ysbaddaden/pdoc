@@ -126,10 +126,7 @@ class Pdoc_Analyzer
     {
       switch($token[0])
       {
-        case T_COMMENT:
-        case T_DOC_COMMENT:
-          $this->parse_comment();
-        break;
+        case T_COMMENT: case T_DOC_COMMENT: $this->parse_comment(); break;
         
         case T_CONST:
           list($const_name, $const_value) = $this->parse_class_constant();
@@ -206,14 +203,16 @@ class Pdoc_Analyzer
     {
       switch($token[0])
       {
+        case T_COMMENT: case T_DOC_COMMENT: $this->parse_comment(); break;
+        
         case T_CONST:
           list($const_name, $const_value) = $this->parse_class_constant();
           $interface['constants'][$const_name] = $const_value;
         break;
         
         case T_FUNCTION:
-          list($method_name, $args) = $this->parse_interface_method();
-          $interface['methods'][$method_name] = array('arguments' => $args);
+          list($method_name, $method) = $this->parse_interface_method();
+          $interface['methods'][$method_name] = $method;
         break;
         
         case '}': break 2;
@@ -227,8 +226,14 @@ class Pdoc_Analyzer
   {
     while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
     $name = $token[1];
-    $args = $this->parse_function_args();
-    return array($name, $args);
+    
+    $method = array(
+      'arguments' => $this->parse_function_args(),
+      'comment'   => $this->comment,
+    );
+    $this->comment = '';
+    
+    return array($name, $method);
   }
   
   private function parse_function()
