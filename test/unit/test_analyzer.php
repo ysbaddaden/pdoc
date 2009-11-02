@@ -15,10 +15,11 @@ class Test_Pdoc_Analyzer extends Unit_Test
     # args
     $this->assert_equal(array_keys($functions), array('abc', 'def', 'ghi', 'jkl'));
     $this->assert_equal($functions['abc']['arguments'], "\$a, \$b=null, \$c=array('a' => array('b' => 'c'))");
+    $this->assert_equal($functions['def']['arguments'], '');
     $this->assert_equal($functions['ghi']['arguments'], "array \$a=(true && false), \$d='e', \$e=\"fg\"");
     
     # comments
-    $this->assert_equal($functions['def'], array('arguments' => '', 'comment' => "this is a comment\nfor def\n"));
+    $this->assert_equal($functions['def']['comment'], "this is a comment\nfor def\n");
     $this->assert_equal($functions['abc']['comment'], "This is a doc\nblock test.");
     $this->assert_equal($functions['ghi']['comment'], "this is\na test");
     $this->assert_equal($functions['jkl']['comment'], '');
@@ -36,11 +37,16 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal($classes['B']['extends'], 'A');
     $this->assert_equal($classes['B']['implements'], array('ArrayAccess', 'Countable'));
     
-    # comments
-    $this->assert_equal($classes['B']['comment'], "this is\nclass B.\n");
-    
     # constants
     $this->assert_equal($classes['A']['constants'], array('name' => "'A'", 'data' => "array('a', 'b', false)"));
+    
+    # methods
+    $this->assert_equal(array_keys($classes['B']['methods']), array('name', 'id'));
+    
+    # comments
+    $this->assert_equal($classes['B']['comment'], "this is\nclass B.\n");
+    $this->assert_equal($classes['B']['methods']['name']['comment'], "gets name\n");
+    $this->assert_equal($classes['B']['methods']['id']['comment'], '');
   }
   
   function test_interfaces()
