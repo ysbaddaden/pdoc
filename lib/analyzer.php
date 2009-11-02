@@ -1,9 +1,9 @@
 <?php
 
-# Replacement for +Pdoc_Parser+ which uses PHP's tokenizer.
+# Analyzes a PHP source file for functions, classes, etc.
 # 
 # TODO: Parse abstract/final properties for classes.
-# TODO: Parse class methods visibility/static/abstract/final..
+# TODO: Parse visibility/static/abstract/final properties for class methods.
 # TODO: Parse class attributes (with visibility/static).
 # TODO: Parse pseudo-namespaces.
 # IMPROVE: Parse namespaces.
