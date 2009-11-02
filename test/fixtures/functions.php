@@ -25,7 +25,7 @@ function abc($a, $b=null, $c=array('a' => array('b' => 'c')))
 this is
 a test
 */
-function ghi($a=(true && false), $d='e', $e="fg")
+function ghi(array $a=(true && false), $d='e', $e="fg")
 {
   if ($a == 0) {
     echo $b;

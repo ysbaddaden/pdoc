@@ -15,7 +15,7 @@ class Test_Pdoc_Analyzer extends Unit_Test
     # args
     $this->assert_equal(array_keys($functions), array('abc', 'def', 'ghi', 'jkl'));
     $this->assert_equal($functions['abc']['arguments'], "\$a, \$b=null, \$c=array('a' => array('b' => 'c'))");
-    $this->assert_equal($functions['ghi']['arguments'], "\$a=(true && false), \$d='e', \$e=\"fg\"");
+    $this->assert_equal($functions['ghi']['arguments'], "array \$a=(true && false), \$d='e', \$e=\"fg\"");
     
     # comments
     $this->assert_equal($functions['def'], array('arguments' => '', 'comment' => "this is a comment\nfor def\n"));

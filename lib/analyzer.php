@@ -19,7 +19,7 @@ class Pdoc_Analyzer
   private $interfaces = array();
   
   
-  # Analyzes a PHP source file for functions, classes, methods, etc.
+  # Analyzes a PHP source file for functions, classes, etc.
   function add($php_file)
   {
     $this->tokens = token_get_all(file_get_contents($php_file));
@@ -101,6 +101,7 @@ class Pdoc_Analyzer
     );
     $this->comment = '';
     
+    # definition
     while(($token = next($this->tokens)) !== false)
     {
       switch($token[0])
@@ -119,6 +120,9 @@ class Pdoc_Analyzer
         case '{': break 2;
       }
     }
+    
+    # method declarations
+    // ...
 
     $this->classes[$name] = $klass;
   }
@@ -134,6 +138,7 @@ class Pdoc_Analyzer
     );
     $this->comment = '';
     
+    # definition
     while(($token = next($this->tokens)) !== false)
     {
       switch($token[0])
@@ -146,6 +151,9 @@ class Pdoc_Analyzer
         case '{': break 2;
       }
     }
+    
+    # method declarations
+    // ...
     
     $this->interfaces[$name] = $interface;
   }
@@ -163,45 +171,26 @@ class Pdoc_Analyzer
     $this->comment = '';
   }
   
+  # IMPROVE: parse forced type, like: function b(array $ary);
   private function parse_function_args()
   {
-    $args = array();
-    
-    while(($token = next($this->tokens)) !== false)
-    {
-      switch($token[0])
-      {
-        case T_VARIABLE: $var = $token[1]; break;
-        case '=': $args[] = "$var=".$this->parse_function_arg_value(); unset($var); break;
-        case ',': if (isset($var)) $args[] = $var; break;
-        case ')': if (isset($var)) $args[] = $var; break 2;
-      }
-    }
-    return implode(', ', $args);
-  }
-  
-  private function parse_function_arg_value()
-  {
-    $val  = '';
+    $args = '';
     $deep = 0;
     
     while(($token = next($this->tokens)) !== false)
     {
-      if (($token[0] == ',' and $deep < 1)
-        or ($token[0] == ')' and $deep == 0))
-      {
-        prev($this->tokens);
-        return $val;
-      }
-      
-      $val .= is_string($token) ? $token : $token[1];
       switch($token[0])
       {
-        case '(': $deep++; break;
-        case ')': $deep--; if ($deep < 1) return $val; break;
+        case T_WHITESPACE: if ($deep > 0) $args .= ' '; break;
+        case '(': if ($deep > 0) $args .= '('; $deep++; break;
+        case ')': $deep--; if ($deep == 0) break 2;
+        default:
+          if ($deep > 0) {
+            $args .= is_string($token) ? $token : $token[1];
+          }
       }
     }
-    return $val;
+    return $args;
   }
   
   # IMPROVE: Remove minimal indentation from code.
