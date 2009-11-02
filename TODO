@@ -2,7 +2,6 @@
 Experimental branch:
 
   * Update Browser to parse each files whenever one is found.
-  * Rewrite Parser from scratch (eg: tokenize whilst reading the file).
   * Use a bunch of objects to describe the tokenized source code
     instead of using a stupid array (eg. Php_Klass, Php_Function, etc).
   * Update Generator to use objects.
@@ -16,7 +15,6 @@ Experimental branch:
 Things to do:
 
   * Extract value of class attributes.
-  * Extract source of functions and class methods.
 
   * Generate inheritence tree (ascending & descending) for a given class.
   * Document the inheritence tree.

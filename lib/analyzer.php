@@ -2,10 +2,9 @@
 
 # Replacement for +Pdoc_Parser+ which uses PHP's tokenizer.
 # 
-# TODO: Parse interface method declarations (with arguments).
 # TODO: Parse abstract/final properties for classes.
-# TODO: Parse class methods (with visibility/static/abstract/final and arguments).
-# TODO: Parse class attributes and constants (with visibility/static).
+# TODO: Parse class methods visibility/static/abstract/final..
+# TODO: Parse class attributes (with visibility/static).
 # TODO: Parse pseudo-namespaces.
 # IMPROVE: Parse namespaces.
 # 
