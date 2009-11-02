@@ -2,6 +2,7 @@
 
 interface A
 {
+  /* aze is false */
   const aze = false;
   const rty = array('name' => 'a;b');
 }

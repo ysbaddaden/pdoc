@@ -129,8 +129,8 @@ class Pdoc_Analyzer
         case T_COMMENT: case T_DOC_COMMENT: $this->parse_comment(); break;
         
         case T_CONST:
-          list($const_name, $const_value) = $this->parse_class_constant();
-          $klass['constants'][$const_name] = $const_value;
+          list($const_name, $const) = $this->parse_class_constant();
+          $klass['constants'][$const_name] = $const;
         break;
         
         case T_FUNCTION:
@@ -168,7 +168,14 @@ class Pdoc_Analyzer
         default: $value .= is_string($token) ? $token : $token[1];
       }
     }
-    return array($name, trim($value));
+    
+    $const = array(
+      'value' => trim($value),
+      'comment' => $this->comment,
+    );
+    $this->comment = '';
+    
+    return array($name, $const);
   }
   
   private function parse_interface()
@@ -206,8 +213,8 @@ class Pdoc_Analyzer
         case T_COMMENT: case T_DOC_COMMENT: $this->parse_comment(); break;
         
         case T_CONST:
-          list($const_name, $const_value) = $this->parse_class_constant();
-          $interface['constants'][$const_name] = $const_value;
+          list($const_name, $const) = $this->parse_class_constant();
+          $interface['constants'][$const_name] = $const;
         break;
         
         case T_FUNCTION:

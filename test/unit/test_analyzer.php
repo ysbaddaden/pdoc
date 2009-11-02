@@ -38,7 +38,10 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal($classes['B']['implements'], array('ArrayAccess', 'Countable'));
     
     # constants
-    $this->assert_equal($classes['A']['constants'], array('name' => "'A'", 'data' => "array('a', 'b', false)"));
+    $this->assert_equal($classes['A']['constants'], array(
+      'name' => array('value' => "'A'", 'comment' => ''),
+      'data' => array('value' => "array('a', 'b', false)", 'comment' => ''),
+    ));
     
     # methods
     $this->assert_equal(array_keys($classes['B']['methods']), array('name', 'id'));
@@ -59,16 +62,17 @@ class Test_Pdoc_Analyzer extends Unit_Test
     # definition
     $this->assert_equal(array_keys($interfaces), array('A', 'B'));
     $this->assert_equal($interfaces['B']['extends'], array('A', 'ArrayAccess'));
-    
+    $this->assert_equal($interfaces['B']['comment'], "this is\ninterface B\n");
+   
     # constants
-    $this->assert_equal($interfaces['A']['constants'], array('aze' => 'false', 'rty' => "array('name' => 'a;b')"));
+    $this->assert_equal($interfaces['A']['constants'], array(
+      'aze' => array('value' => 'false', 'comment' => 'aze is false'),
+      'rty' => array('value' => "array('name' => 'a;b')", 'comment' => '')
+    ));
     
     # method declarations
     $this->assert_equal(array_keys($interfaces['B']['methods']), array('test', 'another_test'));
     $this->assert_equal($interfaces['B']['methods']['another_test']['arguments'], '$a=null');
-    
-    # comments
-    $this->assert_equal($interfaces['B']['comment'], "this is\ninterface B\n");
     $this->assert_equal($interfaces['B']['methods']['another_test']['comment'], "this is another\n test\n");
   }
 }
