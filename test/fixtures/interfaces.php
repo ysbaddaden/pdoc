@@ -10,7 +10,8 @@ interface A
 // interface B
 interface B extends A, ArrayAccess
 {
-  
+  function test();
+  function another_test($a=null);
 }
 
 ?>

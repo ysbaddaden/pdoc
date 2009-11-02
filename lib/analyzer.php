@@ -2,8 +2,7 @@
 
 # Replacement for +Pdoc_Parser+ which uses PHP's tokenizer.
 # 
-# TODO: Parse interface constants (with visibility/static).
-# TODO: Parse interface method declarations (with visibility and arguments).
+# TODO: Parse interface method declarations (with arguments).
 # TODO: Parse abstract/final properties for classes.
 # TODO: Parse class methods (with visibility/static/abstract/final and arguments).
 # TODO: Parse class attributes and constants (with visibility/static).
@@ -144,9 +143,10 @@ class Pdoc_Analyzer
     
     $interface_name = $token[1];
     $interface = array(
-      'comment'    => $this->comment,
-      'extends'    => array(),
-      'constants'  => array(),
+      'comment'   => $this->comment,
+      'extends'   => array(),
+      'constants' => array(),
+      'methods'   => array(),
     );
     $this->comment = '';
     
@@ -173,11 +173,25 @@ class Pdoc_Analyzer
           $const = $this->parse_class_constant();
           $interface['constants'][$const[0]] = $const[1];
         break;
+        
+        case T_FUNCTION:
+          $method = $this->parse_interface_method();
+          $interface['methods'][$method[0]] = array('arguments' => $method[1]);
+        break;
+        
         case '}': break 2;
       }
     }
     
     $this->interfaces[$interface_name] = $interface;
+  }
+  
+  private function parse_interface_method()
+  {
+    while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
+    $name = $token[1];
+    $args = $this->parse_function_args();
+    return array($name, $args);
   }
   
   private function parse_class_constant()
@@ -210,7 +224,6 @@ class Pdoc_Analyzer
     $this->comment = '';
   }
   
-  # IMPROVE: parse forced type, like: function b(array $ary);
   private function parse_function_args()
   {
     $args = '';

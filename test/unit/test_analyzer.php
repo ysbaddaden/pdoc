@@ -54,11 +54,15 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal(array_keys($interfaces), array('A', 'B'));
     $this->assert_equal($interfaces['B']['extends'], array('A', 'ArrayAccess'));
     
-    # comments
-    $this->assert_equal($interfaces['B']['comment'], "this is\ninterface B\n");
-    
     # constants
     $this->assert_equal($interfaces['A']['constants'], array('aze' => 'false', 'rty' => "array('name' => 'a;b')"));
+    
+    # method declarations
+    $this->assert_equal(array_keys($interfaces['B']['methods']), array('test', 'another_test'));
+    $this->assert_equal($interfaces['B']['methods']['another_test'], array('arguments' => '$a=null'));
+        
+    # comments
+    $this->assert_equal($interfaces['B']['comment'], "this is\ninterface B\n");
   }
 }
 new Test_Pdoc_Analyzer();
