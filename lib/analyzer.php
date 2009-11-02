@@ -2,10 +2,11 @@
 
 # Replacement for +Pdoc_Parser+ which uses PHP's tokenizer.
 # 
+# TODO: Parse interface constants (with visibility/static).
 # TODO: Parse interface method declarations (with visibility and arguments).
 # TODO: Parse abstract/final properties for classes.
 # TODO: Parse class methods (with visibility/static/abstract/final and arguments).
-# TODO: Parse class attributes (with visibility/static).
+# TODO: Parse class attributes and constants (with visibility/static).
 # TODO: Parse pseudo-namespaces.
 # IMPROVE: Parse namespaces.
 # 
@@ -131,10 +132,11 @@ class Pdoc_Analyzer
   {
     while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
     
-    $name = $token[1];
+    $interface_name = $token[1];
     $interface = array(
       'comment'    => $this->comment,
       'extends'    => array(),
+      'constants'  => array(),
     );
     $this->comment = '';
     
@@ -152,12 +154,39 @@ class Pdoc_Analyzer
       }
     }
     
-    # method declarations
-    // ...
+    # constants & methods
+    while(($token = next($this->tokens)) !== false)
+    {
+      switch($token[0])
+      {
+        case T_CONST:
+          $const = $this->parse_class_constant();
+          $interface['constants'][$const[0]] = $const[1];
+        break;
+        case '}': break 2;
+      }
+    }
     
-    $this->interfaces[$name] = $interface;
+    $this->interfaces[$interface_name] = $interface;
   }
-
+  
+  private function parse_class_constant()
+  {
+    while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
+    $name  = $token[1];
+    $value = '';
+    while(($token = next($this->tokens)) !== false)
+    {
+      switch($token[0])
+      {
+        case '=': continue;
+        case ';': break 2;
+        default: $value .= is_string($token) ? $token : $token[1];
+      }
+    }
+    return array($name, trim($value));
+  }
+  
   private function parse_function()
   {
     while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
