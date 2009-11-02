@@ -2,6 +2,7 @@
 
 class A
 {
+  # const A::A
   const name = 'A';
   const data = array('a', 'b', false);
 }

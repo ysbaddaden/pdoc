@@ -36,18 +36,16 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal(array_keys($classes), array('A', 'B'));
     $this->assert_equal($classes['B']['extends'], 'A');
     $this->assert_equal($classes['B']['implements'], array('ArrayAccess', 'Countable'));
+    $this->assert_equal($classes['B']['comment'], "this is\nclass B.\n");
     
     # constants
     $this->assert_equal($classes['A']['constants'], array(
-      'name' => array('value' => "'A'", 'comment' => ''),
+      'name' => array('value' => "'A'", 'comment' => "const A::A\n"),
       'data' => array('value' => "array('a', 'b', false)", 'comment' => ''),
     ));
     
     # methods
     $this->assert_equal(array_keys($classes['B']['methods']), array('name', 'id'));
-    
-    # comments
-    $this->assert_equal($classes['B']['comment'], "this is\nclass B.\n");
     $this->assert_equal($classes['B']['methods']['name']['comment'], "gets name\n");
     $this->assert_equal($classes['B']['methods']['id']['comment'], '');
   }
