@@ -122,9 +122,19 @@ class Pdoc_Analyzer
       }
     }
     
-    # method declarations
-    // ...
-
+    # constants, attributes & methods
+    while(($token = next($this->tokens)) !== false)
+    {
+      switch($token[0])
+      {
+        case T_CONST:
+          $const = $this->parse_class_constant();
+          $klass['constants'][$const[0]] = $const[1];
+        break;
+        case '}': break 2;
+      }
+    }
+    
     $this->classes[$name] = $klass;
   }
   

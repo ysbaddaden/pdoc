@@ -38,6 +38,9 @@ class Test_Pdoc_Analyzer extends Unit_Test
     
     # comments
     $this->assert_equal($classes['B']['comment'], "this is\nclass B.\n");
+    
+    # constants
+    $this->assert_equal($classes['A']['constants'], array('name' => "'A'", 'data' => "array('a', 'b', false)"));
   }
   
   function test_interfaces()
