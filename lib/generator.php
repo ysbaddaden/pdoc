@@ -65,6 +65,22 @@ class Pdoc_Generator
     }
   }
   
+  private function generate_interfaces()
+  {
+    foreach($this->analyzer->interfaces() as $interface_name => $interface)
+    {
+      ksort($interface['constants']);
+      ksort($interface['methods']);
+      
+      $this->relative_url(count(explode('_', $interface_name)));
+      
+      $this->render('class', $this->interface_path($interface_name), array(
+        'interface_name' => $interface_name,
+        'interface'      => &$interface,
+      ));
+    }
+  }
+  
   private function render($template, $output_file, $locals=array())
   {
     # some local vars
