@@ -28,7 +28,7 @@ class Pdoc_Generator
     $this->render('method_index', 'method_index.html');
     
     $this->generate_classes();
-#    $this->generate_interfaces();
+    $this->generate_interfaces();
 #    $this->generate_namespaces();
     
 #    $this->render('readme', 'readme.html');

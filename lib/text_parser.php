@@ -83,7 +83,7 @@ class TextParser
     return '<a href="'.htmlspecialchars($match[0]).'">'.$match[0].'</a>';
   }
   
-  # @private
+  # :nodoc:
   static function __replace_links($match)
   {
     if (strtolower($match[1]) != $match[1])

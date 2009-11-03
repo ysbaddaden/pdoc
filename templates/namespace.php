@@ -12,13 +12,13 @@
       <strong><?= $namespace ?></strong>
     </h1>
     
-    <? if (!empty($comment['description'])): ?>
+    <? if (!empty($namespace['comment'])): ?>
       <div class="description">
-        <?= $this->fix_internal_links(text_to_html($comment['description'], array('headings_start' => 2))) ?>
+        <?= $this->text_to_html($namespace['comment'], array('headings_start' => 2)) ?>
       </div>
-   <? endif; ?>
+    <? endif; ?>
     
-    <? if (!empty($tree)): ?>
+    <? /*if (!empty($tree)): ?>
       <h2>Namespaces:</h2>
       
       <ul class="classes">
@@ -28,7 +28,7 @@
           </li>
         <? endforeach; ?>
       </ul>
-    <? endif; ?>
+    <? endif;*/ ?>
     
     <? if (!empty($classes)): ?>
       <h2>Classes:</h2>
