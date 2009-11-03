@@ -9,7 +9,7 @@
 #   $functions  = $analyzer->functions();
 #   $classes    = $analyzer->classes();
 # 
-# TODO: :nodoc: in comment must skip the definition (whatever if an attribute, method, etc.)
+# TODO: documentation modifiers => :nodoc:, :doc:, :private:, :namespace:$namespace
 # IMPROVE: Parse PHP namespaces.
 # 
 class Pdoc_Analyzer
@@ -26,6 +26,8 @@ class Pdoc_Analyzer
   # Adds a PHP source file to parse.
   function add($php_file)
   {
+    echo "Analyzing $php_file\n";
+    
     $this->tokens     = token_get_all(file_get_contents($php_file));
     $this->comment    = '';
     $this->properties = array();

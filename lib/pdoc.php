@@ -11,6 +11,7 @@ require ROOT.'/lib/generator.php';
 $excludes         = array();
 $project_name     = '';
 $document_private = false;
+$main_file        = '';
 
 # parses params
 for ($n = 1; $n < $_SERVER['argc']; $n++)
@@ -35,6 +36,7 @@ for ($n = 1; $n < $_SERVER['argc']; $n++)
         echo "  --project name   Sets the project's name.\n";
         echo "  --exclude path/  Excludes a file or directory from documentation.\n";
 #        echo "  --private        Document private methods and attributes (defaults: no).\n";
+#        echo "  --main file      Use this file as index page.\n";
       exit;
       
       case 'exclude':
@@ -53,6 +55,13 @@ for ($n = 1; $n < $_SERVER['argc']; $n++)
       
       case 'private':
         $document_private = true;
+      break;
+      
+      case 'main':
+        if ($value === null and isset($_SERVER['argv'][++$n])) {
+          $value = $_SERVER['argv'][$n];
+        }
+        $main_file = $value;
       break;
       
       default:
@@ -92,6 +101,7 @@ $generator = new Pdoc_Generator($analyzer, array(
   'outputdir'        => $outputdir,
   'project_name'     => $project_name,
   'document_private' => $document_private,
+  'main_file'        => $main_file,
 ));
 $generator->save();
 

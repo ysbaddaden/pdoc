@@ -1,7 +1,6 @@
 
 Experimental branch:
 
-  * Update Browser to parse each files whenever one is found.
   * Use a bunch of objects to describe the tokenized source code
     instead of using a stupid array (eg. Php_Klass, Php_Function, etc).
   * Update Generator to use objects.
@@ -13,8 +12,6 @@ Experimental branch:
     * Use <tt>method</tt> to create links to classes, methods or functions.
 
 Things to do:
-
-  * Extract value of class attributes.
 
   * Generate inheritence tree (ascending & descending) for a given class.
   * Document the inheritence tree.

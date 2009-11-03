@@ -1,6 +1,10 @@
 <?php
 
 # Generates the HTML documentation from parsed source files.
+# 
+# TODO: render global functions (ie. that do not belong to a namespace) as classes/_global.html
+# TODO: render a main_file as index file (within frameset).
+# 
 class Pdoc_Generator
 {
   protected $analyzer;
@@ -30,8 +34,9 @@ class Pdoc_Generator
     $this->generate_classes();
     $this->generate_interfaces();
 #    $this->generate_namespaces();
+#    $this->generate_global_namespace();
     
-#    $this->render('readme', 'readme.html');
+#    $this->render('main', 'readme.html');
     
     /*
     # namespaces
@@ -83,6 +88,8 @@ class Pdoc_Generator
   
   private function render($template, $output_file, $locals=array())
   {
+    echo "Generating $output_file\n";
+    
     # some local vars
     foreach($locals as $k => $v) {
       $$k = $v;
