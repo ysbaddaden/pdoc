@@ -5,10 +5,10 @@
 #   $browser = new PDoc_Browser('./src');
 #   $files = $browser->search('php', array('test'));
 # 
-class PDoc_Browser
+class Pdoc_Browser
 {
-  public    $basedir;
-  protected $exclude_regexp = false;
+  private $basedir;
+  private $exclude_regexp = false;
   
   function __construct($basedir)
   {
@@ -19,7 +19,7 @@ class PDoc_Browser
   }
   
   # Searches a directory for files matching a file extension.
-  # It will skip files that match patterns defined in the excludes' array.
+  # It will skip files that match the patterns defined in +$excludes+.
   function & search($extension, $excludes=array())
   {
     if (!empty($excludes))
@@ -33,11 +33,11 @@ class PDoc_Browser
     return $this->recursive_search($this->basedir, $extension);
   }
   
-  # Recursively parses a directory.
+  # Parses a directory recursively.
   # 
-  # It extracts files that match an extension,
-  # skipping those that match the given exclusion patterns.
-  protected function & recursive_search($dir, $extension)
+  # It extracts files that match an extension, skipping files
+  # that match the exclusion patterns.
+  private function & recursive_search($dir, $extension)
   {
 #    echo "Searching in $dir/\n";
     

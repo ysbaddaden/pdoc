@@ -1,12 +1,10 @@
 
 <ul class="attributes">
-  <? foreach($attributes as $attribute): ?>
-    <? $resource = "#{$attribute['name']}" ?>
-    
-    <li id="attribute-<?= $attribute['name'] ?>">
-      <span class="visibility"><?= $attribute['visibility'] ?></span>
-      <span class="name">$<?= $attribute['name'] ?></span>
-      <span class="brief"><?= $this->fix_internal_links(span_to_html($attribute['brief'])) ?></span>
+  <? foreach($attributes as $attr_name => $attr): ?>
+    <li id="attribute-<?= $attr_name ?>">
+      <span class="visibility"><?= $attr['visibility'] ?></span>
+      <span class="name"><?= $attr_name ?></span>
+      <span class="brief"><?= $this->span_to_html($attr['comment']) ?></span>
     </li>
   <? endforeach; ?>
 </ul>

@@ -8,11 +8,11 @@
 <body class="index">
 
   <h1>List of methods</h1>
-  
+
   <ul>
-    <? foreach($this->parser->list_methods() as $aside_name => $aside_func): ?>
-      <? if (!isset($aside_func['visibility']) or $aside_func['visibility'] != 'private'): ?>
-        <li><a href="<?= $this->relative_url().$aside_func['link'] ?>" target="docwin"><?= $aside_name ?></a></li>
+    <? foreach($this->analyzer->methods() as $func_name => $func): ?>
+      <? if ($func['visibility'] != 'private' or $this->document_private): ?>
+        <li><a href="<?= $this->relative_url().$this->method_url($func['path']) ?>" target="docwin"><?= $func_name ?></a></li>
       <? endif; ?>
     <? endforeach; ?>
   </ul>

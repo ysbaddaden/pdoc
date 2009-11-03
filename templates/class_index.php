@@ -8,12 +8,10 @@
 <body class="index">
 
   <h1>List of classes</h1>
-  
+
   <ul class="index">
-    <? foreach($this->parser->list_classes() as $aside_name => $aside_klass): ?>
-      <? if (!isset($aside_klass['visibility']) or $aside_klass['visibility'] != 'private'): ?>
-        <li><a href="<?= $this->klass_url($aside_name) ?>" target="docwin"><?= $aside_name ?></a></li>
-      <? endif; ?>
+    <? foreach($this->analyzer->classes() as $klass_name => $klass): ?>
+      <li><a href="<?= $this->klass_url($klass_name) ?>" target="docwin"><?= $klass_name ?></a></li>
     <? endforeach; ?>
   </ul>
 

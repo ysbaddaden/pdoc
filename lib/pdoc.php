@@ -4,7 +4,7 @@ define('ROOT', dirname(dirname(__FILE__)));
 
 require ROOT.'/lib/browser.php';
 require ROOT.'/lib/text_parser.php';
-require ROOT.'/lib/parser.php';
+require ROOT.'/lib/analyzer.php';
 require ROOT.'/lib/generator.php';
 
 # params
@@ -34,7 +34,7 @@ for ($n = 1; $n < $_SERVER['argc']; $n++)
         echo "  --help           Displays this help message.\n";
         echo "  --project name   Sets the project's name.\n";
         echo "  --exclude path/  Excludes a file or directory from documentation.\n";
-        echo "  --private        Document private methods and attributes (defaults: no).\n";
+#        echo "  --private        Document private methods and attributes (defaults: no).\n";
       exit;
       
       case 'exclude':
@@ -77,17 +77,22 @@ if (!isset($outputdir)) {
 
 
 # searches for source code
-$browser = new PDoc_Browser($basedir);
+$browser = new Pdoc_Browser($basedir);
 $files = $browser->search('php', $excludes);
 
 # parses source code
-$parser = new PDoc_Parser($basedir);
+$analyzer = new Pdoc_Analyzer();
 foreach($files as $file) {
-  $parser->add($file);
+  $analyzer->add($file);
 }
 
 # generates the HTML documentation
-$generator = new PDoc_Generator($parser, $project_name, $document_private);
-$generator->save($basedir, $outputdir);
+$generator = new Pdoc_Generator($analyzer, array(
+  'inputdir'         => $basedir,
+  'outputdir'        => $outputdir,
+  'project_name'     => $project_name,
+  'document_private' => $document_private,
+));
+$generator->save();
 
 ?>

@@ -1,47 +1,40 @@
 <?php
 
 # Generates the HTML documentation from parsed source files.
-class PDoc_Generator
+class Pdoc_Generator
 {
-  public $parser;
-  public $project_name;
+  protected $analyzer;
+  protected $project_name;
   
-  public $inputdir;
-  public $outputdir;
+  protected $inputdir;
+  protected $outputdir;
   
-  public $relative_url = '';
+  protected $relative_url = '';
   
-  function __construct($parser, $project_name, $document_private=false)
+  
+  function __construct(Pdoc_Analyzer $analyzer, $options=array())
   {
-    $this->project_name     = $project_name;
-    $this->document_private = $document_private;
-    $this->parser           = $parser;
+    $this->analyzer = $analyzer;
+    
+    foreach($options as $k => $v) {
+      $this->$k = $v;
+    }
   }
   
-  function save($inputdir, $outputdir)
+  function save()
   {
-    $this->inputdir  = $inputdir;
-    $this->outputdir = $outputdir;
+    $this->render('index',        'index.html');
+    $this->render('class_index',  'class_index.html');
+    $this->render('method_index', 'method_index.html');
     
-    if (!is_dir($this->outputdir)) {
-      mkdir($this->outputdir, 0755, true);
-    }
+    $this->generate_classes();
+#    $this->generate_interfaces();
+#    $this->generate_namespaces();
     
-    ksort($this->parser->classes);
-    ksort($this->parser->functions);
+#    $this->render('readme', 'readme.html');
     
-    # indexes
-    $this->generate_readme();
-    $this->generate_index();
-    $this->generate_class_index();
-    $this->generate_method_index();
-    
-    # each class
-    foreach($this->parser->classes as $klass) {
-      $this->generate_class($klass);
-    }
-    
-    # each namespace
+    /*
+    # namespaces
     $tree = $this->parser->get_tree();
     foreach($tree as $ns => $subtree)
     {
@@ -49,11 +42,153 @@ class PDoc_Generator
         $this->generate_namespace($subtree, $ns);
       }
     }
+    */
     
+    # CSS
     copy(ROOT.'/templates/style.css', $this->outputdir.'/style.css');
   }
   
+  private function generate_classes()
+  {
+    foreach($this->analyzer->classes() as $klass_name => $klass)
+    {
+      ksort($klass['constants']);
+      ksort($klass['attributes']);
+      ksort($klass['methods']);
+      
+      $this->relative_url(count(explode('_', $klass_name)));
+      
+      $this->render('class', $this->klass_path($klass_name), array(
+        'klass_name' => $klass_name,
+        'klass'      => &$klass,
+      ));
+    }
+  }
   
+  private function render($template, $output_file, $locals=array())
+  {
+    # some local vars
+    foreach($locals as $k => $v) {
+      $$k = $v;
+    }
+    
+    # renders template
+    ob_start();
+    include ROOT."/templates/{$template}.php";
+    $contents = ob_get_clean();
+    
+    # saves HTML file
+    if (!file_exists($this->outputdir.dirname($output_file))) {
+      mkdir($this->outputdir.dirname($output_file), 0775, true);
+    }
+    file_put_contents($this->outputdir.$output_file, $contents);
+  }
+  
+  
+  protected function text_to_html($text, $options=array())
+  {
+    $html = text_to_html($text, $options);
+    return preg_replace('/(src|href)="classes\//', '\1="'.$this->relative_url().'classes/', $html);
+  }
+  
+  protected function span_to_html($span, $options=array())
+  {
+    $html = span_to_html($span, $options);
+    return preg_replace('/(src|href)="classes\//', '\1="'.$this->relative_url().'classes/', $html);
+  }
+  
+  
+  protected function stylesheet_url()
+  {
+    return $this->relative_url().'style.css';
+  }
+  
+  protected function relative_url($deepness=null)
+  {
+    if ($deepness !== null) {
+      $this->relative_url = str_repeat('../', $deepness);
+    }
+    return $this->relative_url;
+  }
+  
+  protected function namespace_path($namespace)
+  {
+    return "classes/".str_replace('_', '/', $namespace).".html";
+  }
+  
+  protected function namespace_url($namespace)
+  {
+    return $this->relative_url().$this->namespace_path($namespace);
+  }
+  
+  protected function klass_path($klass)
+  {
+    return "classes/".str_replace('_', '/', $klass).'.html';
+  }
+  
+  protected function klass_url($klass)
+  {
+    return $this->relative_url().$this->klass_path($klass);
+  }
+  
+  protected function interface_path($interface)
+  {
+    return "interfaces/".str_replace('_', '/', $interface).'.html';
+  }
+  
+  protected function interface_url($interface)
+  {
+    return $this->relative_url().$this->interface_path($interface);
+  }
+  
+  protected function method_url($method)
+  {
+    if (strpos($method, '::'))
+    {
+      list($klass, $func) = explode('::', $method, 2);
+      return $this->relative_url().$this->klass_path($klass)."#method-$func";
+    }
+    else {
+      return $this->relative_url()."classes/_global.html#method-$method";
+    }
+  }
+  
+  
+  protected function filter_class_attributes($data)
+  {
+    $static   = array();
+    $instance = array();
+    
+    foreach($this->filter($data, 'static', true) as $name => $d) {
+      $static[$d['visibility']][$name] = $d;
+    }
+    foreach($this->filter($data, 'static', false) as $name => $d) {
+      $instance[$d['visibility']][$name] = $d;
+    }
+    
+    return array($static, $instance);
+  }
+  
+  protected function filter_class_methods($data)
+  {
+    return $this->filter_class_attributes($data);
+  }
+  
+  
+  private function filter($data, $type, $value)
+  {
+    $rs = array();
+    foreach($data as $name => $d)
+    {
+      if ($d[$type] === $value) {
+        $rs[$name] = $d;
+      }
+    }
+    return $rs;
+  }
+  
+  
+  /*
   protected function generate_readme()
   {
     $readme = file_exists($this->inputdir.'/doc/README') ?
@@ -80,7 +215,6 @@ class PDoc_Generator
     ob_start(); include ROOT.'/templates/method_index.php';
     file_put_contents($this->outputdir.'/method_index.html', ob_get_clean());
   }
-  
   
   protected function generate_namespace($tree, $namespace)
   {
@@ -136,82 +270,13 @@ class PDoc_Generator
     $contents = ob_get_clean();
     
     $path = $this->klass_path($klass);
-    @mkdir($this->outputdir.dirname($path), 0775, true);
+    
+    if (!file_exists($this->outputdir.dirname($path))) {
+      mkdir($this->outputdir.dirname($path), 0775, true);
+    }
     file_put_contents($this->outputdir.$path, $contents);
   }
-  
-  
-  protected function stylesheet_url()
-  {
-    return $this->relative_url().'style.css';
-  }
-  
-  protected function relative_url($deepness=null)
-  {
-    if ($deepness !== null) {
-      $this->relative_url = str_repeat('../', $deepness);
-    }
-    return $this->relative_url;
-  }
-  
-  protected function klass_path($klass)
-  {
-    $name = is_array($klass) ? $klass['name'] : $klass;
-    return "classes/".str_replace('_', '/', $name).'.html';
-  }
-  
-  protected function namespace_path($namespace)
-  {
-    return "classes/".str_replace('_', '/', $namespace).".html";
-  }
-  
-  protected function klass_url($klass)
-  {
-    return $this->relative_url().$this->klass_path($klass);
-  }
-  
-  protected function namespace_url($namespace)
-  {
-    return $this->relative_url().$this->namespace_path($namespace);
-  }
-  
-  
-  protected function render_tree($tree, $namespace='')
-  {
-    ksort($tree);
-    
-    echo "<dl>\n";
-    foreach($tree as $ns => $subtree)
-    {
-      if ($ns == '_classes')
-      {
-        ksort($subtree);
-        foreach($subtree as $klass)
-        {
-          $klass_name = empty($namespace) ? $klass['name'] : str_replace("{$namespace}_", '', $klass['name']);
-          $klass_url  = $this->klass_url($klass);
-          if ($klass_name != 'NS') {
-            echo "<dd class=\"klass\"><a title=\"Class: {$klass['name']}\" href=\"{$klass_url}\">{$klass_name}</a></dd>\n";
-          }
-        }
-      }
-      elseif ($ns != '_functions')
-      {
-        $ns_name = empty($namespace) ? $ns : $namespace.'_'.$ns;
-        $ns_url  = $this->namespace_url($ns_name);
-        echo "<dt><a href=\"{$ns_url}\">$ns</a></dt>\n";
-        echo "<dd>";
-        $this->render_tree($subtree, $ns_name);
-        echo "</dd>";
-      }
-    }
-    echo "</dl>\n";
-  }
-  
-  protected function fix_internal_links($html)
-  {
-    return preg_replace('/(src|href)="classes\//', '\1="'.$this->relative_url().'classes/', $html);
-  }
+  */
 }
 
 ?>
