@@ -74,7 +74,7 @@ class Pdoc_Generator
       
       $this->relative_url(count(explode('_', $interface_name)));
       
-      $this->render('class', $this->interface_path($interface_name), array(
+      $this->render('interface', $this->interface_path($interface_name), array(
         'interface_name' => $interface_name,
         'interface'      => &$interface,
       ));
