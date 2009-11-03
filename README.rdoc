@@ -29,12 +29,12 @@ So that you may do this:
    
    # This comment is discarded.
    
-   # This is a brief for +my_method+
+   # This is a brief for <tt>my_method</tt>
    # 
-   # This is the long comment for +MyClass::my_method()+.
+   # This is the long comment for <tt>MyClass::my_method()</tt>.
    # You may fill it with a lot of things.
    # 
-   # `$toto` can be:
+   # +$toto+ can be:
    # 
    # - something
    # - something else
@@ -65,8 +65,7 @@ So that you may do this:
 Available options:
 
 - --project "Project Name"
-- --exclude subpath (exclude a path from input_directory, there can be more than one)
-- --private (do document private methods and attributes (not reliable))
+- --exclude sub/path (exclude a path from input_directory, there can be more than one)
 
 Examples:
 
