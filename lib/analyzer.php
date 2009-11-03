@@ -9,7 +9,7 @@
 #   $functions  = $analyzer->functions();
 #   $classes    = $analyzer->classes();
 # 
-# TODO: :nodoc: in comment must skip the definition (whatever if an attribute, etc.)
+# TODO: :nodoc: in comment must skip the definition (whatever if an attribute, method, etc.)
 # IMPROVE: Parse PHP namespaces.
 # 
 class Pdoc_Analyzer
@@ -116,6 +116,24 @@ class Pdoc_Analyzer
     return $methods;
   }
   
+  # Returns true if the class exists in the project.
+  function class_exists($klass_name)
+  {
+    return isset($this->classes[$klass_name]);
+  }
+  
+  # Returns true if the interface exists in the project.
+  function interface_exists($interface_name)
+  {
+    return isset($this->interfaces[$interface_name]);
+  }
+  
+  # Returns true if the function exists in the project.
+  function function_exists($function_name)
+  {
+    return isset($this->functions[$function_name]);
+  }
+  
   
   private function gen_pseudo_namespaces(&$namespaces, $ary, $type)
   {
@@ -191,9 +209,9 @@ class Pdoc_Analyzer
       'comment'    => $this->comment(),
       'extends'    => '',
       'implements' => array(),
-      'methods'    => array(),
+      'constants'  => array(),
       'attributes' => array(),
-      'visibility' => 'public',
+      'methods'    => array(),
       'abstract'   => false,
       'final'      => false,
     ), $this->properties());

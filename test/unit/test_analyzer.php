@@ -23,6 +23,9 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal($functions['abc']['comment'], "This is a doc\nblock test.");
     $this->assert_equal($functions['ghi']['comment'], "this is\na test");
     $this->assert_equal($functions['jkl']['comment'], '');
+    
+    $this->assert_true($analyzer->function_exists('abc'));
+    $this->assert_false($analyzer->function_exists('unknown_function'));
   }
   
   function test_classes()
@@ -81,6 +84,9 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_true($classes['C']['methods']['d']['static']);
     $this->assert_false($classes['C']['methods']['e']['static']);
     $this->assert_true($classes['C']['methods']['f']['static']);
+    
+    $this->assert_true($analyzer->class_exists('C'));
+    $this->assert_false($analyzer->class_exists('UnknownClass'));
   }
   
   function test_interfaces()
@@ -105,6 +111,9 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal(array_keys($interfaces['B']['methods']), array('test', 'another_test'));
     $this->assert_equal($interfaces['B']['methods']['another_test']['arguments'], '$a=null');
     $this->assert_equal($interfaces['B']['methods']['another_test']['comment'], "this is another\n test\n");
+    
+    $this->assert_true($analyzer->interface_exists('A'));
+    $this->assert_false($analyzer->interface_exists('UnknownInterface'));
   }
   
   function test_pseudo_namespaces()
