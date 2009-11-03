@@ -7,10 +7,9 @@
 #   $analyzer->add('src/another_file.php');
 #   
 #   $functions  = $analyzer->functions();
-#   $interfaces = $analyzer->interfaces();
 #   $classes    = $analyzer->classes();
 # 
-# IMPROVE: Parse namespaces.
+# IMPROVE: Parse PHP namespaces.
 class Pdoc_Analyzer
 {
   private $tokens;
@@ -80,28 +79,39 @@ class Pdoc_Analyzer
   function & namespaces()
   {
     $namespaces = array();
+    $this->gen_pseudo_namespaces($namespaces, $this->functions,  'functions');
+    $this->gen_pseudo_namespaces($namespaces, $this->interfaces, 'interfaces');
+    $this->gen_pseudo_namespaces($namespaces, $this->classes,    'classes');
     
-    $list = array_merge(
-      array_keys($this->functions),
-      array_keys($this->interfaces),
-      array_keys($this->classes)
-    );
-    foreach ($list as $func)
-    {
-      if (strpos($func, '_'))
-      {
-        foreach(explode('_', $func, -1) as $ns)
-        {
-          $_ns = isset($_ns) ? "{$_ns}_{$ns}" : $ns;
-          $namespaces[] = $_ns;
-        }
-        unset($_ns);
-      }
-    }
-    $namespaces = array_unique($namespaces, SORT_STRING);
+    ksort($namespaces);
     return $namespaces;
   }
   
+  private function gen_pseudo_namespaces(&$namespaces, $ary, $type)
+  {
+    foreach($ary as $name => $data)
+    {
+      if (strpos($name, '_'))
+      {
+        foreach(explode('_', $name, -1) as $ns)
+        {
+          $_ns = isset($_ns) ? "{$_ns}_{$ns}" : $ns;
+          
+          if (!isset($namespaces[$_ns]))
+          {
+            $namespaces[$_ns] = array(
+              'functions'  => array(),
+              'interfaces' => array(),
+              'classes'    => array(),
+            );
+          }
+        }
+        
+        $namespaces[$_ns][$type][$name] = $data;
+        unset($_ns);
+      }
+    }
+  }
   
   private function properties()
   {
