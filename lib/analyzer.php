@@ -85,7 +85,7 @@ class Pdoc_Analyzer
   private function comment()
   {
     $comment = $this->comment;
-    $this->comment = null;
+    $this->comment = '';
     return $comment;
   }
   
