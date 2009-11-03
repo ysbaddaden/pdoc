@@ -49,7 +49,15 @@ class Test_Pdoc_Analyzer extends Unit_Test
     ));
     
     # attributes
-#    $this->assert_equal(array_keys($classes['C']['attributes']), array('name', 'value', 'protect_me', 'paranoid'));
+    $this->assert_equal(array_keys($classes['C']['attributes']), array('$name', '$value', '$protect_me', '$paranoid'));
+    $this->assert_equal($classes['C']['attributes']['$name'],
+      array('comment' => '', 'value' => null, 'visibility' => 'public', 'static' => true));
+    $this->assert_equal($classes['C']['attributes']['$value'],
+      array('comment' => '', 'value' => 'null', 'visibility' => 'private', 'static' => true));
+    $this->assert_equal($classes['C']['attributes']['$protect_me'],
+      array('comment' => '', 'value' => 'false', 'visibility' => 'protected', 'static' => false));
+    $this->assert_equal($classes['C']['attributes']['$paranoid'],
+      array('comment' => "shall we be paranoid?\n", 'value' => "array('a' => array('b'))", 'visibility' => 'private', 'static' => false));
     
     # methods
     $this->assert_equal(array_keys($classes['B']['methods']), array('name', 'id'));

@@ -32,9 +32,11 @@ final class B extends A implements ArrayAccess, Countable
 class C
 {
   static $name;
-  private static $value;
-  protected $protect_me;
-  private $paranoid;
+  private static $value = null;
+  protected $protect_me = false;
+  
+  # shall we be paranoid?
+  private $paranoid = array('a' => array('b'));
   
   public function a()
   {
