@@ -2,7 +2,6 @@
 
 # Analyzes PHP source files.
 # 
-# TODO: Parse visibility/static/abstract/final properties for class methods.
 # TODO: Parse class attributes (with visibility/static).
 # TODO: Parse pseudo-namespaces.
 # IMPROVE: Parse namespaces.
@@ -33,13 +32,8 @@ class Pdoc_Analyzer
         switch($token[0])
         {
           case T_COMMENT: case T_DOC_COMMENT: $this->parse_comment(); break;
-          
-          case T_ABSTRACT:  $this->properties['abstract']   = true; break;
-          case T_FINAL:     $this->properties['final']      = true; break;
-          case T_STATIC:    $this->properties['static']     = true; break;
-          case T_PUBLIC:    $this->properties['visibility'] = 'public';    break;
-          case T_PROTECTED: $this->properties['visibility'] = 'protected'; break;
-          case T_PRIVATE:   $this->properties['visibility'] = 'private';   break;
+          case T_ABSTRACT:  $this->properties['abstract'] = true; break;
+          case T_FINAL:     $this->properties['final']    = true; break;
           
           case T_FUNCTION:  $this->parse_function();  break;
           case T_CLASS:     $this->parse_class();     break;
@@ -153,6 +147,12 @@ class Pdoc_Analyzer
       switch($token[0])
       {
         case T_COMMENT: case T_DOC_COMMENT: $this->parse_comment(); break;
+        case T_ABSTRACT:  $this->properties['abstract']   = true; break;
+        case T_FINAL:     $this->properties['final']      = true; break;
+        case T_STATIC:    $this->properties['static']     = true; break;
+        case T_PUBLIC:    $this->properties['visibility'] = 'public';    break;
+        case T_PROTECTED: $this->properties['visibility'] = 'protected'; break;
+        case T_PRIVATE:   $this->properties['visibility'] = 'private';   break;
         
         case T_CONST:
           list($const_name, $const) = $this->parse_class_constant();
@@ -173,8 +173,14 @@ class Pdoc_Analyzer
   
   private function parse_class_method()
   {
+    $defaults = array(
+      'visibility' => 'public',
+      'abstract'   => false,
+      'final'      => false,
+    );
+    
     list($name, $func) = $this->parse_function_or_method();
-#    $func = array_merge($func, $this->properties());
+    $func = array_merge($defaults, $func, $this->properties());
     return array($name, $func);
   }
   

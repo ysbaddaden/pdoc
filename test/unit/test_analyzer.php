@@ -33,7 +33,7 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $classes = $analyzer->classes();
     
     # definition
-    $this->assert_equal(array_keys($classes), array('A', 'B'));
+    $this->assert_equal(array_keys($classes), array('A', 'B', 'C'));
     $this->assert_equal($classes['A']['abstract'], true);
     $this->assert_equal($classes['B']['abstract'], false);
     $this->assert_equal($classes['A']['final'], false);
@@ -52,6 +52,20 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal(array_keys($classes['B']['methods']), array('name', 'id'));
     $this->assert_equal($classes['B']['methods']['name']['comment'], "gets name\n");
     $this->assert_equal($classes['B']['methods']['id']['comment'], '');
+    
+    $this->assert_equal($classes['C']['methods']['a']['visibility'], 'public');
+    $this->assert_equal($classes['C']['methods']['b']['visibility'], 'protected');
+    $this->assert_equal($classes['C']['methods']['c']['visibility'], 'private');
+    $this->assert_equal($classes['C']['methods']['d']['visibility'], 'public');
+    $this->assert_equal($classes['C']['methods']['e']['visibility'], 'public');
+    $this->assert_equal($classes['C']['methods']['f']['visibility'], 'private');
+    
+    $this->assert_true($classes['C']['methods']['c']['final']);
+    $this->assert_false($classes['C']['methods']['d']['final']);
+    $this->assert_true($classes['C']['methods']['e']['final']);
+    
+    $this->assert_false($classes['C']['methods']['a']['abstract']);
+    $this->assert_true($classes['C']['methods']['b']['abstract']);
   }
   
   function test_interfaces()
