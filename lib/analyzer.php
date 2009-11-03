@@ -2,9 +2,15 @@
 
 # Analyzes PHP source files.
 # 
-# TODO: Parse pseudo-namespaces.
-# IMPROVE: Parse namespaces.
+#   $analyzer = new Pdoc_Analyzer();
+#   $analyzer->add('src/file.php');
+#   $analyzer->add('src/another_file.php');
+#   
+#   $functions  = $analyzer->functions();
+#   $interfaces = $analyzer->interfaces();
+#   $classes    = $analyzer->classes();
 # 
+# IMPROVE: Parse namespaces.
 class Pdoc_Analyzer
 {
   private $tokens;
@@ -65,6 +71,35 @@ class Pdoc_Analyzer
     $interfaces = $this->interfaces;
     ksort($interfaces);
     return $interfaces;
+  }
+  
+  # Returns the list of namespaces.
+  # 
+  # NOTE: Only pseudo namespaces are supported right now.
+  # Real namespaces shall be supported in a near future.
+  function & namespaces()
+  {
+    $namespaces = array();
+    
+    $list = array_merge(
+      array_keys($this->functions),
+      array_keys($this->interfaces),
+      array_keys($this->classes)
+    );
+    foreach ($list as $func)
+    {
+      if (strpos($func, '_'))
+      {
+        foreach(explode('_', $func, -1) as $ns)
+        {
+          $_ns = isset($_ns) ? "{$_ns}_{$ns}" : $ns;
+          $namespaces[] = $_ns;
+        }
+        unset($_ns);
+      }
+    }
+    $namespaces = array_unique($namespaces, SORT_STRING);
+    return $namespaces;
   }
   
   
@@ -351,10 +386,22 @@ class Pdoc_Analyzer
       switch($token[0])
       {
         case T_COMMENT: case T_DOC_COMMENT: continue;
-        case '{': $deep++; break;
-        case '}': $deep--; if ($deep < 1) return $code; break;
+        case '{':
+          $deep++;
+          if ($deep == 1) {
+            $indent = 0;
+          }
+          break;
+        
+        case '}':
+          $deep--;
+          if ($deep < 1) {
+            break 2;
+          }
+        break;
       }
     }
+    
     return $code;
   }
   

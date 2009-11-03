@@ -106,6 +106,14 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal($interfaces['B']['methods']['another_test']['arguments'], '$a=null');
     $this->assert_equal($interfaces['B']['methods']['another_test']['comment'], "this is another\n test\n");
   }
+  
+  function test_pseudo_namespaces()
+  {
+    $analyzer = new Pdoc_Analyzer();
+    $analyzer->add(dirname(__FILE__).'/../fixtures/pseudo_namespaces.php');
+    
+    $this->assert_equal($analyzer->namespaces(), array('Ns', 'Ns_SubNs', 'Ifaces'));
+  }
 }
 new Test_Pdoc_Analyzer();
 
