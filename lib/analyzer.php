@@ -126,7 +126,6 @@ class Pdoc_Analyzer
       'abstract'   => false,
       'final'      => false,
     ), $this->properties());
-    $this->comment = '';
     
     # definition
     while(($token = next($this->tokens)) !== false)
@@ -175,9 +174,7 @@ class Pdoc_Analyzer
   private function parse_class_method()
   {
     list($name, $func) = $this->parse_function_or_method();
-    
-    // ...
-    
+#    $func = array_merge($func, $this->properties());
     return array($name, $func);
   }
   
@@ -198,9 +195,8 @@ class Pdoc_Analyzer
     
     $const = array(
       'value' => trim($value),
-      'comment' => $this->comment,
+      'comment' => $this->comment(),
     );
-    $this->comment = '';
     
     return array($name, $const);
   }
@@ -211,12 +207,11 @@ class Pdoc_Analyzer
     
     $interface_name = $token[1];
     $interface = array(
-      'comment'   => $this->comment,
+      'comment'   => $this->comment(),
       'extends'   => array(),
       'constants' => array(),
       'methods'   => array(),
     );
-    $this->comment = '';
     
     # definition
     while(($token = next($this->tokens)) !== false)
@@ -263,9 +258,8 @@ class Pdoc_Analyzer
     
     $method = array(
       'arguments' => $this->parse_function_args(),
-      'comment'   => $this->comment,
+      'comment'   => $this->comment(),
     );
-    $this->comment = '';
     
     return array($name, $method);
   }
@@ -285,9 +279,8 @@ class Pdoc_Analyzer
     $func = array(
       'arguments' => $this->parse_function_args(),
       'code'      => $this->parse_function_code(),
-      'comment'   => $this->comment,
+      'comment'   => $this->comment(),
     );
-    $this->comment = '';
     
     return array($name, $func);
   }
