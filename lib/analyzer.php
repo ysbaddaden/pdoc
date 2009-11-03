@@ -93,14 +93,22 @@ class Pdoc_Analyzer
   {
     $methods = array();
     
-    foreach($this->functions as $func_name => $func) {
-      $methods[$func_name] = array('visibility' => 'public');
+    foreach($this->functions as $func_name => $func)
+    {
+      $methods[$func_name] = array(
+        'visibility' => 'public',
+        'path' => $func_name,
+      );
     }
     
     foreach($this->classes as $klass_name => $klass)
     {
-      foreach($klass['methods'] as $method_name => $method) {
-        $methods["$method_name ($klass_name)"] = array('visibility' => $method['visibility']);
+      foreach($klass['methods'] as $method_name => $method)
+      {
+        $methods["$method_name ($klass_name)"] = array(
+          'visibility' => $method['visibility'],
+          'path' => "$klass_name::$method_name",
+        );
       }
     }
     

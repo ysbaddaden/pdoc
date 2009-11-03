@@ -127,8 +127,9 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $methods = $analyzer->methods();
     
     $this->assert_equal(array_keys($methods), array('another_test (Ns_Klass)', 'Ns_find', 'test (Ns_Klass)', 'test (Ns_SubNs_Klass)'));
-    $this->assert_equal($methods['test (Ns_Klass)'], array('visibility' => 'public'));
-    $this->assert_equal($methods['another_test (Ns_Klass)'], array('visibility' => 'private'));
+    $this->assert_equal($methods['test (Ns_Klass)'], array('visibility' => 'public', 'path' => 'Ns_Klass::test'));
+    $this->assert_equal($methods['another_test (Ns_Klass)'], array('visibility' => 'private', 'path' => 'Ns_Klass::another_test'));
+    $this->assert_equal($methods['Ns_find'], array('visibility' => 'public', 'path' => 'Ns_find'));
   }
 }
 new Test_Pdoc_Analyzer();
