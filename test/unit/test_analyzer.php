@@ -48,6 +48,9 @@ class Test_Pdoc_Analyzer extends Unit_Test
       'data' => array('value' => "array('a', 'b', false)", 'comment' => ''),
     ));
     
+    # attributes
+#    $this->assert_equal(array_keys($classes['C']['attributes']), array('name', 'value', 'protect_me', 'paranoid'));
+    
     # methods
     $this->assert_equal(array_keys($classes['B']['methods']), array('name', 'id'));
     $this->assert_equal($classes['B']['methods']['name']['comment'], "gets name\n");
@@ -66,6 +69,10 @@ class Test_Pdoc_Analyzer extends Unit_Test
     
     $this->assert_false($classes['C']['methods']['a']['abstract']);
     $this->assert_true($classes['C']['methods']['b']['abstract']);
+    
+    $this->assert_true($classes['C']['methods']['d']['static']);
+    $this->assert_false($classes['C']['methods']['e']['static']);
+    $this->assert_true($classes['C']['methods']['f']['static']);
   }
   
   function test_interfaces()

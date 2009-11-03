@@ -177,8 +177,8 @@ class Pdoc_Analyzer
       'visibility' => 'public',
       'abstract'   => false,
       'final'      => false,
+      'static'     => false,
     );
-    
     list($name, $func) = $this->parse_function_or_method();
     $func = array_merge($defaults, $func, $this->properties());
     return array($name, $func);
@@ -205,6 +205,17 @@ class Pdoc_Analyzer
     );
     
     return array($name, $const);
+  }
+  
+  private function parse_class_attribute()
+  {
+    $defaults = array(
+      'visibility' => 'public',
+      'static'     => false,
+    );
+    list($name, $attribute) = $this->parse_class_constant();
+    $attribute = array_merge($defaults, $attribute, $this->properties());
+    return array($name, $attribute);
   }
   
   private function parse_interface()
