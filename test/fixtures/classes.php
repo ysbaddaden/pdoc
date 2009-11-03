@@ -16,6 +16,8 @@ final class B extends A implements ArrayAccess, Countable
   # gets name
   static protected function name()
   {
+    $a = "{$this->name}";
+    
     # irrelevant comment
     return $this->name;
   }

@@ -439,11 +439,11 @@ class Pdoc_Analyzer
     
     while(($token = next($this->tokens)) !== false)
     {
-      $code .= is_string($token) ? $token : $token[1];
-      
       switch($token[0])
       {
         case T_COMMENT: case T_DOC_COMMENT: continue;
+        
+        case T_CURLY_OPEN:
         case '{':
           $deep++;
           if ($deep == 1) {
@@ -453,11 +453,14 @@ class Pdoc_Analyzer
         
         case '}':
           $deep--;
-          if ($deep < 1) {
+          if ($deep < 1)
+          {
+            $code .= '}';
             break 2;
           }
         break;
       }
+      $code .= is_string($token) ? $token : $token[1];
     }
     
     return $code;
