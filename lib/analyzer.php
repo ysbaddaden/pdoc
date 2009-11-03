@@ -9,7 +9,9 @@
 #   $functions  = $analyzer->functions();
 #   $classes    = $analyzer->classes();
 # 
+# TODO: :nodoc: in comment must skip the definition (whatever if an attribute, etc.)
 # IMPROVE: Parse PHP namespaces.
+# 
 class Pdoc_Analyzer
 {
   private $tokens;
@@ -86,6 +88,26 @@ class Pdoc_Analyzer
     ksort($namespaces);
     return $namespaces;
   }
+  
+  function & methods()
+  {
+    $methods = array();
+    
+    foreach($this->functions as $func_name => $func) {
+      $methods[$func_name] = array('visibility' => 'public');
+    }
+    
+    foreach($this->classes as $klass_name => $klass)
+    {
+      foreach($klass['methods'] as $method_name => $method) {
+        $methods["$method_name ($klass_name)"] = array('visibility' => $method['visibility']);
+      }
+    }
+    
+    ksort($methods);
+    return $methods;
+  }
+  
   
   private function gen_pseudo_namespaces(&$namespaces, $ary, $type)
   {

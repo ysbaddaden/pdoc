@@ -119,6 +119,17 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal(array_keys($namespaces['Ns_SubNs']['classes']), array('Ns_SubNs_Klass'));
     $this->assert_equal(array_keys($namespaces['Ifaces']['interfaces']), array('Ifaces_Object'));
   }
+  
+  function test_methods()
+  {
+    $analyzer = new Pdoc_Analyzer();
+    $analyzer->add(dirname(__FILE__).'/../fixtures/pseudo_namespaces.php');
+    $methods = $analyzer->methods();
+    
+    $this->assert_equal(array_keys($methods), array('another_test (Ns_Klass)', 'Ns_find', 'test (Ns_Klass)', 'test (Ns_SubNs_Klass)'));
+    $this->assert_equal($methods['test (Ns_Klass)'], array('visibility' => 'public'));
+    $this->assert_equal($methods['another_test (Ns_Klass)'], array('visibility' => 'private'));
+  }
 }
 new Test_Pdoc_Analyzer();
 
