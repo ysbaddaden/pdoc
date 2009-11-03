@@ -34,6 +34,10 @@ class Test_Pdoc_Analyzer extends Unit_Test
     
     # definition
     $this->assert_equal(array_keys($classes), array('A', 'B'));
+    $this->assert_equal($classes['A']['abstract'], true);
+    $this->assert_equal($classes['B']['abstract'], false);
+    $this->assert_equal($classes['A']['final'], false);
+    $this->assert_equal($classes['B']['final'], true);
     $this->assert_equal($classes['B']['extends'], 'A');
     $this->assert_equal($classes['B']['implements'], array('ArrayAccess', 'Countable'));
     $this->assert_equal($classes['B']['comment'], "this is\nclass B.\n");

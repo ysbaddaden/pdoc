@@ -1,6 +1,6 @@
 <?php
 
-class A
+abstract class A
 {
   # const A::A
   const name = 'A';
@@ -9,7 +9,7 @@ class A
 
 # this is
 # class B.
-class B extends A implements ArrayAccess, Countable
+final class B extends A implements ArrayAccess, Countable
 {
   public $name;
   

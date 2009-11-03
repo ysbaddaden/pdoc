@@ -1,8 +1,7 @@
 <?php
 
-# Analyzes a PHP source file for functions, classes, etc.
+# Analyzes PHP source files.
 # 
-# TODO: Parse abstract/final properties for classes.
 # TODO: Parse visibility/static/abstract/final properties for class methods.
 # TODO: Parse class attributes (with visibility/static).
 # TODO: Parse pseudo-namespaces.
@@ -12,16 +11,20 @@ class Pdoc_Analyzer
 {
   private $tokens;
   private $comment    = '';
+  private $properties = array();
   
   private $functions  = array();
   private $classes    = array();
   private $interfaces = array();
   
   
-  # Analyzes a PHP source file for functions, classes, etc.
+  # Adds a PHP source file to parse.
   function add($php_file)
   {
-    $this->tokens = token_get_all(file_get_contents($php_file));
+    $this->tokens     = token_get_all(file_get_contents($php_file));
+    $this->comment    = '';
+    $this->properties = array();
+    
     $token = reset($this->tokens);
     do
     {
@@ -30,6 +33,14 @@ class Pdoc_Analyzer
         switch($token[0])
         {
           case T_COMMENT: case T_DOC_COMMENT: $this->parse_comment(); break;
+          
+          case T_ABSTRACT:  $this->properties['abstract']   = true; break;
+          case T_FINAL:     $this->properties['final']      = true; break;
+          case T_STATIC:    $this->properties['static']     = true; break;
+          case T_PUBLIC:    $this->properties['visibility'] = 'public';    break;
+          case T_PROTECTED: $this->properties['visibility'] = 'protected'; break;
+          case T_PRIVATE:   $this->properties['visibility'] = 'private';   break;
+          
           case T_FUNCTION:  $this->parse_function();  break;
           case T_CLASS:     $this->parse_class();     break;
           case T_INTERFACE: $this->parse_interface(); break;
@@ -55,7 +66,7 @@ class Pdoc_Analyzer
     return $classes;
   }
   
-  # Returns the list of classes.
+  # Returns the list of interfaces.
   function & interfaces()
   {
     $interfaces = $this->interfaces;
@@ -63,6 +74,20 @@ class Pdoc_Analyzer
     return $interfaces;
   }
   
+  
+  private function properties()
+  {
+    $properties = $this->properties;
+    $this->properties = array();
+    return $properties;
+  }
+  
+  private function comment()
+  {
+    $comment = $this->comment;
+    $this->comment = null;
+    return $comment;
+  }
   
   private function parse_comment()
   {
@@ -93,11 +118,14 @@ class Pdoc_Analyzer
     while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
     
     $name  = $token[1];
-    $klass = array(
-      'comment'    => $this->comment,
+    $klass = array_merge(array(
+      'comment'    => $this->comment(),
       'extends'    => '',
       'implements' => array(),
-    );
+      'visibility' => 'public',
+      'abstract'   => false,
+      'final'      => false,
+    ), $this->properties());
     $this->comment = '';
     
     # definition
