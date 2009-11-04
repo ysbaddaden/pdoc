@@ -47,7 +47,8 @@ class Pdoc_Generator
   {
     foreach($this->analyzer->classes() as $klass_name => $klass)
     {
-      $this->relative_url(count(explode('_', $klass_name)));
+      $klass_name = ltrim($klass_name, '\\');
+      $this->relative_url(count(preg_split('/(_|\\\)/', $klass_name)));
       
       $this->render('class', $this->klass_path($klass_name), array(
         'klass_name' => $klass_name,
@@ -76,6 +77,7 @@ class Pdoc_Generator
   {
     foreach($this->analyzer->namespaces() as $ns_name => $ns)
     {
+      $ns_name = ltrim($ns_name, '\\');
       $this->relative_url(count(explode('\\', $ns_name)));
       
       $this->render('namespace', $this->namespace_path($ns_name), array(
@@ -143,7 +145,7 @@ class Pdoc_Generator
   
   protected function namespace_path($namespace)
   {
-    return "classes/".str_replace(array('_', '\\'), '/', $namespace).".html";
+    return "classes/".ltrim(str_replace(array('_', '\\'), '/', $namespace), '/').".html";
   }
   
   protected function namespace_url($namespace)
@@ -153,7 +155,7 @@ class Pdoc_Generator
   
   protected function klass_path($klass)
   {
-    return "classes/".str_replace(array('_', '\\'), '/', $klass).'.html';
+    return "classes/".ltrim(str_replace(array('_', '\\'), '/', $klass), '/').'.html';
   }
   
   protected function klass_url($klass)
