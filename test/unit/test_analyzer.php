@@ -5,7 +5,6 @@ include dirname(__FILE__).'/../../lib/pdoc/analyzer.php';
 
 class Test_Pdoc_Analyzer extends Unit_Test
 {
-  /*
   function test_functions_and_arguments()
   {
     $analyzer = new Pdoc_Analyzer();
@@ -129,7 +128,7 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal(array_keys($namespaces['Ns\SubNs']['classes']),  array('Ns_SubNs_Klass'));
     $this->assert_equal(array_keys($namespaces['Ifaces']['interfaces']), array('Ifaces_Object'));
   }
-  */
+  
   function test_namespaces()
   {
     $analyzer = new Pdoc_Analyzer();
@@ -142,7 +141,7 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal(array_keys($namespaces['Ns']['functions']), array('Ns\my_func'));
     $this->assert_equal(array_keys($namespaces['Ns']['interfaces']), array('Ns\Iface'));
   }
-  /*
+  
   function test_methods()
   {
     $analyzer = new Pdoc_Analyzer();
@@ -175,7 +174,6 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal(array_keys($analyzer->interfaces()), array('\Ns\MyIface'));
     $this->assert_equal(array_keys($analyzer->namespaces()), array('My', 'My\Ns', 'Ns'));
   }
-  */
 }
 new Test_Pdoc_Analyzer();
 
