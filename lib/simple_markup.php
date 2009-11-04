@@ -25,7 +25,7 @@ class SimpleMarkup
     if (!empty($options)) {
       $this->options = array_merge($this->options, $options);
     }
-    $this->text = $text;
+    $this->text = trim($text);
     $this->linearize_text();
   }
   
@@ -53,7 +53,7 @@ class SimpleMarkup
       {
         # heading
         $hx    = strlen($m[1]) - 1 + $this->options['headings_start'];
-        $html .= "<h{$hx}>{$m[2]}</h{$hx}>\n";
+        $html .= "<h{$hx}>".trim($m[2])."</h{$hx}>\n";
       }
       elseif(preg_match('/^[\-\*] /s', $block, $m))
       {

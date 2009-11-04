@@ -19,7 +19,8 @@ class Test_SimpleMarkup extends Unit_Test
   
   function test_text_to_html()
   {
-    
+    $html = text_to_html(file_get_contents(dirname(__FILE__).'/../fixtures/plain.txt'));
+    $this->assert_equal($html, file_get_contents(dirname(__FILE__).'/../fixtures/plain.html'));
   }
 }
 new Test_SimpleMarkup();

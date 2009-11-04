@@ -1,0 +1,35 @@
+
+= Header
+
+This is a *paragraph*. Yes,
+it _extends_ itself on
+multiple lines.
+
+This is another
+paragraph.
+
+==Subheader
+
+This is another
+paragraph.
+
+- list +item 1+
+- list +item 2+
+
+Example:
+
+  <?php
+  class A extends B
+  {
+    
+  }
+  ?>
+
+  <?php
+  $this->a();
+  ?>
+
+You may use +$this->a()+.
+See <tt>B::a()</tt> for more help,
+or just <tt>a</tt>.
+
