@@ -15,6 +15,7 @@ function abc($a, $b=null, $c=array('a' => array('b' => 'c')))
   # is discarded
   
   # this is a comment
+  #
   # for def
   function def()
   {

@@ -170,7 +170,7 @@ class Pdoc_Analyzer
     }
     
     # removes useless chars
-    $this->comment = preg_replace(array('/^\s*(#|[*]) /m', '/\/[*]*\s*|\s*[*]\//'), '', $comment);
+    $this->comment = preg_replace(array('/^\s*(#|[*])[ ]?/m', '/\/[*]*\s*|\s*[*]\//'), '', $comment);
   }
   
   
