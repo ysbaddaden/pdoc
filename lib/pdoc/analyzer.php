@@ -195,7 +195,7 @@ class Pdoc_Analyzer
       $modifiers = array();
       foreach($matches as $match)
       {
-        $comment = str_replace($match[0], '', $data['comment']);
+        $data['comment'] = str_replace($match[0], '', $data['comment']);
         switch($match[1])
         {
           case 'nodoc':     $data['doc'] = false; break;
