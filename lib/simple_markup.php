@@ -70,23 +70,28 @@ class SimpleMarkup
     return $html;
   }
   
-  # Transforms a plain text phrase to HTML.
+  # Transforms a block (ie. a single phrase) to HTML.
   function parse_span($block)
   {
-    $block = preg_replace('/\+(.+?)\+/', '<code>\1</code>', $block);
-    $block = preg_replace_callback('/<tt>(.+?)<\/tt>/', array($this, '__replace_links'), $block);
-    $block = preg_replace_callback('/(?:http|https|ftp|sftp|ssh):\/\/[^ ]+/', array($this, '__cb_auto_link'), $block);
+    $block = preg_replace_callback('/([+*_])(.+?)\1/', array($this, '_replace_span'), $block);
+    $block = preg_replace_callback('/<tt>(.+?)<\/tt>/', array($this, '_replace_links'), $block);
+    $block = preg_replace_callback('/(?:http|https|ftp|sftp|ssh):\/\/[^ ]+/', array($this, '_auto_links'), $block);
     return $block;
   }
   
   # :nodoc:
-  static private function __cb_auto_link($match)
+  static private function _replace_span($match)
   {
-    return '<a href="'.htmlspecialchars($match[0]).'">'.$match[0].'</a>';
+    switch($match[1])
+    {
+      case '+': return '<code>'.$match[2].'</code>'; break;
+      case '*': return '<strong>'.$match[2].'</strong>'; break;
+      case '_': return '<em>'.$match[2].'</em>'; break;
+    }
   }
   
   # :nodoc:
-  static private function __replace_links($match)
+  static private function _replace_links($match)
   {
     if (strtolower($match[1]) != $match[1])
     {
@@ -98,6 +103,12 @@ class SimpleMarkup
       return '<a href="classes/'.implode('/', explode('_', $match[1])).'.html">'.$match[1].'</a>';
     }
     return '<a href="#method-'.str_replace(array('(', ')'), '', $match[1]).'">'.$match[1].'</a>';
+  }
+  
+  # :nodoc:
+  static private function _auto_links($match)
+  {
+    return '<a href="'.htmlspecialchars($match[0]).'">'.$match[0].'</a>';
   }
   
   # Parses a list.
