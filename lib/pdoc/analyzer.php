@@ -236,7 +236,7 @@ class Pdoc_Analyzer
       'abstract'   => false,
       'final'      => false,
     ), $this->properties());
-#    $klass = $this->parse_modifiers($name, $klass);
+    list($name, $klass) = $this->parse_modifiers($name, $klass);
     
     # definition
     while(($token = next($this->tokens)) !== false)
@@ -273,12 +273,16 @@ class Pdoc_Analyzer
         
         case T_CONST:
           list($const_name, $const) = $this->parse_class_constant();
-          $klass['constants'][$const_name] = $const;
+          if (!isset($const['doc']) or $const['doc'] === true) {
+            $klass['constants'][$const_name] = $const;
+          }
         break;
         
         case T_VARIABLE:
           list($attribute_name, $attribute) = $this->parse_class_attribute();
-          $klass['attributes'][$attribute_name] = $attribute;
+          if (!isset($attribute['doc']) or $attribute['doc'] === true) {
+            $klass['attributes'][$attribute_name] = $attribute;
+          }
         break;
         
         case T_FUNCTION:
@@ -312,6 +316,18 @@ class Pdoc_Analyzer
     return $this->parse_class_variable();
   }
   
+  private function parse_class_attribute()
+  {
+    $defaults = array(
+      'visibility' => 'public',
+      'static'     => false,
+    );
+    list($name, $attribute) = $this->parse_class_variable();
+    $attribute = array_merge($defaults, $attribute, $this->properties());
+    return array($name, $attribute);
+  }
+  
+  # :nodoc:
   private function parse_class_variable()
   {
     $token = current($this->tokens);
@@ -327,24 +343,13 @@ class Pdoc_Analyzer
       }
     }
     
-    $const = array(
+    $var = array(
       'value' => trim($value),
       'comment' => $this->comment(),
     );
-#    list($name, $const) = $this->parse_modifiers($name, $const);
+    list($name, $var) = $this->parse_modifiers($name, $var);
     
-    return array($name, $const);
-  }
-  
-  private function parse_class_attribute()
-  {
-    $defaults = array(
-      'visibility' => 'public',
-      'static'     => false,
-    );
-    list($name, $attribute) = $this->parse_class_variable();
-    $attribute = array_merge($defaults, $attribute, $this->properties());
-    return array($name, $attribute);
+    return array($name, $var);
   }
   
   private function parse_class_method()
@@ -380,6 +385,7 @@ class Pdoc_Analyzer
       'constants' => array(),
       'methods'   => array(),
     );
+    list($name, $interface) = $this->parse_modifiers($name, $interface);
     
     # definition
     while(($token = next($this->tokens)) !== false)

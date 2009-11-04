@@ -7,6 +7,12 @@ abstract class A
   const data = array('a', 'b', false);
   
   # :nodoc:
+  public $b;
+  
+  # :nodoc:
+  const undocumented = 'A';
+  
+  # :nodoc:
   function a()
   {
     

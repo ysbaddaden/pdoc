@@ -160,6 +160,7 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $analyzer->add(dirname(__FILE__).'/../fixtures/classes.php');
     $classes = $analyzer->classes();
     
+    $this->assert_equal($classes['A']['attributes'], array());
     $this->assert_equal($classes['A']['methods'], array());
   }
 }
