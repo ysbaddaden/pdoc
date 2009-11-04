@@ -1,11 +1,11 @@
 
-<article class="function" id="function-<?= $function['name'] ?>">
+<article class="function" id="function-<?= $func_name ?>">
   <h3>
-    <span class="name"><?= $function['name'] ?></span><span class="arguments">(<?= $function['arguments'] ?>)</span>
+    <span class="name"><?= $func_name ?></span><span class="arguments">(<?= $func['arguments'] ?>)</span>
   </h3>
   
   <div class="description">
-    <?= $this->fix_internal_links(text_to_html($function['description'], array('headings_start' => 4))) ?>
+    <?= $this->text_to_html($func['comment'], array('headings_start' => 4)) ?>
   </div>
 </article>
 

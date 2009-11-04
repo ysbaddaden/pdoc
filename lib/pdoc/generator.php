@@ -9,6 +9,7 @@ class Pdoc_Generator
 {
   protected $analyzer;
   protected $project_name;
+  protected $main_file;
   
   protected $inputdir;
   protected $outputdir;
@@ -33,21 +34,10 @@ class Pdoc_Generator
     
     $this->generate_classes();
     $this->generate_interfaces();
-#    $this->generate_namespaces();
+    $this->generate_namespaces();
 #    $this->generate_global_namespace();
     
 #    $this->render('main', 'readme.html');
-    
-    /*
-    # namespaces
-    $tree = $this->parser->get_tree();
-    foreach($tree as $ns => $subtree)
-    {
-      if ($ns != '_classes' and $ns != '_functions') {
-        $this->generate_namespace($subtree, $ns);
-      }
-    }
-    */
     
     # CSS
     copy(ROOT.'/templates/style.css', $this->outputdir.'/style.css');
@@ -57,10 +47,6 @@ class Pdoc_Generator
   {
     foreach($this->analyzer->classes() as $klass_name => $klass)
     {
-      ksort($klass['constants']);
-      ksort($klass['attributes']);
-      ksort($klass['methods']);
-      
       $this->relative_url(count(explode('_', $klass_name)));
       
       $this->render('class', $this->klass_path($klass_name), array(
@@ -82,6 +68,19 @@ class Pdoc_Generator
       $this->render('interface', $this->interface_path($interface_name), array(
         'interface_name' => $interface_name,
         'interface'      => &$interface,
+      ));
+    }
+  }
+  
+  private function generate_namespaces()
+  {
+    foreach($this->analyzer->namespaces() as $ns_name => $ns)
+    {
+      $this->relative_url(count(explode('\\', $ns_name)));
+      
+      $this->render('namespace', $this->namespace_path($ns_name), array(
+        'ns_name' => $ns_name,
+        'ns'      => &$ns,
       ));
     }
   }

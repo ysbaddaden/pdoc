@@ -8,9 +8,12 @@
 <body class="index">
 
   <h1>List of classes</h1>
-
+  
+  <? $collection = array_merge($this->analyzer->classes(), $this->analyzer->namespaces()) ?>
+  <? ksort($collection) ?>
+  
   <ul class="index">
-    <? foreach($this->analyzer->classes() as $klass_name => $klass): ?>
+    <? foreach($collection as $klass_name => $klass): ?>
       <li><a href="<?= $this->klass_url($klass_name) ?>" target="docwin"><?= $klass_name ?></a></li>
     <? endforeach; ?>
   </ul>

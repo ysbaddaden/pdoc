@@ -51,7 +51,7 @@ So that you may do this:
      
    }
    
-   # @private
+   # :nodoc:
    function undocumented_public_method()
    {
      
