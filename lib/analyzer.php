@@ -185,13 +185,7 @@ class Pdoc_Analyzer
         default: $name .= is_string($token) ? $token : $token[1];
       }
     }
-    $this->namespaces[$name] = array(
-      'comment'    => $this->comment(),
-      'functions'  => array(),
-      'classes'    => array(),
-      'interfaces' => array(),
-    );
-    
+    $this->add_namespace($name);
     $this->namespace = $name;
   }
   
@@ -277,16 +271,10 @@ class Pdoc_Analyzer
     
     $this->classes[$name] = $klass;
     
-    # namespace (pseudo or real)
     $_name = strpos($name, '_') ? str_replace('_', '\\', $name) : $name;
     if (strpos($_name, '\\'))
     {
-      $parts = explode('\\', $_name, -1);
-      foreach($parts as $ns)
-      {
-        $namespace = isset($namespace) ? "$namespace\\$ns" : $ns;
-        $this->add_namespace($namespace);
-      }
+      $namespace = $this->add_namespace_for($_name);
       $this->namespaces[$namespace]['classes'][$name] =& $this->classes[$name];
     }
   }
@@ -405,17 +393,10 @@ class Pdoc_Analyzer
 
     $this->interfaces[$name] = $interface;
     
-    # namespace (pseudo or real)
     $_name = strpos($name, '_') ? str_replace('_', '\\', $name) : $name;
     if (strpos($_name, '\\'))
     {
-      $parts = explode('\\', $_name, -1);
-      foreach($parts as $ns)
-      {
-        $namespace = isset($namespace) ? "$namespace\\$ns" : $ns;
-        $this->add_namespace($namespace);
-      }
-      
+      $namespace = $this->add_namespace_for($_name);
       $this->namespaces[$namespace]['interfaces'][$name] =& $this->interfaces[$name];
     }
   }
@@ -444,16 +425,9 @@ class Pdoc_Analyzer
     
     $this->functions[$name] = $func;
     
-    # namespace (pseudo or real)
     if (strpos($name, '\\'))
     {
-      $parts = explode('\\', $name, -1);
-      foreach($parts as $ns)
-      {
-        $namespace = isset($namespace) ? "$namespace\\$ns" : $ns;
-        $this->add_namespace($namespace);
-      }
-      
+      $namespace = $this->add_namespace_for($name);
       $this->namespaces[$namespace]['functions'][$name] =& $this->functions[$name];
     }
   }
@@ -547,6 +521,17 @@ class Pdoc_Analyzer
         'interfaces' => '',
       );
     }
+  }
+  
+  private function add_namespace_for($name)
+  {
+    $parts = explode('\\', $name, -1);
+    foreach($parts as $ns)
+    {
+      $namespace = isset($namespace) ? "$namespace\\$ns" : $ns;
+      $this->add_namespace($namespace);
+    }
+    return $namespace;
   }
   
   private function debug_token($token)
