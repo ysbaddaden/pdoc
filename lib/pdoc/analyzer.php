@@ -1,5 +1,5 @@
 <?php
-require 'pdoc_klass.php';
+require 'klass.php';
 
 # Analyzes PHP source files.
 # 

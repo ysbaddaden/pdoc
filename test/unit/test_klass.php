@@ -1,7 +1,7 @@
 <?php
 include dirname(__FILE__).'/../test.php';
 include dirname(__FILE__).'/../terminal.php';
-include dirname(__FILE__).'/../../lib/analyzer.php';
+include dirname(__FILE__).'/../../lib/pdoc/analyzer.php';
 
 class Test_Pdoc_Klass extends Unit_Test
 {

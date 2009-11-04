@@ -108,12 +108,14 @@ class Pdoc_Generator
   }
   
   
+  # See <tt>SimpleMarkup</tt> for help.
   protected function text_to_html($text, $options=array())
   {
     $html = text_to_html($text, $options);
     return preg_replace('/(src|href)="classes\//', '\1="'.$this->relative_url().'classes/', $html);
   }
   
+  # See <tt>SimpleMarkup</tt> for help.
   protected function span_to_html($span, $options=array())
   {
     $html = span_to_html($span, $options);
@@ -176,7 +178,7 @@ class Pdoc_Generator
     }
   }
   
-  
+  /*
   protected function filter_class_attributes($data)
   {
     $static   = array();
@@ -197,7 +199,6 @@ class Pdoc_Generator
     return $this->filter_class_attributes($data);
   }
   
-  
   private function filter($data, $type, $value)
   {
     $rs = array();
@@ -209,7 +210,7 @@ class Pdoc_Generator
     }
     return $rs;
   }
-  
+  */
   
   /*
   protected function generate_readme()

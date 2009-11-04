@@ -2,10 +2,10 @@
 error_reporting(E_ALL);
 define('ROOT', dirname(dirname(__FILE__)));
 
-require ROOT.'/lib/browser.php';
-require ROOT.'/lib/text_parser.php';
-require ROOT.'/lib/analyzer.php';
-require ROOT.'/lib/generator.php';
+require ROOT.'/lib/simple_markup.php';
+require ROOT.'/lib/pdoc/browser.php';
+require ROOT.'/lib/pdoc/analyzer.php';
+require ROOT.'/lib/pdoc/generator.php';
 
 # params
 $excludes         = array();
@@ -78,12 +78,11 @@ for ($n = 1; $n < $_SERVER['argc']; $n++)
 
 # default params (when missing)
 if (!isset($basedir)) {
-  $basedir = $_ENV['PWD'];
+  $basedir = getcwd();
 }
 if (!isset($outputdir)) {
   $outputdir = rtrim($basedir, '/').'/doc';
 }
-
 
 # searches for source code
 $browser = new Pdoc_Browser($basedir);

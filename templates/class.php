@@ -1,9 +1,3 @@
-<?php
-
-list($static_methods,    $instance_methods)    = $this->filter_class_methods($klass['methods']);
-
-?>
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>

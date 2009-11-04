@@ -2,17 +2,17 @@
 
 function text_to_html($text, $options=null)
 {
-  $parser = new TextParser($text, $options);
+  $parser = new SimpleMarkup($text, $options);
   return $parser->transform();
 }
 
 function span_to_html($block)
 {
-  $parser = new TextParser('');
+  $parser = new SimpleMarkup('');
   return $parser->parse_span($block);
 }
 
-class TextParser
+class SimpleMarkup
 {
   public $text;
   public $options = array(
@@ -70,21 +70,23 @@ class TextParser
     return $html;
   }
   
+  # Transforms a plain text phrase to HTML.
   function parse_span($block)
   {
-    $block = preg_replace('/`(.+?)`/', '<code>\1</code>', $block);
-    $block = preg_replace_callback('/\+(.+?)\+/', array($this, '__replace_links'), $block);
+    $block = preg_replace('/+(.+?)+/', '<code>\1</code>', $block);
+    $block = preg_replace_callback('/<tt>(.+?)<\/tt>/', array($this, '__replace_links'), $block);
     $block = preg_replace_callback('/(?:http|https|ftp|sftp|ssh):\/\/[^ ]+/', array($this, '__cb_auto_link'), $block);
     return $block;
   }
   
+  # :nodoc:
   static private function __cb_auto_link($match)
   {
     return '<a href="'.htmlspecialchars($match[0]).'">'.$match[0].'</a>';
   }
   
   # :nodoc:
-  static function __replace_links($match)
+  static private function __replace_links($match)
   {
     if (strtolower($match[1]) != $match[1])
     {
