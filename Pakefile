@@ -7,7 +7,7 @@ function build_pdoc_documentation()
 {
   chdir(dirname(__FILE__));
   passthru("rm doc/* -rf");
-  passthru("./pdoc --project pdoc --main README.rdoc lib/ doc/");
+  passthru("./pdoc --project pdoc --main ../README.rdoc lib/ doc/");
 }
 
 ?>

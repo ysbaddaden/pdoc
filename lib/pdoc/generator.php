@@ -2,7 +2,6 @@
 
 # Generates the HTML documentation from parsed source files.
 # 
-# TODO: render global functions (ie. that do not belong to a namespace) as classes/_global.html
 # TODO: render a main_file as index file (within frameset).
 # 
 class Pdoc_Generator
@@ -37,7 +36,8 @@ class Pdoc_Generator
     $this->generate_namespaces();
     $this->generate_global_namespace();
     
-#    $this->render('main', 'readme.html');
+    $this->relative_url(0);
+    $this->render('main', 'readme.html', array('main_file' => $this->inputdir.'/'.$this->main_file));
     
     # CSS
     copy(ROOT.'/templates/style.css', $this->outputdir.'/style.css');

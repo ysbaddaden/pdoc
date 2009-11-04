@@ -35,8 +35,8 @@ for ($n = 1; $n < $_SERVER['argc']; $n++)
         echo "  --help           Displays this help message.\n";
         echo "  --project name   Sets the project's name.\n";
         echo "  --exclude path/  Excludes a file or directory from documentation.\n";
-#        echo "  --private        Document private methods and attributes (defaults: no).\n";
-#        echo "  --main file      Use this file as index page.\n";
+        echo "  --private        Document private.\n";
+        echo "  --main file      Use this file as index page (path is relative to input directory, defaults to README).\n";
       exit;
       
       case 'exclude':
