@@ -93,14 +93,30 @@ class Pdoc_Analyzer
     
     foreach($this->functions as $func_name => $func)
     {
+      $func_name = ltrim($func_name, '\\');
+      
+      if (strpos($func_name, '\\') !== false)
+      {
+        $parts     = explode('\\', $func_name);
+        $func_name = array_pop($parts);
+        $ns_name   = implode('\\', $parts);
+        $func_path = "$ns_name::$func_name";
+        $func_name = $func_name.' ('.implode('\\', $parts).')';
+      }
+      else {
+        $func_path = $func_name;
+      }
+      
       $methods[$func_name] = array(
-        'visibility' => 'public',
-        'path' => $func_name,
+        'visibility' => isset($func['visibility']) ? $func['visibility'] : 'public',
+        'path'       => $func_path,
       );
     }
     
     foreach($this->classes as $klass_name => $klass)
     {
+      $klass_name = ltrim($klass_name, '\\');
+      
       foreach($klass['methods'] as $method_name => $method)
       {
         $methods["$method_name ($klass_name)"] = array(
