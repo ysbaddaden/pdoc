@@ -35,7 +35,7 @@ class Pdoc_Generator
     $this->generate_classes();
     $this->generate_interfaces();
     $this->generate_namespaces();
-#    $this->generate_global_namespace();
+    $this->generate_global_namespace();
     
 #    $this->render('main', 'readme.html');
     
@@ -89,6 +89,7 @@ class Pdoc_Generator
   
   private function generate_global_namespace()
   {
+    $this->relative_url(1);
     $this->render('global_namespace', 'classes/_global.html');
   }
   
