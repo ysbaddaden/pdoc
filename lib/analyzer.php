@@ -10,13 +10,13 @@
 #   $classes    = $analyzer->classes();
 # 
 # TODO: documentation modifiers => :nodoc:, :doc:, :private:, :namespace:$namespace
-# IMPROVE: Assign classes, functions and interfaces that belong to a namespace.
 # 
 class Pdoc_Analyzer
 {
   private $tokens;
   private $comment    = '';
   private $properties = array();
+  private $namespace  = '';
   
   private $namespaces = array();
   private $classes    = array();
@@ -31,6 +31,7 @@ class Pdoc_Analyzer
     
     $this->tokens     = token_get_all(file_get_contents($php_file));
     $this->comment    = '';
+    $this->namespace  = null;
     $this->properties = array();
     
     $token = reset($this->tokens);
@@ -132,6 +133,7 @@ class Pdoc_Analyzer
     return isset($this->functions[$function_name]);
   }
   
+  
   private function properties()
   {
     $properties = $this->properties;
@@ -189,13 +191,23 @@ class Pdoc_Analyzer
       'classes'    => array(),
       'interfaces' => array(),
     );
+    
+    $this->namespace = $name;
   }
   
   private function parse_class()
   {
-    while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
+    $name = '';
+    while(($token = next($this->tokens)) !== false)
+    {
+      switch($token[0])
+      {
+        case T_WHITESPACE: break;
+        case T_NS_SEPARATOR: case T_STRING: $name .= is_string($token) ? $token : $token[1]; break;
+        case '{': case T_EXTENDS: case T_IMPLEMENTS: prev($this->tokens); break 2;
+      }
+    }
     
-    $name  = $token[1];
     $klass = array_merge(array(
       'comment'    => $this->comment(),
       'extends'    => '',
@@ -259,9 +271,13 @@ class Pdoc_Analyzer
       }
     }
     
+    if ($this->namespace !== null and strpos($name, '\\') !== 0) {
+      $name = $this->namespace.'\\'.$name;
+    }
+    
     $this->classes[$name] = $klass;
     
-    # namespace
+    # namespace (pseudo or real)
     $_name = strpos($name, '_') ? str_replace('_', '\\', $name) : $name;
     if (strpos($_name, '\\'))
     {
@@ -271,7 +287,6 @@ class Pdoc_Analyzer
         $namespace = isset($namespace) ? "$namespace\\$ns" : $ns;
         $this->add_namespace($namespace);
       }
-      
       $this->namespaces[$namespace]['classes'][$name] =& $this->classes[$name];
     }
   }
@@ -329,12 +344,19 @@ class Pdoc_Analyzer
     return array($name, $func);
   }
   
-  
   private function parse_interface()
   {
-    while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
+    $name = '';
+    while(($token = next($this->tokens)) !== false)
+    {
+      switch($token[0])
+      {
+        case T_WHITESPACE: break;
+        case T_NS_SEPARATOR: case T_STRING: $name .= is_string($token) ? $token : $token[1]; break;
+        case '{': case T_EXTENDS: prev($this->tokens); break 2;
+      }
+    }
     
-    $interface_name = $token[1];
     $interface = array(
       'comment'   => $this->comment(),
       'extends'   => array(),
@@ -377,10 +399,14 @@ class Pdoc_Analyzer
       }
     }
     
-    $this->interfaces[$interface_name] = $interface;
+    if ($this->namespace !== null and strpos($name, '\\') !== 0) {
+      $name = $this->namespace.'\\'.$name;
+    }
+
+    $this->interfaces[$name] = $interface;
     
-    # namespace
-    $_name = strpos($interface_name, '_') ? str_replace('_', '\\', $interface_name) : $interface_name;
+    # namespace (pseudo or real)
+    $_name = strpos($name, '_') ? str_replace('_', '\\', $name) : $name;
     if (strpos($_name, '\\'))
     {
       $parts = explode('\\', $_name, -1);
@@ -390,7 +416,7 @@ class Pdoc_Analyzer
         $this->add_namespace($namespace);
       }
       
-      $this->namespaces[$namespace]['interfaces'][$interface_name] =& $this->interfaces[$interface_name];
+      $this->namespaces[$namespace]['interfaces'][$name] =& $this->interfaces[$name];
     }
   }
   
@@ -411,12 +437,17 @@ class Pdoc_Analyzer
   private function parse_function()
   {
     list($name, $func) = $this->parse_function_or_method();
+    
+    if ($this->namespace !== null and strpos($name, '\\') !== 0) {
+      $name = $this->namespace.'\\'.$name;
+    }
+    
     $this->functions[$name] = $func;
     
-    $_name = strpos($name, '_') ? str_replace('_', '\\', $name) : $name;
-    if (strpos($_name, '\\'))
+    # namespace (pseudo or real)
+    if (strpos($name, '\\'))
     {
-      $parts = explode('\\', $_name, -1);
+      $parts = explode('\\', $name, -1);
       foreach($parts as $ns)
       {
         $namespace = isset($namespace) ? "$namespace\\$ns" : $ns;
@@ -429,9 +460,16 @@ class Pdoc_Analyzer
   
   private function parse_function_or_method()
   {
-    while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
-    
-    $name = $token[1];
+    $name = '';
+    while(($token = next($this->tokens)) !== false)
+    {
+      switch($token[0])
+      {
+        case T_WHITESPACE: break;
+        case T_NS_SEPARATOR: case T_STRING: $name .= is_string($token) ? $token : $token[1]; break;
+        case '(': prev($this->tokens); break 2;
+      }
+    }
     
     $func = array(
       'arguments' => $this->parse_function_args(),

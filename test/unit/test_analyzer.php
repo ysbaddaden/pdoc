@@ -123,7 +123,7 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $namespaces = $analyzer->namespaces();
     
     $this->assert_equal(array_keys($namespaces), array('Ns', 'Ns\SubNs', 'Ifaces'));
-    $this->assert_equal(array_keys($namespaces['Ns']['functions']), array('Ns_find'));
+#    $this->assert_equal(array_keys($namespaces['Ns']['functions']), array('Ns_find'));
     $this->assert_equal(array_keys($namespaces['Ns']['classes']),   array('Ns_Klass'));
     $this->assert_equal(array_keys($namespaces['Ns\SubNs']['classes']),  array('Ns_SubNs_Klass'));
     $this->assert_equal(array_keys($namespaces['Ifaces']['interfaces']), array('Ifaces_Object'));
@@ -137,6 +137,9 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $namespaces = $analyzer->namespaces();
     
     $this->assert_equal(array_keys($namespaces), array('Ns', 'Ns\SubNs'));
+    $this->assert_equal(array_keys($namespaces['Ns']['classes']), array('Ns\SubKlass'));
+    $this->assert_equal(array_keys($namespaces['Ns']['functions']), array('Ns\my_func'));
+    $this->assert_equal(array_keys($namespaces['Ns']['interfaces']), array('Ns\Iface'));
   }
   
   function test_methods()
