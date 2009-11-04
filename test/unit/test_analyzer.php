@@ -19,9 +19,9 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal($functions['ghi']['arguments'], "array \$a=(true && false), \$d='e', \$e=\"fg\"");
     
     # comments
-    $this->assert_equal($functions['def']['comment'], "this is a comment\n\nfor def\n");
-    $this->assert_equal($functions['abc']['comment'], "This is a doc\nblock test.\n");
-    $this->assert_equal($functions['ghi']['comment'], "this is\na test\n");
+    $this->assert_equal($functions['def']['comment'], "this is a comment\n\nfor def\n\n  \$file = 'src/file.php';\n\n");
+    $this->assert_equal($functions['abc']['comment'], "This is a doc\nblock test.");
+    $this->assert_equal($functions['ghi']['comment'], "this is\na test");
     $this->assert_equal($functions['jkl']['comment'], '');
     
     $this->assert_true($analyzer->function_exists('abc'));

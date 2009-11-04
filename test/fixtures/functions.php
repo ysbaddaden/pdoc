@@ -17,6 +17,9 @@ function abc($a, $b=null, $c=array('a' => array('b' => 'c')))
   # this is a comment
   #
   # for def
+  # 
+  #   $file = 'src/file.php';
+  #
   function def()
   {
     
