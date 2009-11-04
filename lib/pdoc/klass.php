@@ -5,6 +5,7 @@ class Pdoc_Klass extends ArrayObject
   # Returns a list of class constants.
   function & constants()
   {
+    ksort($this['constants']);
     return $this['constants'];
   }
   
@@ -21,6 +22,7 @@ class Pdoc_Klass extends ArrayObject
   # 
   function & attributes($filters=array())
   {
+    ksort($this['attributes']);
     return $this->filter($this['attributes'], $filters);
   }
   
@@ -35,6 +37,7 @@ class Pdoc_Klass extends ArrayObject
   # 
   function & methods($filters=array())
   {
+    ksort($this['methods']);
     return $this->filter($this['methods'], $filters);
   }
   

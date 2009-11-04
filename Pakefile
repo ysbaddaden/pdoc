@@ -1,13 +1,13 @@
 <?php
 
 desc("Generates documentation for pdoc");
-task('doc', 'build_pdoc');
+task('doc', 'build_pdoc_documentation');
 
-function build_pdoc()
+function build_pdoc_documentation()
 {
   chdir(dirname(__FILE__));
   passthru("rm doc/* -rf");
-  passthru("./pdoc --project pdoc lib/ doc/");
+  passthru("./pdoc --project pdoc --main README.rdoc lib/ doc/");
 }
 
 ?>

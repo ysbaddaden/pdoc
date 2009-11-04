@@ -11,7 +11,7 @@ require ROOT.'/lib/pdoc/generator.php';
 $excludes         = array();
 $project_name     = '';
 $document_private = false;
-$main_file        = '';
+$main_file        = 'README';
 
 # parses params
 for ($n = 1; $n < $_SERVER['argc']; $n++)
