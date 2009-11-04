@@ -23,6 +23,7 @@
       
       <ul class="classes">
         <? foreach($ns['classes'] as $klass_name => $klass): ?>
+          <? $klass_name = end(explode('\\', $klass_name)) ?>
           <li><a href="<?= $this->klass_url($klass_name) ?>"><?= $klass_name ?></a></li>
         <? endforeach; ?>
       </ul>
@@ -33,12 +34,14 @@
       
       <ul class="functions">
         <? foreach($ns['functions'] as $func_name => $func): ?>
+          <? $func_name = end(explode('\\', $func_name)) ?>
           <li><a href="#function-<?= $func_name ?>"><?= $func_name ?></a></li>
         <? endforeach; ?>
       </ul>
       
       <section class="functions">
         <? foreach($ns['functions'] as $func_name => $func): ?>
+          <? $func_name = end(explode('\\', $func_name)) ?>
           <? include('_function.php') ?>
         <? endforeach; ?>
       </section>
