@@ -73,7 +73,7 @@ class SimpleMarkup
   # Transforms a block (ie. a single phrase) to HTML.
   function parse_span($block)
   {
-    $block = preg_replace_callback('/([+*_])(.+?)\1/', array($this, '_replace_span'), $block);
+    $block = preg_replace_callback('/([+*])(.+?)\1/', array($this, '_replace_span'), $block);
     $block = preg_replace_callback('/<tt>(.+?)<\/tt>/', array($this, '_replace_links'), $block);
     $block = preg_replace_callback('/(?:http|https|ftp|sftp|ssh):\/\/[^ ]+/', array($this, '_auto_links'), $block);
     return $block;
@@ -86,7 +86,7 @@ class SimpleMarkup
     {
       case '+': return '<code>'.$match[2].'</code>'; break;
       case '*': return '<strong>'.$match[2].'</strong>'; break;
-      case '_': return '<em>'.$match[2].'</em>'; break;
+#      case '_': return '<em>'.$match[2].'</em>'; break;
     }
   }
   
