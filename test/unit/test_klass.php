@@ -42,6 +42,12 @@ class Test_Pdoc_Klass extends Unit_Test
     $this->assert_true($this->classes['C']->has_attributes(array('static' => false)));
   }
   
+  function test_has_constants()
+  {
+    $this->assert_false($this->classes['C']->has_constants());
+    $this->assert_true($this->classes['A']->has_constants());
+  }
+  
   function test_has_methods()
   {
     $this->assert_false($this->classes['C']->has_methods(array('static' => true, 'visibility' => 'protected')));

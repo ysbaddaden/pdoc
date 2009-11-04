@@ -38,11 +38,10 @@ class Pdoc_Klass extends ArrayObject
     return $this->filter($this['methods'], $filters);
   }
   
-  # Checks if the class has any method maching filters.
-  # See +methods+ for the list of filters.
-  function has_methods($filters=array())
+  # Checks if the class has any constant.
+  function has_constants()
   {
-    return ($this->count_filter($this['methods'], $filters) > 0);
+    return (!empty($this['constants']));
   }
   
   # Checks if the class has any attribute maching filters.
@@ -50,6 +49,13 @@ class Pdoc_Klass extends ArrayObject
   function has_attributes($filters=array())
   {
     return ($this->count_filter($this['attributes'], $filters) > 0);
+  }
+  
+  # Checks if the class has any method maching filters.
+  # See +methods+ for the list of filters.
+  function has_methods($filters=array())
+  {
+    return ($this->count_filter($this['methods'], $filters) > 0);
   }
   
   private function & filter($ary, $filters)
