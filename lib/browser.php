@@ -1,7 +1,7 @@
 <?php
 
 # Browses a directory, looking for some files.
-#
+# 
 #   $browser = new PDoc_Browser('./src');
 #   $files = $browser->search('php', array('test'));
 # 

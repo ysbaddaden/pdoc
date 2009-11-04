@@ -1,6 +1,5 @@
 <?php
 
-list($static_attributes, $instance_attributes) = $this->filter_class_attributes($klass['attributes']);
 list($static_methods,    $instance_methods)    = $this->filter_class_methods($klass['methods']);
 
 ?>
@@ -58,61 +57,61 @@ list($static_methods,    $instance_methods)    = $this->filter_class_methods($kl
       </section>
     <? endif; ?>
     
-    <? if (!empty($klass['constants'])): ?>
+    <? if ($klass->has_constants()): ?>
       <section id="constants">
         <h2>Constants</h2>
-        <? $constants = $klass['constants'] ?>
+        <? $constants = $klass->constants() ?>
         <? include('_constants.php') ?>
       </section>
     <? endif; ?>
     
-    <? if (!empty($klass['attributes'])): ?>
+    <? if ($klass->has_attributes()): ?>
       <section id="attributes">
-        <? if (!empty($static_attributes['public'])): ?>
+        <? if ($klass->has_attributes(array('static' => true, 'visibility' => 'public'))): ?>
           <h2>Public static attributes</h2>
-          <? $attributes = $static_attributes['public'] ?>
+          <? $attributes = $klass->attributes(array('static' => true, 'visibility' => 'public')) ?>
           <? include('_attributes.php') ?>
         <? endif; ?>
         
-        <? if (!empty($static_attributes['protected'])): ?>
+        <? if ($klass->has_attributes(array('static' => true, 'visibility' => 'protected'))): ?>
           <h2>Protected static attributes</h2>
-          <? $attributes = $static_attributes['protected'] ?>
+          <? $attributes = $klass->attributes(array('static' => true, 'visibility' => 'protected')) ?>
           <? include('_attributes.php') ?>
         <? endif; ?>
         
-        <? if ($this->document_private and !empty($static_attributes['private'])): ?>
+        <? if ($this->document_private and $klass->has_attributes(array('static' => true, 'visibility' => 'private'))): ?>
           <h2>Private static attributes</h2>
-          <? $attributes = $static_attributes['private'] ?>
+          <? $attributes = $klass->attributes(array('static' => true, 'visibility' => 'private')) ?>
           <? include('_attributes.php') ?>
         <? endif; ?>
         
         
-        <? if (!empty($instance_attributes['public'])): ?>
+        <? if ($klass->has_attributes(array('static' => false, 'visibility' => 'public'))): ?>
           <h2>Public instance attributes</h2>
-          <? $attributes = $instance_attributes['public'] ?>
+          <? $attributes = $klass->attributes(array('static' => false, 'visibility' => 'public')) ?>
           <? include('_attributes.php') ?>
         <? endif; ?>
         
-        <? if (!empty($instance_attributes['protected'])): ?>
+        <? if ($klass->has_attributes(array('static' => false, 'visibility' => 'protected'))): ?>
           <h2>Protected instance attributes</h2>
-          <? $attributes = $instance_attributes['protected'] ?>
+          <? $attributes = $klass->attributes(array('static' => false, 'visibility' => 'protected')) ?>
           <? include('_attributes.php') ?>
         <? endif; ?>
         
-        <? if ($this->document_private and !empty($instance_attributes['private'])): ?>
+        <? if ($this->document_private and $klass->has_attributes(array('static' => false, 'visibility' => 'private'))): ?>
           <h2>Private instance attributes</h2>
-          <? $attributes = $instance_attributes['private'] ?>
+          <? $attributes = $klass->attributes(array('static' => false, 'visibility' => 'private')) ?>
           <? include('_attributes.php') ?>
         <? endif; ?>
       </section>
     <? endif; ?>
     
-    <? if (!empty($klass['methods'])): ?>
+    <? if ($klass->has_methods()): ?>
       <section id="methods">
         <h2>Methods</h2>
         
         <ul class="methods">
-          <? foreach($klass['methods'] as $method_name => $method): ?>
+          <? foreach($klass->methods() as $method_name => $method): ?>
             <? if ($method['visibility'] != 'private' or $this->document_private): ?>
               <li>
                 <a href="#method-<?= $method_name ?>"
@@ -123,40 +122,40 @@ list($static_methods,    $instance_methods)    = $this->filter_class_methods($kl
           <? endforeach; ?>
         </ul>
         
-        <? if (!empty($static_methods['public'])): ?>
+        <? if ($klass->has_methods(array('static' => true, 'visibility' => 'public'))): ?>
           <h2>Public static methods</h2>
-          <? $methods = $static_methods['public'] ?>
+          <? $methods = $klass->methods(array('static' => true, 'visibility' => 'public')) ?>
           <? include('_methods.php') ?>
         <? endif; ?>
         
-        <? if (!empty($static_methods['protected'])): ?>
+        <? if ($klass->has_methods(array('static' => true, 'visibility' => 'protected'))): ?>
           <h2>Protected static methods</h2>
-          <? $methods = $static_methods['protected'] ?>
+          <? $methods = $klass->methods(array('static' => true, 'visibility' => 'protected')) ?>
           <? include('_methods.php') ?>
         <? endif; ?>
         
-        <? if ($this->document_private and !empty($static_methods['private'])): ?>
+        <? if ($this->document_private and $klass->has_methods(array('static' => true, 'visibility' => 'private'))): ?>
           <h2>Private static methods</h2>
-          <? $methods = $static_methods['private'] ?>
+          <? $methods = $klass->methods(array('static' => true, 'visibility' => 'private')) ?>
           <? include('_methods.php') ?>
         <? endif; ?>
         
         
-        <? if (!empty($instance_methods['public'])): ?>
+        <? if ($klass->has_methods(array('static' => false, 'visibility' => 'public'))): ?>
           <h2>Public instance methods</h2>
-          <? $methods = $instance_methods['public'] ?>
+          <? $methods = $klass->methods(array('static' => false, 'visibility' => 'public')) ?>
           <? include('_methods.php') ?>
         <? endif; ?>
         
-        <? if (!empty($instance_methods['protected'])): ?>
+        <? if ($klass->has_methods(array('static' => false, 'visibility' => 'protected'))): ?>
           <h2>Protected instance methods</h2>
-          <? $methods = $instance_methods['protected'] ?>
+          <? $methods = $klass->methods(array('static' => false, 'visibility' => 'protected')) ?>
           <? include('_methods.php') ?>
         <? endif; ?>
         
-        <? if ($this->document_private and !empty($instance_methods['private'])): ?>
+        <? if ($this->document_private and $klass->has_methods(array('static' => false, 'visibility' => 'private'))): ?>
           <h2>Private instance methods</h2>
-          <? $methods = $instance_methods['private'] ?>
+          <? $methods = $klass->methods(array('static' => false, 'visibility' => 'private')) ?>
           <? include('_methods.php') ?>
         <? endif; ?>
       </section>
