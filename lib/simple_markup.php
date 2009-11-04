@@ -73,7 +73,7 @@ class SimpleMarkup
   # Transforms a plain text phrase to HTML.
   function parse_span($block)
   {
-    $block = preg_replace('/+(.+?)+/', '<code>\1</code>', $block);
+    $block = preg_replace('/\+(.+?)\+/', '<code>\1</code>', $block);
     $block = preg_replace_callback('/<tt>(.+?)<\/tt>/', array($this, '__replace_links'), $block);
     $block = preg_replace_callback('/(?:http|https|ftp|sftp|ssh):\/\/[^ ]+/', array($this, '__cb_auto_link'), $block);
     return $block;
