@@ -462,14 +462,17 @@ class Pdoc_Analyzer
       $name = $this->namespace.'\\'.$name;
     }
     
-    $this->functions[$name] = $func;
-    
-    if (strpos($name, '\\') !== false)
+    if (!isset($func['doc']) or $func['doc'] === true)
     {
-      $namespace = $this->add_namespace_for($name);
+      $this->functions[$name] = $func;
       
-      if ($namespace != '\\') {
-        $this->namespaces[$namespace]['functions'][$name] =& $this->functions[$name];
+      if (strpos($name, '\\') !== false)
+      {
+        $namespace = $this->add_namespace_for($name);
+        
+        if ($namespace != '\\') {
+          $this->namespaces[$namespace]['functions'][$name] =& $this->functions[$name];
+        }
       }
     }
   }
