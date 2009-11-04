@@ -85,6 +85,12 @@ class Pdoc_Generator
     }
   }
   
+  private function generate_global_namespace()
+  {
+    $this->render('global_namespace', 'classes/_global.html');
+  }
+  
+  
   private function render($template, $output_file, $locals=array())
   {
     echo "Generating $output_file\n";
@@ -137,7 +143,7 @@ class Pdoc_Generator
   
   protected function namespace_path($namespace)
   {
-    return "classes/".str_replace('_', '/', $namespace).".html";
+    return "classes/".str_replace(array('_', '\\'), '/', $namespace).".html";
   }
   
   protected function namespace_url($namespace)
@@ -147,7 +153,7 @@ class Pdoc_Generator
   
   protected function klass_path($klass)
   {
-    return "classes/".str_replace('_', '/', $klass).'.html';
+    return "classes/".str_replace(array('_', '\\'), '/', $klass).'.html';
   }
   
   protected function klass_url($klass)
@@ -157,7 +163,7 @@ class Pdoc_Generator
   
   protected function interface_path($interface)
   {
-    return "interfaces/".str_replace('_', '/', $interface).'.html';
+    return $this->klass_path($interface);
   }
   
   protected function interface_url($interface)
@@ -176,130 +182,6 @@ class Pdoc_Generator
       return $this->relative_url()."classes/_global.html#method-$method";
     }
   }
-  
-  /*
-  protected function filter_class_attributes($data)
-  {
-    $static   = array();
-    $instance = array();
-    
-    foreach($this->filter($data, 'static', true) as $name => $d) {
-      $static[$d['visibility']][$name] = $d;
-    }
-    foreach($this->filter($data, 'static', false) as $name => $d) {
-      $instance[$d['visibility']][$name] = $d;
-    }
-    
-    return array($static, $instance);
-  }
-  
-  protected function filter_class_methods($data)
-  {
-    return $this->filter_class_attributes($data);
-  }
-  
-  private function filter($data, $type, $value)
-  {
-    $rs = array();
-    foreach($data as $name => $d)
-    {
-      if ($d[$type] === $value) {
-        $rs[$name] = $d;
-      }
-    }
-    return $rs;
-  }
-  */
-  
-  /*
-  protected function generate_readme()
-  {
-    $readme = file_exists($this->inputdir.'/doc/README') ?
-      file_get_contents($this->inputdir.'/doc/README') : "";
-    
-    ob_start(); include ROOT.'/templates/readme.php';
-    file_put_contents($this->outputdir.'/readme.html', ob_get_clean());
-  }
-  
-  protected function generate_index()
-  {
-    ob_start(); include ROOT.'/templates/index.php';
-    file_put_contents($this->outputdir.'/index.html', ob_get_clean());
-  }
-  
-  protected function generate_class_index()
-  {
-    ob_start(); include ROOT.'/templates/class_index.php';
-    file_put_contents($this->outputdir.'/class_index.html', ob_get_clean());
-  }
-  
-  protected function generate_method_index()
-  {
-    ob_start(); include ROOT.'/templates/method_index.php';
-    file_put_contents($this->outputdir.'/method_index.html', ob_get_clean());
-  }
-  
-  protected function generate_namespace($tree, $namespace)
-  {
-    echo "Generating documentation for namespace: {$namespace}\n";
-    
-    ksort($tree);
-    $classes   = isset($tree['_classes'])   ? $tree['_classes']   : array();
-    $functions = isset($tree['_functions']) ? $tree['_functions'] : array();
-    
-    unset($tree['_classes']);
-    unset($tree['_functions']);
-    
-    $comment = null;
-    foreach(array_keys($classes) as $i)
-    {
-      if ($classes[$i]['name'] == "{$namespace}_NS")
-      {
-        $comment = $classes[$i];
-        break;
-      }
-    }
-    
-    if ($namespace == '_global') {
-      $this->relative_url(1);
-    }
-    else {
-      $this->relative_url(count(explode('_', $namespace)));
-    }
-    
-    ob_start();
-    include ROOT.'/templates/namespace.php';
-    $contents = ob_get_clean();
-    
-    $path = $this->namespace_path($namespace);
-    @mkdir($this->outputdir.dirname($path), 0775, true);
-    file_put_contents($this->outputdir.$path, $contents);
-    
-    # child namespaces
-    foreach($tree as $ns => $subtree) {
-      $this->generate_namespace($subtree, $namespace.'_'.$ns);
-    }
-  }
-  
-  protected function generate_class($klass)
-  {
-    echo "Generating documentation for class: {$klass['name']} ({$klass['namespace']})\n";
-    
-    ksort($klass['methods']);
-    $this->relative_url(count(explode('_', $klass['name'])));
-    
-    ob_start();
-    include ROOT.'/templates/class.php';
-    $contents = ob_get_clean();
-    
-    $path = $this->klass_path($klass);
-    
-    if (!file_exists($this->outputdir.dirname($path))) {
-      mkdir($this->outputdir.dirname($path), 0775, true);
-    }
-    file_put_contents($this->outputdir.$path, $contents);
-  }
-  */
 }
 
 ?>

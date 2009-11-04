@@ -3,7 +3,7 @@
 class Pdoc_Klass extends ArrayObject
 {
   # Returns a list of class constants.
-  function & constants()
+  function constants()
   {
     ksort($this['constants']);
     return $this['constants'];
@@ -20,7 +20,7 @@ class Pdoc_Klass extends ArrayObject
   # - visibility: either public, protected or private
   # - static (bool)
   # 
-  function & attributes($filters=array())
+  function attributes($filters=array())
   {
     ksort($this['attributes']);
     return $this->filter($this['attributes'], $filters);
@@ -35,7 +35,7 @@ class Pdoc_Klass extends ArrayObject
   # - abstract (bool)
   # - final (bool)
   # 
-  function & methods($filters=array())
+  function methods($filters=array())
   {
     ksort($this['methods']);
     return $this->filter($this['methods'], $filters);

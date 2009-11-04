@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <title>Interface <?= $klass_name ?></title>
+  <title>Interface <?= $interface_name ?></title>
 	<link rel="stylesheet" type="text/css" charset="utf-8" href="<?= $this->stylesheet_url() ?>"/>
 </head>
 <body>
@@ -12,7 +12,7 @@
     
     <? if (!empty($interface['comment'])): ?>
       <div class="description">
-        <?= $this->text_to_html($klass['comment'], array('headings_start' => 2)) ?>
+        <?= $this->text_to_html($interface['comment'], array('headings_start' => 2)) ?>
       </div>
     <? endif; ?>
     
@@ -25,7 +25,7 @@
             <dt>Extends:</dt>
             <dd>
               <? foreach($klass['extends'] as $implement): ?>
-                <? if ($this->analyzer->interface_exists($implement))): ?>
+                <? if ($this->analyzer->interface_exists($implement)): ?>
                   <a href="<?= $this->interface_url($implement) ?>"><?= $implement ?></a>,
                 <? else: ?>
                   <?= $implement ?>

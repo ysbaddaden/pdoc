@@ -9,7 +9,7 @@
 
   <h1>List of classes</h1>
   
-  <? $collection = array_merge($this->analyzer->classes(), $this->analyzer->namespaces()) ?>
+  <? $collection = array_merge($this->analyzer->classes(), $this->analyzer->interfaces(), $this->analyzer->namespaces()) ?>
   <? ksort($collection) ?>
   
   <ul class="index">
