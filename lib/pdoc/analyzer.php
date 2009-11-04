@@ -173,6 +173,28 @@ class Pdoc_Analyzer
     $this->comment = preg_replace(array('/\/[*]+\s*/', '/\s*[*]\//', '/^\s*(#|[*]|\/\/)[ ]?/m'), '', $comment);
   }
   
+  private function parse_modifiers($name, $data)
+  {
+    if (!empty($data['comment'])
+      and preg_match_all('/^\s*:(.+?):\s*(.*)$/m', $data['comment'], $matches, PREG_SET_ORDER))
+    {
+      $modifiers = array();
+      foreach($matches as $match)
+      {
+        $comment = str_replace($match[0], '', $data['comment']);
+        switch($match[1])
+        {
+          case 'nodoc':     $data['doc'] = false; break;
+          case 'doc':       $data['doc'] = true;  break;
+          case 'private':   $data['visibility'] = 'private';   break;
+          case 'namespace': $name = '\\'.$match[2].'\\'.$name; break;
+        }
+      }
+      $data = array_merge($data, $modifiers);
+    }
+    return array($name, $data);
+  }
+  
   
   private function parse_namespace()
   {
@@ -187,6 +209,7 @@ class Pdoc_Analyzer
       }
     }
     $this->add_namespace($name);
+    $this->namespaces[$name]['comment'] = $this->comment();
     $this->namespace = $name;
   }
   
@@ -213,6 +236,7 @@ class Pdoc_Analyzer
       'abstract'   => false,
       'final'      => false,
     ), $this->properties());
+#    $klass = $this->parse_modifiers($name, $klass);
     
     # definition
     while(($token = next($this->tokens)) !== false)
@@ -259,7 +283,9 @@ class Pdoc_Analyzer
         
         case T_FUNCTION:
           list($method_name, $method) = $this->parse_class_method();
-          $klass['methods'][$method_name] = $method;
+          if (!isset($method['doc']) or $method['doc'] === true) {
+            $klass['methods'][$method_name] = $method;
+          }
         break;
         
         case '}': break 2;
@@ -305,6 +331,7 @@ class Pdoc_Analyzer
       'value' => trim($value),
       'comment' => $this->comment(),
     );
+#    list($name, $const) = $this->parse_modifiers($name, $const);
     
     return array($name, $const);
   }
@@ -328,6 +355,7 @@ class Pdoc_Analyzer
       'final'      => false,
       'static'     => false,
     );
+    
     list($name, $func) = $this->parse_function_or_method();
     $func = array_merge($defaults, $func, $this->properties());
     return array($name, $func);
@@ -451,7 +479,7 @@ class Pdoc_Analyzer
       'code'      => $this->parse_function_code(),
       'comment'   => $this->comment(),
     );
-    
+    list($name, $func) = $this->parse_modifiers($name, $func);
     return array($name, $func);
   }
   

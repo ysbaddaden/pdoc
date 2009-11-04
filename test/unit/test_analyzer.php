@@ -153,6 +153,15 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal($methods['another_test (Ns_Klass)'], array('visibility' => 'private', 'path' => 'Ns_Klass::another_test'));
     $this->assert_equal($methods['Ns_find'], array('visibility' => 'public', 'path' => 'Ns_find'));
   }
+  
+  function test_modifiers()
+  {
+    $analyzer = new Pdoc_Analyzer();
+    $analyzer->add(dirname(__FILE__).'/../fixtures/classes.php');
+    $classes = $analyzer->classes();
+    
+    $this->assert_equal($classes['A']['methods'], array());
+  }
 }
 new Test_Pdoc_Analyzer();
 
