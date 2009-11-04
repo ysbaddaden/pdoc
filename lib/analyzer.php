@@ -1,4 +1,5 @@
 <?php
+require 'pdoc_klass.php';
 
 # Analyzes PHP source files.
 # 
@@ -269,13 +270,13 @@ class Pdoc_Analyzer
       $name = $this->namespace.'\\'.$name;
     }
     
-    $this->classes[$name] = $klass;
+    $this->classes[$name] = new Pdoc_Klass($klass);
     
     $_name = strpos($name, '_') ? str_replace('_', '\\', $name) : $name;
     if (strpos($_name, '\\'))
     {
       $namespace = $this->add_namespace_for($_name);
-      $this->namespaces[$namespace]['classes'][$name] =& $this->classes[$name];
+      $this->namespaces[$namespace]['classes'][$name] = $this->classes[$name];
     }
   }
   
