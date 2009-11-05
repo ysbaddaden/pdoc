@@ -55,11 +55,23 @@ class SimpleMarkup
         $hx    = strlen($m[1]) - 1 + $this->options['headings_start'];
         $html .= "<h{$hx}>".trim($m[2])."</h{$hx}>\n";
       }
-      elseif(preg_match('/^[\-\*] /s', $block, $m))
+      elseif(preg_match('/^[\-\*] /s', $block))
       {
-        # list (unordered)
-        $block = $this->parse_list($block);
-        $html .= "<ul>".$this->parse_span($block)."</ul>\n";
+        # unordered list
+        $block = $this->parse_unordered_list($block);
+        $html .= "<ul>".$block."</ul>\n";
+      }
+      elseif(preg_match('/^\d+. /s', $block))
+      {
+        # ordered list
+        $block = $this->parse_ordered_list($block);
+        $html .= "<ol>".$block."</ol>\n";
+      }
+      elseif(preg_match('/^\[.+?\] /', $block))
+      {
+        # definition list
+        $block = $this->parse_definition_list($block);
+        $html .= "<dl>".$block."</dl>\n";
       }
       else
       {
@@ -111,17 +123,43 @@ class SimpleMarkup
     return '<a href="'.htmlspecialchars($match[0]).'">'.$match[0].'</a>';
   }
   
-  # Parses a list.
-  # 
-  # TODO: Parse sublists.
-  protected function parse_list($block)
+  # Parses an unordered list.
+  protected function parse_unordered_list($block)
   {
     $block = "\n$block\n";
     preg_match_all('/\n[\-\*] (.+)/', $block, $matches, PREG_SET_ORDER);
-
+    
     $html = '';
     foreach($matches as $match) {
-      $html .= "<li>{$match[1]}</li>\n";
+      $html .= "<li>".$this->parse_span($match[1])."</li>\n";
+    }
+    return $html;
+  }
+  
+  # Parses an ordered list.
+  protected function parse_ordered_list($block)
+  {
+    $block = "\n$block\n";
+    preg_match_all('/\n\d+. (.+)/', $block, $matches, PREG_SET_ORDER);
+    
+    $html = '';
+    foreach($matches as $match) {
+      $html .= "<li>".$this->parse_span($match[1])."</li>\n";
+    }
+    return $html;
+  }
+  
+  # Parses a definition list.
+  protected function parse_definition_list($block)
+  {
+    $block = "\n$block\n";
+    preg_match_all('/\n\[(.+?)\] (.+)/', $block, $matches, PREG_SET_ORDER);
+    
+    $html = '';
+    foreach($matches as $match)
+    {
+      $html .= "<dt>".$this->parse_span($match[1])."</dt>\n";
+      $html .= "<dd>".$this->parse_span($match[2])."</dd>\n";
     }
     return $html;
   }
