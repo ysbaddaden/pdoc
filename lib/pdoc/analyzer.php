@@ -1,6 +1,16 @@
 <?php
 require 'klass.php';
 
+# PHP 5.3+ tokenizer defines some new tokens not available in previous
+# versions. This make sure the constant are defined for previous PHP versions.
+if(version_compare(phpversion(), '5.3', '<'))
+{
+  define('T_NAMESPACE', -1);
+  define('T_NS_SEPARATOR', -1);
+  //define('T_NS_C', -1);
+  //define('T_USE', -1);
+}
+
 # Analyzes PHP source files.
 # 
 #   $analyzer = new Pdoc_Analyzer();
