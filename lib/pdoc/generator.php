@@ -109,10 +109,11 @@ class Pdoc_Generator
     $contents = ob_get_clean();
     
     # saves HTML file
-    if (!file_exists($this->outputdir.dirname($output_file))) {
-      mkdir($this->outputdir.dirname($output_file), 0775, true);
+    $dir = $this->outputdir.'/'.dirname($output_file);
+    if (!file_exists($dir)) {
+      mkdir($dir, 0775, true);
     }
-    file_put_contents($this->outputdir.$output_file, $contents);
+    file_put_contents($this->outputdir.'/'.$output_file, $contents);
   }
   
   
