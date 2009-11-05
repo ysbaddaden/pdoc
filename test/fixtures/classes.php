@@ -34,7 +34,7 @@ final class B extends A implements ArrayAccess, Countable
     return $this->name;
   }
   
-  function id($id=null)
+  function id($id=null/*, $b=null*/)
   {
     if ($id !== null) {
       $this->id = $id;

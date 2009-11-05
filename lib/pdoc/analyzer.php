@@ -230,6 +230,7 @@ class Pdoc_Analyzer
     {
       switch($token[0])
       {
+        case T_COMMENT: case T_DOC_COMMENT: continue;
         case T_WHITESPACE: break;
         case ';': break 2;
         default: $name .= is_string($token) ? $token : $token[1];
@@ -247,6 +248,7 @@ class Pdoc_Analyzer
     {
       switch($token[0])
       {
+        case T_COMMENT: case T_DOC_COMMENT: continue;
         case T_WHITESPACE: break;
         case T_NS_SEPARATOR: case T_STRING: $name .= is_string($token) ? $token : $token[1]; break;
         case '{': case T_EXTENDS: case T_IMPLEMENTS: prev($this->tokens); break 2;
@@ -270,6 +272,7 @@ class Pdoc_Analyzer
     {
       switch($token[0])
       {
+        case T_COMMENT: case T_DOC_COMMENT: continue;
         case T_EXTENDS:
           while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
           $klass['extends'] = $token[1];
@@ -405,6 +408,7 @@ class Pdoc_Analyzer
     {
       switch($token[0])
       {
+        case T_COMMENT: case T_DOC_COMMENT: continue;
         case T_WHITESPACE: break;
         case T_NS_SEPARATOR: case T_STRING: $name .= is_string($token) ? $token : $token[1]; break;
         case '{': case T_EXTENDS: prev($this->tokens); break 2;
@@ -424,6 +428,7 @@ class Pdoc_Analyzer
     {
       switch($token[0])
       {
+        case T_COMMENT: case T_DOC_COMMENT: continue;
         case T_EXTENDS:
         case ',':
           while(($token = next($this->tokens)) !== false and $token[0] != T_STRING) continue;
@@ -515,6 +520,7 @@ class Pdoc_Analyzer
     {
       switch($token[0])
       {
+        case T_COMMENT: case T_DOC_COMMENT: continue;
         case T_WHITESPACE: break;
         case T_NS_SEPARATOR: case T_STRING: $name .= is_string($token) ? $token : $token[1]; break;
         case '(': prev($this->tokens); break 2;
@@ -539,6 +545,7 @@ class Pdoc_Analyzer
     {
       switch($token[0])
       {
+        case T_COMMENT: case T_DOC_COMMENT: continue;
         case T_WHITESPACE: if ($deep > 0) $args .= ' '; break;
         case '(': if ($deep > 0) $args .= '('; $deep++; break;
         case ')': $deep--; if ($deep == 0) break 2;
@@ -586,6 +593,7 @@ class Pdoc_Analyzer
     return $code;
   }
   
+  
   private function add_namespace($namespace)
   {
     $namespace = ltrim($namespace, '\\');
@@ -612,6 +620,7 @@ class Pdoc_Analyzer
     }
     return isset($namespace) ? $namespace : '\\';
   }
+  
   
   private function debug_token($token)
   {

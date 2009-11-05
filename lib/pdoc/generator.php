@@ -1,9 +1,6 @@
 <?php
 
 # Generates the HTML documentation from parsed source files.
-# 
-# TODO: render a main_file as index file (within frameset).
-# 
 class Pdoc_Generator
 {
   protected $analyzer;
@@ -39,7 +36,6 @@ class Pdoc_Generator
     $this->relative_url(0);
     $this->render('main', 'readme.html', array('main_file' => $this->inputdir.'/'.$this->main_file));
     
-    # CSS
     copy(ROOT.'/templates/style.css', $this->outputdir.'/style.css');
   }
   

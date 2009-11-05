@@ -66,6 +66,7 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $this->assert_equal(array_keys($classes['B']['methods']), array('name', 'id', '__set'));
     $this->assert_equal($classes['B']['methods']['name']['comment'], "gets name\n");
     $this->assert_equal($classes['B']['methods']['id']['comment'], '');
+    $this->assert_equal($classes['B']['methods']['id']['arguments'], '$id=null');
     
     $this->assert_equal($classes['C']['methods']['a']['visibility'], 'public');
     $this->assert_equal($classes['C']['methods']['b']['visibility'], 'protected');
