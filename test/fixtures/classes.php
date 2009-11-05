@@ -41,6 +41,17 @@ final class B extends A implements ArrayAccess, Countable
     }
     return $this->id;
   }
+  
+  function __get()
+  {
+    
+  }
+  
+  # :doc:
+  function __set()
+  {
+    
+  }
 }
 
 class C

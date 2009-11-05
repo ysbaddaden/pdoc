@@ -63,7 +63,7 @@ class Test_Pdoc_Analyzer extends Unit_Test
       array('comment' => "shall we be paranoid?\n", 'value' => "array('a' => array('b'))", 'visibility' => 'private', 'static' => false));
     
     # methods
-    $this->assert_equal(array_keys($classes['B']['methods']), array('name', 'id'));
+    $this->assert_equal(array_keys($classes['B']['methods']), array('name', 'id', '__set'));
     $this->assert_equal($classes['B']['methods']['name']['comment'], "gets name\n");
     $this->assert_equal($classes['B']['methods']['id']['comment'], '');
     

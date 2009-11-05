@@ -8,5 +8,6 @@ Things to do:
   * Document TODO:, DEPRECATED:, etc.
   * Generate special pages for parsed TODO:, DEPRECATED:, etc.
 
-  * Detect constructors and destructors, and document them specifically.
+  * do not document __get, __set, __isset, __unset, __call, __callStatic, __sleep, __wakeup,
+   __set_state and __clone magic methods unless explicitly told to with the :doc: modifier.
 

@@ -22,6 +22,9 @@ class Pdoc_Analyzer
   private $interfaces = array();
   private $functions  = array();
   
+  private $undocumented_methods = array('__get', '__set', '__isset', '__unset',
+    '__call', '__callStatic', '__sleep', '__wakeup', '__set_state', '__clone');
+  
   
   # Adds a PHP source file to parse.
   function add($php_file)
@@ -301,7 +304,9 @@ class Pdoc_Analyzer
         
         case T_FUNCTION:
           list($method_name, $method) = $this->parse_class_method();
-          if (!isset($method['doc']) or $method['doc'] === true) {
+          if ((!isset($method['doc']) and !in_array($method_name, $this->undocumented_methods))
+            or (isset($method['doc']) and $method['doc'] === true))
+          {
             $klass['methods'][$method_name] = $method;
           }
         break;
