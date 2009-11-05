@@ -62,10 +62,10 @@ So that you may do this:
 
 Available options:
 
-- +--project+ "Project Name"
-- +--exclude sub/path+  exclude a path from input directory (there may be more than one)
-- +--main file+         the main file (path is relative to input directory, defaults to README)
-- +--private+           document private (defaults to no)
+[+--project "Project Name"+] sets the project's name
+[+--main file+]              the main file (path is relative to input directory, defaults to README)
+[+--exclude sub/path+]       exclude a path from input directory (there may be more than one)
+[+--private+]                document private (defaults to no)
 
 Examples:
 
