@@ -98,7 +98,6 @@ class SimpleMarkup
     {
       case '+': return '<code>'.$match[2].'</code>'; break;
       case '*': return '<strong>'.$match[2].'</strong>'; break;
-#      case '_': return '<em>'.$match[2].'</em>'; break;
     }
   }
   
