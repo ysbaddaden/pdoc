@@ -30,7 +30,7 @@
               <? if (isset($this->analyzer->class_exists[$klass['extends']])): ?>
                 <a href="<?= $this->klass_url($klass['extends']) ?>"><?= $klass['extends'] ?></a>
               <? else: ?>
-                <?= $klass['extends'] ?></a>
+                <?= $klass['extends'] ?>
               <? endif; ?>
             </dd>
           <? endif; ?>

@@ -1,5 +1,5 @@
 
-<article class="function" id="function-<?= $func_name ?>">
+<article class="method" id="method-<?= $func_name ?>">
   <h3>
     <span class="name"><?= $func_name ?></span><span class="arguments">(<?= $func['arguments'] ?>)</span>
   </h3>
