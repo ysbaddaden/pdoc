@@ -1,4 +1,9 @@
 <?php
+
+if (version_compare(phpversion(), '5.0', '<')) {
+  trigger_error("PHP 5.0+ is required to run pdoc.", E_USER_ERROR);
+}
+
 error_reporting(E_ALL);
 define('ROOT', dirname(dirname(__FILE__)));
 
