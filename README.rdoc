@@ -34,10 +34,8 @@ So that you may do this:
     # This is the long comment for <tt>MyClass::my_method()</tt>.
     # You may fill it with a lot of things.
     # 
-    # +$toto+ can be:
-    # 
-    # - something
-    # - something else
+    # [+$toto+]  either +something+ or +something else+
+    # [+$tata+]  +true+ to search
     # 
     # == Example:
     # 
@@ -46,7 +44,7 @@ So that you may do this:
     #
     # See http://some.url/ for more details.
     # 
-    function my_method($toto)
+    function my_method($toto, $search=false)
     {
       
     }
