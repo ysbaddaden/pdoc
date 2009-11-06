@@ -170,9 +170,9 @@ class Test_Pdoc_Analyzer extends Unit_Test
     $analyzer = new Pdoc_Analyzer();
     $analyzer->add(dirname(__FILE__).'/../fixtures/namespace_modifier.php');
     
-    $this->assert_equal(array_keys($analyzer->classes()),    array('\My\Ns\SubKlass'));
-    $this->assert_equal(array_keys($analyzer->functions()),  array('\My\Ns\my_func'));
-    $this->assert_equal(array_keys($analyzer->interfaces()), array('\Ns\MyIface'));
+    $this->assert_equal(array_keys($analyzer->classes()),    array('My\Ns\SubKlass'));
+    $this->assert_equal(array_keys($analyzer->functions()),  array('My\Ns\my_func'));
+    $this->assert_equal(array_keys($analyzer->interfaces()), array('Ns\MyIface'));
     $this->assert_equal(array_keys($analyzer->namespaces()), array('My', 'My\Ns', 'Ns'));
   }
 }

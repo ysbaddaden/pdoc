@@ -328,19 +328,23 @@ class Pdoc_Analyzer
       }
     }
     
-    if ($this->namespace !== null and strpos($name, '\\') !== 0) {
-      $name = $this->namespace.'\\'.$name;
-    }
-    
-    $this->classes[$name] = new Pdoc_Klass($klass);
-    
-    $_name = strpos($name, '_') ? str_replace('_', '\\', $name) : $name;
-    if (strpos($_name, '\\') !== false)
+    if (!isset($klass['doc']) or $klass['doc'] === true)
     {
-      $namespace = $this->add_namespace_for($_name);
+      if ($this->namespace !== null and strpos($name, '\\') !== 0) {
+        $name = $this->namespace.'\\'.$name;
+      }
+      $name = ltrim($name, '\\');
       
-      if ($namespace != '\\') {
-        $this->namespaces[$namespace]['classes'][$name] = $this->classes[$name];
+      $this->classes[$name] = new Pdoc_Klass($klass);
+      
+      $_name = strpos($name, '_') ? str_replace('_', '\\', $name) : $name;
+      if (strpos($_name, '\\') !== false)
+      {
+        $namespace = $this->add_namespace_for($_name);
+        
+        if ($namespace != '\\') {
+          $this->namespaces[$namespace]['classes'][$name] = $this->classes[$name];
+        }
       }
     }
   }
@@ -459,19 +463,22 @@ class Pdoc_Analyzer
       }
     }
     
-    if ($this->namespace !== null and strpos($name, '\\') !== 0) {
-      $name = $this->namespace.'\\'.$name;
-    }
-
-    $this->interfaces[$name] = $interface;
-    
-    $_name = strpos($name, '_') ? str_replace('_', '\\', $name) : $name;
-    if (strpos($_name, '\\') !== false)
+    if (!isset($interface['doc']) or $interface['doc'] === true)
     {
-      $namespace = $this->add_namespace_for($_name);
+      if ($this->namespace !== null and strpos($name, '\\') !== 0) {
+        $name = $this->namespace.'\\'.$name;
+      }
+      $name = ltrim($name, '\\');
+      $this->interfaces[$name] = $interface;
       
-      if ($namespace != '\\') {
-        $this->namespaces[$namespace]['interfaces'][$name] =& $this->interfaces[$name];
+      $_name = strpos($name, '_') ? str_replace('_', '\\', $name) : $name;
+      if (strpos($_name, '\\') !== false)
+      {
+        $namespace = $this->add_namespace_for($_name);
+        
+        if ($namespace != '\\') {
+          $this->namespaces[$namespace]['interfaces'][$name] =& $this->interfaces[$name];
+        }
       }
     }
   }
@@ -494,12 +501,12 @@ class Pdoc_Analyzer
   {
     list($name, $func) = $this->parse_function_or_method();
     
-    if ($this->namespace !== null and strpos($name, '\\') !== 0) {
-      $name = $this->namespace.'\\'.$name;
-    }
-    
     if (!isset($func['doc']) or $func['doc'] === true)
     {
+      if ($this->namespace !== null and strpos($name, '\\') !== 0) {
+        $name = $this->namespace.'\\'.$name;
+      }
+      $name = ltrim($name, '\\');
       $this->functions[$name] = $func;
       
       if (strpos($name, '\\') !== false)
