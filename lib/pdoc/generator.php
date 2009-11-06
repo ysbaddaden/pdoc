@@ -25,8 +25,9 @@ class Pdoc_Generator
   function save()
   {
     $this->render('index',        'index.html');
-    $this->render('class_index',  'class_index.html');
     $this->render('method_index', 'method_index.html');
+    
+    $this->generate_class_index();
     
     $this->generate_classes();
     $this->generate_interfaces();
@@ -37,6 +38,14 @@ class Pdoc_Generator
     $this->render('main', 'readme.html', array('main_file' => $this->inputdir.'/'.$this->main_file));
     
     copy(ROOT.'/templates/style.css', $this->outputdir.'/style.css');
+  }
+  
+  
+  private function generate_class_index()
+  {
+    $collection = array_merge($this->analyzer->classes(), $this->analyzer->interfaces(), $this->analyzer->namespaces());
+    ksort($collection);
+    $this->render('class_index',  'class_index.html', array('collection' => &$collection));
   }
   
   private function generate_classes()
@@ -92,7 +101,7 @@ class Pdoc_Generator
   
   private function render($template, $output_file, $locals=array())
   {
-    echo "Generating $output_file\n";
+    #echo "Generating $output_file\n";
     
     # some local vars
     foreach($locals as $k => $v) {

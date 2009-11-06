@@ -1,7 +1,7 @@
 
 .clear { clear: both; }
 
-body { font: normal 14px/1.25 Verdana, Arial, Helvetica, sans-serif; margin: 0; padding: 1.5em; }
+body { font: normal 14px/1.25 sans-serif; margin: 0; padding: 1.5em; }
 header, footer, section, article, hgroup, aside { display: block; }
 
 h1, h2, h3, h4, h5, h6 { color: #125; font-weight: bold; margin-top: 1.5em; }
@@ -23,7 +23,7 @@ dt { font-weight: bold; }
 
 a { text-decoration: none; color: #039; }
 
-code { font-family: monospace; background: #F4F4F4; }
+code { font-family: monospace; background: #F4F4F4; font-size: .833em; }
 pre  { white-space: pre; font-family: monospace; font-size: .833em; border-left: 4px solid #CCC;
   display: block; padding-left: .75em; overflow: auto; margin-left: 1.5em; }
 
