@@ -90,16 +90,21 @@ if (!isset($outputdir)) {
 }
 
 # searches for source code
+echo "Searching... ";
 $browser = new Pdoc_Browser($basedir);
 $files = $browser->search('php', $excludes);
+echo "done.\n";
 
 # parses source code
+echo "Analyzing source code... ";
 $analyzer = new Pdoc_Analyzer();
 foreach($files as $file) {
   $analyzer->add($file);
 }
+echo "done.\n";
 
 # generates the HTML documentation
+echo "Generating documentation... ";
 $generator = new Pdoc_Generator($analyzer, array(
   'inputdir'         => $basedir,
   'outputdir'        => $outputdir,
@@ -108,5 +113,7 @@ $generator = new Pdoc_Generator($analyzer, array(
   'main_file'        => $main_file,
 ));
 $generator->save();
+echo "done.\n";
+echo "\n";
 
 ?>
