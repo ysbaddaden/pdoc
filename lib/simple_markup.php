@@ -12,13 +12,37 @@ function span_to_html($block)
   return $parser->parse_span($block);
 }
 
+function syntax_highlight($code)
+{
+  return SimpleMarkup::syntax_highlight($code);
+}
+
+
 class SimpleMarkup
 {
   public $text;
   public $options = array(
-    'pre_width'      => 2,
-    'headings_start' => 2,
+    'pre_width'        => 2,
+    'headings_start'   => 2,
+    'syntax_highlight' => false,
   );
+  
+  private static $keywords  = array(T_ABSTRACT, T_ARRAY, T_AS, T_BREAK, T_CASE, T_CATCH, T_CLASS, T_CLONE,
+    T_CONST, T_DECLARE, T_DEFAULT, T_DO, T_ECHO, T_ELSE, T_ELSEIF, T_EMPTY, T_ENDDECLARE,
+    T_ENDFOR, T_ENDFOREACH, T_ENDIF, T_ENDSWITCH, T_ENDWHILE, T_EVAL, T_EXIT, T_EXTENDS,
+    T_FINAL, T_FOR, T_FOREACH, T_FUNCTION, T_GLOBAL, T_GOTO, T_IF, T_IMPLEMENTS, T_INCLUDE,
+    T_INCLUDE_ONCE, T_INSTANCEOF, T_INTERFACE, T_ISSET, T_LIST, T_LOGICAL_AND, T_LOGICAL_OR,
+    T_LOGICAL_XOR, T_NEW, T_PRINT, T_PRIVATE, T_PUBLIC, T_PROTECTED, T_REQUIRE, T_REQUIRE_ONCE,
+    T_RETURN, T_STATIC, T_SWITCH, T_THROW, T_TRY, T_UNSET, T_USE, T_VAR, T_WHILE, 
+  );
+  private static $comments = array(T_COMMENT, T_DOC_COMMENT);
+  private static $numbers  = array(T_DNUMBER, T_LNUMBER, T_NUM_STRING);
+  private static $casts    = array(T_ARRAY_CAST, T_BOOL_CAST, T_DOUBLE_CAST, T_DOUBLE_COLON, T_INT_CAST,
+    T_OBJECT_CAST, T_STRING_CAST, T_UNSET_CAST);
+  private static $vars     = array(/*T_DOLLAR_CURLY_OPEN, T_CURLY_OPEN,*/ T_VARIABLE, T_STRING_VARNAME, T_VARIABLE);
+  private static $tags     = array(T_CLOSE_TAG, T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO);
+  private static $strings  = array(T_CONSTANT_ENCAPSED_STRING, T_ENCAPSED_AND_WHITESPACE);
+  
   
   function __construct($text, $options=null)
   {
@@ -46,7 +70,8 @@ class SimpleMarkup
       {
         # preformated text
         $block = str_replace(array('<\?', '?\>'), array('<?', '?>'), $block);
-        $block = htmlspecialchars(trim(preg_replace("/\n[ ]{".$indent."}/", "\n", $block)));
+        $block = trim(preg_replace("/\n[ ]{".$indent."}/", "\n", $block));
+        $block = $this->options['syntax_highlight'] ? syntax_highlight($block) : htmlspecialchars($block);
         $html .= "<pre>$block</pre>\n";
       }
       elseif(preg_match('/^([=]+)(.+?)[=]*$/s', $block, $m))
@@ -91,6 +116,71 @@ class SimpleMarkup
     return $block;
   }
   
+  static function syntax_highlight($code)
+  {
+    if (strpos($code, '<?') === false)
+    {
+      $code   = "<?\n$code ?>";
+      $tokens = token_get_all($code);
+      $tokens = array_slice($tokens, 1, -1);
+    }
+    else {
+      $tokens = token_get_all($code);
+    }
+    
+    $html  = '';
+    $token = current($tokens);
+    do
+    {
+      $str = is_string($token) ? $token : $token[1];
+      
+      if (in_array($token[0], self::$tags)) {
+        $html .= '<span class="php_tag">'.htmlspecialchars($str).'</span>';
+      }
+      elseif ($token === "'" or $token === '"')
+      {
+        $html .= '<span class="php_string">&quot;';
+        while(($token = next($tokens)) !== false)
+        {
+          $str = is_string($token) ? $token : $token[1];
+          
+          if (in_array($token[0], self::$vars)) {
+            $html .= '<span class="php_var">'.$str.'</span>';
+          }
+          elseif ($token === '"') break;
+          else {
+            $html .= $str;
+          }
+        }
+        $html .= '&quot;</span>';
+      }
+      elseif (in_array($token[0], self::$keywords)) {
+        $html .= '<span class="php_keyword">'.$str.'</span>';
+      }
+      elseif (in_array($token[0], self::$comments)) {
+        $html .= '<span class="php_comment">'.htmlspecialchars($str).'</span>';
+      }
+      elseif (in_array($token[0], self::$numbers)) {
+        $html .= '<span class="php_number">'.$str.'</span>';
+      }
+      elseif (in_array($token[0], self::$casts)) {
+        $html .= '<span class="php_cast">'.$str.'</span>';
+      }
+      elseif (in_array($token[0], self::$vars)) {
+        $html .= '<span class="php_var">'.$str.'</span>';
+      }
+      elseif (in_array($token[0], self::$strings)) {
+        $html .= '<span class="php_string">'.htmlspecialchars($str).'</span>';
+      }
+      else {
+        $html .= htmlspecialchars($str);
+      }
+    }
+    while(($token = next($tokens)) !== false);
+    
+    return $html;
+  }
+
   # :nodoc:
   static private function _replace_span($match)
   {

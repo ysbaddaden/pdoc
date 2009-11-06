@@ -49,3 +49,10 @@ h1 .abstract { font-size: .5em; float: right; color: #888; font-weight: bold;
 
 .arguments { font-weight: normal; }
 
+.php_tag     { font-weight: bold; color: #999; }
+.php_keyword { font-weight: bold; }
+.php_var     { color: #008080; }
+.php_string  { color: #D14; }
+.php_string .php_var { font-style: italic; }
+.php_comment { color: #998; font-style: italic; }
+

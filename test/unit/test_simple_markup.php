@@ -66,6 +66,23 @@ class Test_SimpleMarkup extends Unit_Test
     $this->assert_equal(trim($html), trim(file_get_contents(dirname(__FILE__).'/../fixtures/plain.html')));
   }
   
+  function test_syntax_highlight()
+  {
+    $html = syntax_highlight('<?php phpinfo(); ?>');
+    $this->assert_equal($html, '<span class="php_tag">&lt;?php </span>phpinfo(); <span class="php_tag">?&gt;</span>');
+    
+    $html = syntax_highlight('<?php $a = 1 ?>');
+    $this->assert_equal($html, '<span class="php_tag">&lt;?php </span><span class="php_var">$a</span> = <span class="php_number">1</span> <span class="php_tag">?&gt;</span>');
+    
+    $html = syntax_highlight('<?php $abc = "aze" ?>');
+    $this->assert_equal($html, '<span class="php_tag">&lt;?php </span><span class="php_var">$abc</span> = <span class="php_string">&quot;aze&quot;</span> <span class="php_tag">?&gt;</span>');
+    
+    $html = syntax_highlight('<?php $abc = "aze $a bc" ?>');
+    $this->assert_equal($html, '<span class="php_tag">&lt;?php </span><span class="php_var">$abc</span> = <span class="php_string">&quot;aze <span class="php_var">$a</span> bc&quot;</span> <span class="php_tag">?&gt;</span>');
+    
+    $html = syntax_highlight('$abc = "aze"');
+    $this->assert_equal(trim($html), '<span class="php_var">$abc</span> = <span class="php_string">&quot;aze&quot;</span>');
+  }
 }
 new Test_SimpleMarkup();
 

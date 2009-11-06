@@ -125,6 +125,7 @@ class Pdoc_Generator
   # See <tt>SimpleMarkup</tt> for help.
   protected function text_to_html($text, $options=array())
   {
+    if (!isset($options['syntax_highlight'])) $options['syntax_highlight'] = true;
     $html = text_to_html($text, $options);
     return preg_replace('/(src|href)="classes\//', '\1="'.$this->relative_url().'classes/', $html);
   }
